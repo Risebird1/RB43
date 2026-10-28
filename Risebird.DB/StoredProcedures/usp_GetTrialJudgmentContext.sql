@@ -58,20 +58,14 @@ BEGIN
         RETURN;
     END
 
+    -- "Completed on this channel" lives in fn_InterviewerCompletedInterviewsOnIrf so the pre-interview
+    -- trial banner (usp_GetInterviewAlignmentContext) reads exactly the same predicate.
     ;WITH CompletedOnIrf AS (
         SELECT
-            im.id,
-            im.interviewDate,
-            ROW_NUMBER() OVER (ORDER BY im.interviewDate ASC, im.id ASC) AS rn
-        FROM dbo.InterviewMeetings im
-        INNER JOIN dbo.InterviewComments ic ON ic.InterviewId = im.id
-        WHERE im.IRFId = @IrfName
-          AND LTRIM(RTRIM(im.interviewer)) = @InterviewerRaw
-          AND ISNULL(im.confirmationStatus, 0) = 1
-          AND (
-                ic.MeetingStatus IN (4, 6, 7, 8)
-             OR ic.InterviewStatus IN (2, 3, 4, 5)
-          )
+            c.id,
+            c.interviewDate,
+            ROW_NUMBER() OVER (ORDER BY c.interviewDate ASC, c.id ASC) AS rn
+        FROM dbo.fn_InterviewerCompletedInterviewsOnIrf(@IrfName, @InterviewerRaw) c
     )
     SELECT @FirstInterviewId = id
     FROM CompletedOnIrf

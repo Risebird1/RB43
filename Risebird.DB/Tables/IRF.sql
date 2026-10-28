@@ -946,3 +946,91 @@ BEGIN
     ADD IsAdvancedResumeScreening bit NOT NULL CONSTRAINT DF_IRF_IsAdvancedResumeScreening DEFAULT 0
 END
 GO
+
+-- Interview alignment rollout switch. On: interviewers on this channel get the alignment page and the
+-- gated Zoom link. Off or NULL - every existing row, on day one - Interview/InterviewDetails renders
+-- exactly as it always has, with no new queries. Switched on one channel at a time from Edit IRF.
+-- Naming follows the house convention on this table: IsQCRequired, IsProctoring,
+-- IsJoinabilitySelectabilityRequired, CodeSnippetRequired.
+-- Retirement: once every active channel has this on and nobody has asked to turn one back off, delete
+-- the pre-alignment branch from InterviewController.InterviewDetails and this column with it.
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name = N'IsInterviewerAlignmentRequired'
+      AND Object_ID = Object_ID(N'IRF'))
+BEGIN
+    ALTER TABLE IRF
+    Add IsInterviewerAlignmentRequired bit NULL
+END
+GO
+
+-- Interview alignment: switches the pre-interview trial banner and onboarding modal on for this
+-- channel. NULL (every existing row) means off, so no channel changes behaviour until it is set.
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name = N'AITrialEnabled'
+      AND Object_ID = Object_ID(N'IRF'))
+BEGIN
+    ALTER TABLE IRF
+    Add AITrialEnabled bit NULL
+END
+GO
+
+-- Skill-rubric display on the client report. NULL or 0 (every existing row) renders exactly today's
+-- single "Evaluated at <required level>" line. 1 = required and actual level as text, plus the
+-- competency scale section. 2 = as 1, plus the five-star attainment row.
+-- One column with three modes rather than two booleans, so "stars on, required level off" cannot be
+-- represented.
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name = N'LevelDisplayMode'
+      AND Object_ID = Object_ID(N'IRF'))
+BEGIN
+    ALTER TABLE IRF
+    Add LevelDisplayMode int NULL
+END
+GO
+
+-- How many times the candidate (no signed-in session) may reschedule an interview on this channel.
+-- NULL = unlimited, which is today's behaviour. Risebird internal and client users are never capped.
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name = N'MaxCandidateReschedules'
+      AND Object_ID = Object_ID(N'IRF'))
+BEGIN
+    ALTER TABLE IRF
+    Add MaxCandidateReschedules int NULL
+END
+GO
+
+-- A candidate may not pick a slot more than this many days after the interview's first scheduled
+-- date. NULL = no deadline, which is today's behaviour. Applies to the candidate only.
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name = N'InterviewCompleteByDays'
+      AND Object_ID = Object_ID(N'IRF'))
+BEGIN
+    ALTER TABLE IRF
+    Add InterviewCompleteByDays int NULL
+END
+GO
+
+-- LevelTech id 3 is Dreyfus "Advanced Beginner" - the second-lowest rung - but was stored as "Advanced",
+-- which reads as better than Competent. Renamed here, in the script this release already runs, so it lands
+-- together with the LevelTechEnum / LevelTechForReport Display(Name) and Description change: the reports
+-- read LevelTech.Name, the dropdowns read the enum, and the two must agree.
+-- There is no LevelTech table script in this repo, so the fix lives with the release's other schema work.
+-- Display-name only (id untouched). Idempotent: renames the row only while it still holds the old name.
+IF OBJECT_ID(N'dbo.LevelTech') IS NOT NULL
+BEGIN
+    UPDATE dbo.LevelTech
+    SET [Name] = 'Advanced Beginner'
+    WHERE id = 3
+      AND LTRIM(RTRIM([Name])) = 'Advanced'
+END
+GO

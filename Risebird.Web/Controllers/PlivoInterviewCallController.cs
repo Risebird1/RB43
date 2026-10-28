@@ -42,6 +42,7 @@ namespace Risebird.Web.Controllers
         private readonly IPlivoCallRepository _plivoCallRepository;
         private readonly IApplicationErrorLogger _logger;
         private readonly IPhoneNumberHelper _phoneNumberHelper;
+        private readonly IOpenAIApiLogger _openAIApiLogger;
         private readonly string _connectionString;
 
         public PlivoInterviewCallController(
@@ -49,13 +50,15 @@ namespace Risebird.Web.Controllers
             IPlivoService plivoService,
             IPlivoCallRepository plivoCallRepository,
             IApplicationErrorLogger applicationErrorLogger,
-            IPhoneNumberHelper phoneNumberHelper)
+            IPhoneNumberHelper phoneNumberHelper,
+            IOpenAIApiLogger openAIApiLogger)
         {
             _configuration       = configuration;
             _plivoService        = plivoService;
             _plivoCallRepository = plivoCallRepository;
             _logger              = applicationErrorLogger;
             _phoneNumberHelper   = phoneNumberHelper;
+            _openAIApiLogger     = openAIApiLogger;
             _connectionString    = _configuration["ConnectionString:DBConnectionString"];
         }
 
@@ -423,12 +426,18 @@ namespace Risebird.Web.Controllers
             // Configure OpenAI session using DB-driven config
             await SendOpenAISessionConfig(openAiWs, systemPrompt, assistantConfig, cts.Token);
 
+            // Token usage reported by OpenAI after each AI turn, summed for the call's cost.
+            var usage      = new OpenAIRealtimeUsage();
+            var startedUtc = DateTime.UtcNow;
+
             // Run two concurrent loops
             var plivoToOai = ForwardPlivoAudioToOpenAIAsync(plivoWs, openAiWs, callLog, cts);
-            var oaiToPlivo = ForwardOpenAIAudioToPlivoAsync(openAiWs, plivoWs, callLog, cts);
+            var oaiToPlivo = ForwardOpenAIAudioToPlivoAsync(openAiWs, plivoWs, callLog, usage, cts);
 
             await Task.WhenAny(plivoToOai, oaiToPlivo);
             cts.Cancel();
+
+            await LogRealtimeSessionAsync(callLog, model, usage, startedUtc);
 
             // Collect transcript and persist
             try
@@ -509,6 +518,7 @@ namespace Risebird.Web.Controllers
             ClientWebSocket openAiWs,
             WebSocket plivoWs,
             PlivoCallLog callLog,
+            OpenAIRealtimeUsage usage,
             CancellationTokenSource cts)
         {
             var buffer          = new byte[65536];
@@ -580,6 +590,12 @@ namespace Risebird.Web.Controllers
                                 openAiWs, plivoWs, evt, callLog, transcriptParts, cts.Token);
                             break;
 
+                        case "response.done":
+                            // One AI turn finished: OpenAI reports its token usage here.
+                            try { usage.Add(Newtonsoft.Json.Linq.JObject.Parse(json)["response"]?["usage"]); }
+                            catch (JsonException) { }
+                            break;
+
                         case "error":
                             await _logger.LogMessage(LogLevelInfo.Error,
                                 new Exception($"OpenAI Realtime error for call {callLog.Id}: {json}"));
@@ -602,6 +618,42 @@ namespace Risebird.Web.Controllers
                 callLog.Transcript = transcriptParts.ToString();
                 callLog.UpdatedAt  = DateTime.UtcNow;
                 try { await _plivoCallRepository.UpdateCallLogAsync(callLog); } catch { }
+            }
+        }
+
+        /// <summary>
+        /// Writes the whole call's OpenAI Realtime usage as one OpenAIApiLogs row, tied to the interview
+        /// and IRF, so its cost reaches the AI cost reports and the Interview Profitability tab. Never
+        /// throws: a logging failure must not affect the call.
+        /// </summary>
+        private async Task LogRealtimeSessionAsync(PlivoCallLog callLog, string model, OpenAIRealtimeUsage usage, DateTime startedUtc)
+        {
+            if (usage.Responses == 0)
+                return;
+
+            try
+            {
+                var durationMs = (int)Math.Min(int.MaxValue, (DateTime.UtcNow - startedUtc).TotalMilliseconds);
+                await _openAIApiLogger.LogApiCallAsync(
+                    apiEndpoint: "wss://api.openai.com/v1/realtime",
+                    apiMethod: "REALTIME",
+                    requestPayload: JsonConvert.SerializeObject(new { plivoCallLogId = callLog.Id, model }),
+                    responsePayload: usage.ToPayload(),
+                    responseTimeMs: durationMs,
+                    statusCode: 200,
+                    isSuccess: true,
+                    model: model,
+                    context: new OpenAIApiLogContext
+                    {
+                        OperationType = "PlivoInterviewCall",
+                        MeetingId = callLog.InterviewId,
+                        IRFId = callLog.IRFId,
+                        CandidateId = callLog.RecipientId
+                    });
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
             }
         }
 

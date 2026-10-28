@@ -79,6 +79,21 @@ namespace Risebird.AzureTimerFunctions.CodeProjects.Setup
         }
 
         /// <summary>
+        /// 03:00 UTC on the 1st of each month: rebuilds the candidate images with the month's Windows
+        /// security updates (a build costs one D4s_v5 for about two hours per stack).
+        /// </summary>
+        [Function("CodeProjectImageRefresh")]
+        public async Task ImageRefresh([TimerTrigger("0 0 3 1 * *")] TimerInfo timer, CancellationToken ct)
+        {
+            try { _log.LogInformation("Code project image refresh: {Summary}", await _setup.RefreshImagesAsync(ct)); }
+            catch (Exception ex)
+            {
+                _log.LogError(ex, "Code project image refresh failed");
+                await _errorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+        }
+
+        /// <summary>
         /// The container runner the web app calls for validation and grading
         /// (contract: HttpCodeProjectRunner in Risebird.CommonHelper).
         /// </summary>
@@ -86,14 +101,24 @@ namespace Risebird.AzureTimerFunctions.CodeProjects.Setup
         public async Task<HttpResponseData> Run(
             [HttpTrigger(AuthorizationLevel.Function, "post", Route = "codeprojects/run")] HttpRequestData req, CancellationToken ct)
         {
-            var body = await new StreamReader(req.Body).ReadToEndAsync();
-            CodeProjectRunRequest request;
-            try { request = JsonConvert.DeserializeObject<CodeProjectRunRequest>(body); }
-            catch (JsonException) { request = null; }
-            if (request == null || string.IsNullOrWhiteSpace(request.StackImageCode))
-                return await JsonAsync(req, new CodeProjectRunResult { Completed = false, Error = "stackImageCode and files are required." }, HttpStatusCode.BadRequest);
+            try
+            {
+                var body = await new StreamReader(req.Body).ReadToEndAsync();
+                CodeProjectRunRequest request;
+                try { request = JsonConvert.DeserializeObject<CodeProjectRunRequest>(body); }
+                catch (JsonException) { request = null; }
+                if (request == null || string.IsNullOrWhiteSpace(request.StackImageCode))
+                    return await JsonAsync(req, new CodeProjectRunResult { Completed = false, Error = "stackImageCode and files are required." }, HttpStatusCode.BadRequest);
 
-            return await JsonAsync(req, await _runner.RunAsync(request, ct));
+                return await JsonAsync(req, await _runner.RunAsync(request, ct));
+            }
+            catch (Exception ex) when (!(ex is OperationCanceledException && ct.IsCancellationRequested))
+            {
+                // A readable error instead of a bare 500, so the author's panel says what went wrong.
+                _log.LogError(ex, "Code project run failed");
+                await _errorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return await JsonAsync(req, new CodeProjectRunResult { Completed = false, Error = "Runner failure: " + ex.Message });
+            }
         }
 
         private static async Task<HttpResponseData> JsonAsync(HttpRequestData req, object value, HttpStatusCode status = HttpStatusCode.OK)

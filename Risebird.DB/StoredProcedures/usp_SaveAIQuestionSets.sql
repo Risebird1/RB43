@@ -86,7 +86,11 @@ BEGIN
             WHERE q.IRFId = @IRFId
               AND LTRIM(RTRIM(ISNULL(q.SkillName, ''))) = p.SkillName
               AND q.Comment IS NOT NULL
-              AND LTRIM(RTRIM(q.Comment)) <> '')
+              AND LTRIM(RTRIM(q.Comment)) <> ''
+              -- Same eligibility as usp_GetAIQuestionPoolForSets: a code project question counts only
+              -- once it has passed validation, or I4 would disagree with the C# gate.
+              AND (ISNULL(q.IsCodeProjectQuestion, 0) = 0
+                   OR EXISTS (SELECT 1 FROM CodeProjectDetails cpd WHERE cpd.QuestionId = q.id AND cpd.ValidationStatus = 'passed')))
     FROM @Params p;
 
     DECLARE @MinPool int = (SELECT MIN(QuestionCount) FROM @Pool);

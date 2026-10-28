@@ -5,6 +5,12 @@
 @using Microsoft.Extensions.Configuration;
 @using Risebird.Entities.Data
 @inject IConfiguration configuration
+@* Candidate code from per-question code sessions, shown under each question in "Questions Discussed". Disabled (the
+   report renders as before) when the interview has no code sessions. *@
+@{
+    var codeMatcher = await Risebird.Web.Helpers.CodeSessionReportHelper.GetMatcherAsync(Context, (Model == null ? 0 : Model.InterviewId),
+        Model?.QuestionsCollection, Model?.QuestionsTwoCollection);
+}
 @{
     ViewData["Title"] = "Interview Report";
     ViewBag.PageHeader = "Interview Report";
@@ -754,7 +760,15 @@
                                                                     }
                                                                 }
                                                                 @Html.HiddenFor(m => m.TechSkillReportCollection[i].RequiredLevelId)
-                                                                <span class="rqlevel">Evaluated at <b>@Model.TechSkillReportCollection[i].RequiredLevel</b></span>
+                                                                @if (Risebird.Entities.ViewModel.LevelDisplayModes.IsEnhanced(Model.LevelDisplayMode))
+                                                                {
+                                                                    bool levelScoreVisible = (Model.ReportAccepted && ViewBag.profile == "Client") || (Model.Reportsnippet == 2 || Model.Reportsnippet == 0) || ViewBag.profile != "Client";
+                                                                    @await Html.PartialAsync("_TechSkillLevelDisplay", Risebird.Entities.ViewModel.TechSkillLevelDisplay.Create(Model.LevelDisplayMode, Model.TechSkillReportCollection[i], TechSkill_Score, levelScoreVisible))
+                                                                }
+                                                                else
+                                                                {
+                                                                    <span class="rqlevel">Evaluated at <b>@Model.TechSkillReportCollection[i].RequiredLevel</b></span>
+                                                                }
                                                                 @Html.HiddenFor(m => m.TechSkillReportCollection[i].ActualLevelId)
                                                                 @Html.HiddenFor(m => m.TechSkillReportCollection[i].WeightageRequired)
                                                                 @Html.HiddenFor(m => m.TechSkillReportCollection[i].WeightageActual)
@@ -821,6 +835,11 @@
                                                             </div>
                                                         }
                                                     }
+                                                    @* Competency scale: once per report, outside both skill blocks, only for LevelDisplayMode 1 or 2. *@
+                                                    @if (Risebird.Entities.ViewModel.LevelDisplayModes.IsEnhanced(Model.LevelDisplayMode))
+                                                    {
+                                                        @await Html.PartialAsync("_CompetencyScale")
+                                                    }
                                                 </div>
 
                                             </div>
@@ -834,6 +853,11 @@
                                                             <ul>
                                                                 @for (int i = 0; i < Model.QuestionsCollection.Count(); i++)
                                                                 {
+                                                                    @* With code sessions, each question and its candidate code are one card. *@
+                                                                    if (codeMatcher.Enabled)
+                                                                    {
+                                                                        @:<li class="rb-qunit"><span class="rb-qunit-num">Question @(i + 1)</span><ul class="rb-qunit-q">
+                                                                    }
                                                                     var valueslist = Model.QuestionsLevelList.Where(x => x.Value == (Model.QuestionsCollection[i].RatingId).ToString()).Select(x => x.Text).FirstOrDefault();
                                                                     @if (Model.QuestionsCollection[i].Timing != null && Model.QuestionsCollection[i].Timing > 0)
                                                                     {
@@ -847,6 +871,12 @@
                                                                     {
                                                                         <label>Rating : @valueslist</label>
                                                                     }
+                                                                    if (codeMatcher.Enabled)
+                                                                    {
+                                                                        @:</ul>
+                                                                        @await Html.PartialAsync("~/Views/Shared/_QuestionCandidateCode.cshtml", new Risebird.Entities.ViewModel.QuestionCandidateCodeVM { Session = codeMatcher.Find(Model.QuestionsCollection[i].Comment), Wrapper = "div" })
+                                                                        @:</li>
+                                                                    }
                                                                 }
                                                             </ul>
                                                         }
@@ -856,6 +886,9 @@
 
                                                         }
                                                     </div>
+                                                @* Code sessions no discussed question matched, each with its question. *@
+                                                @await Html.PartialAsync("~/Views/Shared/_UnmatchedCandidateCode.cshtml", codeMatcher)
+
                                                 </div>
                                                 @if ((Model.ReportAccepted && ViewBag.profile == "Client") || (Model.Reportsnippet == 2 || Model.Reportsnippet == 0) || ViewBag.profile != "Client")
                                                 {
@@ -982,13 +1015,17 @@
                                                             </div>
                                                         }
 
+                                                        @* Header only with pairs to show, so an interview with no transcript gets no empty header. *@
+                                                        @if (Model.HasTranscriptQaPairs)
+                                                        {
                                                         <h3 style="margin-top: 30px;">
                                                             <img style="width:33px;position: relative;left: -4px;top:0px;" src="/img/question-asked.png">
                                                             AI Interview Questions & Answers
                                                         </h3>
+                                                        }
                                                         <div class="question ai-ques" style="font-size:16px;">
                                                             <ul>
-                                                                @if (Model.TranscriptSummaryObject.IntervieweeAnalysis != null)
+                                                                @if (Model.HasTranscriptQaPairs)
                                                                 {
                                                                     int answerIndex = 0;
                                                                     int commentIndex = 0;
@@ -1040,7 +1077,7 @@
 
                                                                                         <p class="moretext_@(answerId) moretext"
                                                                                            style="margin: 5px 0; color: #555; font-size: 16px;font-weight:400; display: none;">
-                                                                                            @qaPair.Answer.Substring(150, qaPair.Answer.Length - 150)
+                                                                                            @qaPair.Answer.Substring(300, qaPair.Answer.Length - 300)
                                                                                         </p>
                                                                                     </div>
 
@@ -1251,7 +1288,15 @@
                                                                             }
                                                                         }
                                                                         @Html.HiddenFor(m => m.TechSkillTwoReportCollection[i].RequiredLevelId)
-                                                                        <span class="rqlevel">Evaluated at <b>@Model.TechSkillTwoReportCollection[i].RequiredLevel</b></span>
+                                                                        @if (Risebird.Entities.ViewModel.LevelDisplayModes.IsEnhanced(Model.LevelDisplayMode))
+                                                                        {
+                                                                            bool levelScoreVisible = (Model.ReportAccepted && ViewBag.profile == "Client") || (Model.Reportsnippet == 2 || Model.Reportsnippet == 0) || ViewBag.profile != "Client";
+                                                                            @await Html.PartialAsync("_TechSkillLevelDisplay", Risebird.Entities.ViewModel.TechSkillLevelDisplay.Create(Model.LevelDisplayMode, Model.TechSkillTwoReportCollection[i], TechSkill_Score, levelScoreVisible))
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <span class="rqlevel">Evaluated at <b>@Model.TechSkillTwoReportCollection[i].RequiredLevel</b></span>
+                                                                        }
                                                                         @Html.HiddenFor(m => m.TechSkillTwoReportCollection[i].ActualLevelId)
                                                                         @Html.HiddenFor(m => m.TechSkillTwoReportCollection[i].WeightageRequired)
                                                                         @Html.HiddenFor(m => m.TechSkillTwoReportCollection[i].WeightageActual)
@@ -1287,6 +1332,11 @@
                                                                     <ul>
                                                                         @for (int i = 0; i < Model.QuestionsTwoCollection.Count(); i++)
                                                                         {
+                                                                            @* With code sessions, each question and its candidate code are one card. *@
+                                                                            if (codeMatcher.Enabled)
+                                                                            {
+                                                                                @:<li class="rb-qunit"><span class="rb-qunit-num">Question @(i + 1)</span><ul class="rb-qunit-q">
+                                                                            }
                                                                             var valueslist = Model.QuestionsLevelList.Where(x => x.Value == (Model.QuestionsTwoCollection[i].RatingId).ToString()).Select(x => x.Text).FirstOrDefault();
                                                                             @if (Model.QuestionsTwoCollection[i].Timing != null && Model.QuestionsTwoCollection[i].Timing > 0)
                                                                             {
@@ -1299,6 +1349,12 @@
                                                                             @if ((Model.ReportAccepted && ViewBag.profile == "Client") || (Model.Reportsnippet == 2 || Model.Reportsnippet == 0) || ViewBag.profile != "Client")
                                                                             {
                                                                                 <label>Rating : @valueslist</label>
+                                                                            }
+                                                                            if (codeMatcher.Enabled)
+                                                                            {
+                                                                                @:</ul>
+                                                                                @await Html.PartialAsync("~/Views/Shared/_QuestionCandidateCode.cshtml", new Risebird.Entities.ViewModel.QuestionCandidateCodeVM { Session = codeMatcher.Find(Model.QuestionsTwoCollection[i].Comment), Wrapper = "div" })
+                                                                                @:</li>
                                                                             }
                                                                         }
                                                                     </ul>

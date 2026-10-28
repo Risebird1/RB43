@@ -24,9 +24,12 @@ namespace Risebird.CommonHelper
         private readonly IApplicationErrorLogger _applicationErrorLogger;
 
 
-        public SynthesiaTextToVideoService(IConfiguration config, IApplicationErrorLogger applicationErrorLogger)
+        private readonly IHttpClientFactory _httpClientFactory;
+
+        public SynthesiaTextToVideoService(IConfiguration config, IApplicationErrorLogger applicationErrorLogger, IHttpClientFactory httpClientFactory)
         {
-            //_http = new HttpClient();
+            _httpClientFactory = httpClientFactory;
+            //_http = _httpClientFactory.CreateClient();
             _config = config;
             _apiKey = _config["Synthesia:ApiKey"];
             _templateId = _config["Synthesia:TemplateId"];

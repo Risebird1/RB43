@@ -50,4 +50,13 @@
   <ItemGroup>
     <Folder Include="Properties\ServiceDependencies\" />
   </ItemGroup>
+  <!--
+    Applied by the one-click code project setup (CodeProjects/Setup). Conditional so a build that
+    only has this project's folder (the deployment pipeline) still succeeds; run setup from a full checkout.
+  -->
+  <ItemGroup Condition="Exists('..\Risebird.DB\Migrations\AddCodeProjectInfraSetup.sql')">
+    <EmbeddedResource Include="..\Risebird.DB\Migrations\AddCodeProjectQuestionSupport.sql" LogicalName="Migrations.AddCodeProjectQuestionSupport.sql" />
+    <EmbeddedResource Include="..\Risebird.DB\Migrations\AddCodeProjectVmProvisioning.sql" LogicalName="Migrations.AddCodeProjectVmProvisioning.sql" />
+    <EmbeddedResource Include="..\Risebird.DB\Migrations\AddCodeProjectInfraSetup.sql" LogicalName="Migrations.AddCodeProjectInfraSetup.sql" />
+  </ItemGroup>
 </Project>

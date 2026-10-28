@@ -77,6 +77,8 @@ namespace Risebird.Services.Controllers
         [HttpPost("start")]
         public async Task<IActionResult> Start([FromBody] InterviewMessageVM input) //string candidateContext
         {
+            // InterviewMeetings.SessionId is this session, which is how the cost is tied to the interview.
+            using var aiCostScope = OpenAIApiLogScope.Begin(sessionId: input?.SessionId);
             try
             {
                 _assistantId = input.AssistantId;
@@ -142,6 +144,7 @@ namespace Risebird.Services.Controllers
         [HttpPost("ask")]
         public async Task<IActionResult> Ask([FromBody] InterviewMessageVM input)
         {
+            using var aiCostScope = OpenAIApiLogScope.Begin(sessionId: input?.SessionId);
             if (await UseAIInterviewerResponsesApiAsync())
             {
                 var previousResponseId = await _aiInterviewerRepository.GetThreadId(input.SessionId);
@@ -197,6 +200,7 @@ namespace Risebird.Services.Controllers
         [HttpPost("asksystem")]
         public async Task<IActionResult> AskSystem([FromBody] InterviewMessageVM input)
         {
+            using var aiCostScope = OpenAIApiLogScope.Begin(sessionId: input?.SessionId);
             if (await UseAIInterviewerResponsesApiAsync())
             {
                 var previousResponseId = await _aiInterviewerRepository.GetThreadId(input.SessionId);
@@ -254,6 +258,7 @@ namespace Risebird.Services.Controllers
         [HttpPost("report")]
         public async Task<IActionResult> Report([FromBody] AIReportVM input)
         {
+            using var aiCostScope = OpenAIApiLogScope.Begin(sessionId: input?.SessionId);
             bool isReportSavedToDb = false;
             //var threadId = await _aIInterviewerService.GetThreadId(input.SessionId);
             if (input?.AIInterviewType == (int)AIInterviewTypeEnum.Preset)

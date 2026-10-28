@@ -84,7 +84,7 @@ namespace Risebird.Entities.Data.PlivoCXModels
         public int      AttemptsPerDay  { get; set; } = 3;
         public int      TotalAttempts   { get; set; } = 6;
         public int      MinGapMinutes   { get; set; } = 180;
-        public int      ConcurrentCalls { get; set; } = 5;
+        public int      ConcurrentCalls { get; set; } = 20;   // 200+ calls in 30 minutes with headroom for longer calls (PlivoCXCampaignRules.EstimateCallsPer30Minutes)
         public DateTime? StartsOn       { get; set; }
         public DateTime? EndsOn         { get; set; }
 
@@ -245,6 +245,8 @@ namespace Risebird.Entities.Data.PlivoCXModels
         public PlivoCXCampaignCallStats CallStats { get; set; } = new PlivoCXCampaignCallStats();
         public bool  WhatsAppConfigured { get; set; }
         public TimeZoneInfo TimeZone    { get; set; }
+        /// <summary>Lines on the Plivo account all campaigns may use together (PlivoCX:CampaignConcurrencyBudget).</summary>
+        public int ConcurrencyBudget    { get; set; } = 40;
 
         public int Count(string state)
         {

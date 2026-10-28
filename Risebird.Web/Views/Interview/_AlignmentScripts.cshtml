@@ -1,0 +1,842 @@
+@*
+    Behaviour for the interview alignment page (InterviewAlignment.cshtml). Included after the page's own
+    scripts (and after it reloads jQuery), so window.jQuery is resolved at call time.
+
+    The join gate counts the real InterviewCheckshow boxes and derives the total from them - the shape of the
+    old CheckAcceptPopupAck, never a hard-coded number - and only this script ticks them:
+      watch   - rubric, sample questions, previous issues: ticks on close once the panel was open long enough to read
+      link    - quality SLA, flow document: ticks on close once the document was opened from the panel
+      video   - flow video: ticks on close once the video was played
+      confirm - during-the-interview items: ticks when the interviewer confirms, which also closes the panel
+    Opening a panel and dismissing it straight away never counts. Every requirement opens in one overlay over the
+    page - the page's own section is moved into it and back, so nothing is duplicated and nothing scrolls. The
+    candidate-code row is an acknowledgement: a missing code session never holds the Zoom link.
+    Confirmations are remembered per interview in this browser so a reload does not send the interviewer back
+    through the list.
+*@
+<script>
+    (function () {
+        var root = document.getElementById('iaAlignment');
+        if (!root) {
+            return;
+        }
+
+        var interviewId = root.getAttribute('data-interview-id');
+        var MIN_REVIEW_MS = 3000;
+        var storeKey = 'ia-gate-' + interviewId;
+        var state = loadState();
+        var overlay = null;
+
+        function loadState() {
+            try {
+                var raw = window.localStorage.getItem(storeKey);
+                return raw ? (JSON.parse(raw) || {}) : {};
+            } catch (e) {
+                return {};
+            }
+        }
+
+        function saveState() {
+            try {
+                window.localStorage.setItem(storeKey, JSON.stringify(state));
+            } catch (e) {
+                // Private mode or storage blocked: the gate still works for this page view.
+            }
+        }
+
+        function antiForgeryToken() {
+            var input = root.querySelector('input[name="__RequestVerificationToken"]') ||
+                document.querySelector('input[name="__RequestVerificationToken"]');
+            return input ? input.value : '';
+        }
+
+        window.iaEscape = function (value) {
+            return String(value === null || value === undefined ? '' : value)
+                .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+        };
+
+        // ---- The gate -----------------------------------------------------------------------------
+        function rowFor(key) {
+            return root.querySelector('.ia-row[data-req="' + key + '"]');
+        }
+
+        function boxOf(row) {
+            return row ? row.querySelector('input[name="InterviewCheckshow"]') : null;
+        }
+
+        function gateRows() {
+            return root.querySelectorAll('.ia-row[data-req]');
+        }
+
+        function counts() {
+            var boxes = root.querySelectorAll('input[name="InterviewCheckshow"]');
+            var checked = root.querySelectorAll('input[name="InterviewCheckshow"]:checked');
+            return { done: checked.length, total: boxes.length };
+        }
+
+        function gateCleared() {
+            var c = counts();
+            return !!state.overridden || c.done === c.total;
+        }
+
+        function outstandingKeys() {
+            var keys = [];
+            var rows = gateRows();
+            for (var i = 0; i < rows.length; i++) {
+                var box = boxOf(rows[i]);
+                if (box && !box.checked) {
+                    keys.push(rows[i].getAttribute('data-req'));
+                }
+            }
+            return keys;
+        }
+
+        function render() {
+            var c = counts();
+            var allDone = c.done === c.total;
+            var cleared = gateCleared();
+
+            var rows = gateRows();
+            for (var r = 0; r < rows.length; r++) {
+                var box = boxOf(rows[r]);
+                var rowDone = !!(box && box.checked);
+                rows[r].classList.toggle('is-done', rowDone);
+                rows[r].classList.toggle('is-outstanding', !rowDone && !cleared);
+                var tickEl = rows[r].querySelector('.ia-tick');
+                if (tickEl) {
+                    var label = rowDone ? 'Confirmed - click to uncheck' : 'Not confirmed yet - click to open';
+                    tickEl.setAttribute('title', label);
+                    tickEl.setAttribute('aria-label', (rows[r].getAttribute('data-title') || '') + ': ' + label);
+                    tickEl.setAttribute('aria-pressed', rowDone ? 'true' : 'false');
+                }
+            }
+
+            var countEl = document.getElementById('iaGateCount');
+            if (countEl) {
+                countEl.textContent = c.done + ' of ' + c.total + ' confirmed';
+                countEl.classList.toggle('is-done', allDone || cleared);
+            }
+
+            var progress = document.getElementById('iaOverlayProgress');
+            if (progress) {
+                progress.textContent = 'Ready to join · ' + c.done + ' of ' + c.total + ' confirmed';
+                progress.classList.toggle('is-done', allDone);
+            }
+
+            root.classList.toggle('ia-gate-cleared', cleared);
+            var callout = document.getElementById('iaCallout');
+            if (callout) {
+                callout.style.display = cleared ? 'none' : '';
+            }
+
+            var footnote = document.getElementById('iaGateFootnote');
+            if (footnote && allDone) {
+                footnote.textContent = 'All ' + c.total + ' confirmed — the Zoom link above is live.';
+            } else if (footnote && state.overridden) {
+                footnote.textContent = 'You chose to join without confirming. This has been recorded with what was outstanding.';
+            }
+
+            var join = document.getElementById('join-button');
+            if (join) {
+                join.classList.toggle('disable-link', !cleared);
+                join.setAttribute('aria-disabled', cleared ? 'false' : 'true');
+                join.setAttribute('title', cleared ? 'Meeting Link' : 'Check the points below first');
+            }
+        }
+
+        function mark(key) {
+            var box = boxOf(rowFor(key));
+            state[key] = true;
+            saveState();
+            if (box) {
+                box.checked = true;
+            }
+            render();
+        }
+
+        // The interviewer can take back any confirmation at any time. The row goes back to outstanding (and the
+        // Zoom link locks again unless they already chose "Join without confirming"); to tick it again they go
+        // through it again, so the evidence that ticked it is cleared too.
+        function unmark(key) {
+            var box = boxOf(rowFor(key));
+            delete state[key];
+            delete state['evidence_' + key];
+            saveState();
+            if (box) {
+                box.checked = false;
+            }
+            render();
+        }
+
+        window.iaUncheckRequirement = function (key) {
+            if (key) {
+                unmark(key);
+            }
+        };
+
+        // The round tick on each row: on a confirmed row it unchecks it; on an outstanding row it opens the
+        // requirement, the same as the row's action button.
+        var ticks = root.querySelectorAll('.ia-row[data-req] .ia-tick');
+        for (var t = 0; t < ticks.length; t++) {
+            ticks[t].addEventListener('click', function () {
+                var row = this.closest('.ia-row');
+                var key = row ? row.getAttribute('data-req') : null;
+                if (!key) {
+                    return;
+                }
+                if (state[key]) {
+                    unmark(key);
+                } else {
+                    window.iaOpenRequirement(key, this);
+                }
+            });
+        }
+
+        // While the gate is up the Join link must not open: pointer-events are off via disable-link, and this
+        // catches the keyboard. Nothing scrolls - the callout under the button shakes instead.
+        var joinButton = document.getElementById('join-button');
+        if (joinButton) {
+            joinButton.addEventListener('click', function (e) {
+                if (!gateCleared()) {
+                    e.preventDefault();
+                    e.stopImmediatePropagation();
+                    var callout = document.getElementById('iaCallout');
+                    if (callout) {
+                        callout.classList.remove('is-attention');
+                        void callout.offsetWidth;
+                        callout.classList.add('is-attention');
+                    }
+                }
+            }, true);
+        }
+
+        window.iaJoinWithoutConfirming = function () {
+            var outstanding = outstandingKeys();
+            var names = outstanding.map(function (k) {
+                var row = rowFor(k);
+                return row ? row.getAttribute('data-title') : k;
+            }).join(', ');
+            var message = outstanding.length === 0
+                ? 'Join now?'
+                : 'Join without confirming? This is recorded with what is still outstanding: ' + names + '.';
+            if (!window.confirm(message)) {
+                return;
+            }
+
+            var unlock = function () {
+                state.overridden = true;
+                saveState();
+                render();
+            };
+            var $ = window.jQuery;
+            if (!$ || outstanding.length === 0) {
+                unlock();
+                return;
+            }
+            // Never leave the interviewer stuck: the button unlocks whether or not the record saves.
+            $.ajax({
+                type: 'POST',
+                url: '/InterviewAlignment/JoinGateOverride',
+                traditional: true,
+                headers: { 'RequestVerificationToken': antiForgeryToken() },
+                data: { interviewId: interviewId, outstanding: outstanding },
+                complete: unlock
+            });
+        };
+
+        // ---- The overlay --------------------------------------------------------------------------
+        var NOTES = {
+            watch: { pending: 'Take a moment to read it — closing straight away does not count.', ready: 'Closing this marks it as reviewed — Esc or click outside.' },
+            link: { pending: 'Open the document above, or take a moment to read this — closing straight away does not count.', ready: 'Closing this marks it as read — Esc or click outside.' },
+            video: { pending: 'Press play to watch the video, then close this.', ready: 'Played — closing this marks it as watched.' },
+            videoFailed: { pending: 'The video could not be loaded here. Take a moment, then close this to mark it as seen.', ready: 'Closing this marks it as seen — Esc or click outside.' },
+            confirm: { pending: 'This is an acknowledgement: confirm it, and what you do in the call is checked after it.', ready: '' },
+            panel: { pending: 'Esc or click outside to close.', ready: 'Esc or click outside to close.' }
+        };
+
+        function overlayEl() {
+            return document.getElementById('iaOverlay');
+        }
+
+        function setNote() {
+            var note = document.getElementById('iaOverlayNote');
+            if (!note || !overlay) {
+                return;
+            }
+            var done = overlay.key && state[overlay.key];
+            var ready = isReady();
+            var notes = overlay.kind === 'video' && videoFailed[overlay.key] ? NOTES.videoFailed : NOTES[overlay.kind];
+            note.textContent = done && overlay.kind !== 'panel'
+                ? 'Already confirmed. Use "Uncheck" if you want to undo it.'
+                : (ready ? notes.ready : notes.pending) || notes.pending;
+            note.classList.toggle('is-ready', !!(done || (ready && overlay.kind !== 'confirm')));
+            var uncheck = document.getElementById('iaOverlayUncheck');
+            if (uncheck) {
+                uncheck.style.display = done && overlay.kind !== 'panel' ? '' : 'none';
+            }
+        }
+
+        // Videos that cannot be loaded at all (missing file, unsupported format): they can never fire "play", so
+        // without this the row could never be ticked. For those, a few seconds with the panel open counts.
+        var videoFailed = {};
+
+        function dwelled(current) {
+            return Date.now() - current.openedAt >= MIN_REVIEW_MS;
+        }
+
+        function isReady() {
+            if (!overlay) {
+                return false;
+            }
+            switch (overlay.kind) {
+                case 'watch': return dwelled(overlay);
+                // A document: opened from the panel, or the panel was read for a few seconds.
+                case 'link': return !!state['evidence_' + overlay.key] || dwelled(overlay);
+                // A video: played, or it cannot be played here and the panel was open for a few seconds.
+                case 'video': return !!state['evidence_' + overlay.key] || (!!videoFailed[overlay.key] && dwelled(overlay));
+                default: return false;
+            }
+        }
+
+        function openOverlay(opts) {
+            if (overlay) {
+                closeOverlay(false);
+            }
+            var source = document.getElementById(opts.sourceId);
+            var shell = overlayEl();
+            if (!source || !shell) {
+                return;
+            }
+
+            var scrollX = window.pageXOffset, scrollY = window.pageYOffset;
+            // The section leaves a placeholder of its own height, so nothing on the page moves.
+            var placeholder = document.createElement('div');
+            placeholder.className = 'ia-placeholder';
+            placeholder.style.height = source.offsetHeight + 'px';
+            if (!source.offsetHeight) {
+                placeholder.style.border = '0';
+            }
+            source.parentNode.insertBefore(placeholder, source);
+
+            overlay = {
+                key: opts.key || null,
+                kind: opts.kind,
+                opener: opts.opener || null,
+                source: source,
+                placeholder: placeholder,
+                previousDisplay: source.style.display,
+                openedAt: Date.now(),
+                scrollX: scrollX,
+                scrollY: scrollY,
+                timer: null
+            };
+
+            var body = document.getElementById('iaOverlayBody');
+            body.appendChild(source);
+            source.style.display = 'block';
+            body.scrollTop = 0;
+
+            document.getElementById('iaOverlayTitle').textContent = opts.title || '';
+            var confirm = document.getElementById('iaOverlayConfirm');
+            var close = document.getElementById('iaOverlayClose');
+            if (opts.kind === 'confirm' && !state[opts.key]) {
+                confirm.textContent = opts.confirmLabel || 'Confirm';
+                confirm.style.display = '';
+                close.textContent = 'Close';
+            } else {
+                confirm.style.display = 'none';
+                close.textContent = 'Done';
+            }
+
+            shell.style.display = 'block';
+            window.scrollTo(scrollX, scrollY);
+            var content = document.getElementById('iaOverlayContent');
+            if (content) {
+                content.focus();
+            }
+
+            render();
+            setNote();
+            if (opts.kind === 'watch' || opts.kind === 'link' || opts.kind === 'video') {
+                overlay.timer = setTimeout(setNote, MIN_REVIEW_MS);
+            }
+        }
+
+        function closeOverlay(confirmed) {
+            if (!overlay) {
+                return;
+            }
+            var current = overlay;
+            overlay = null;
+            if (current.timer) {
+                clearTimeout(current.timer);
+            }
+
+            var videos = current.source.getElementsByTagName('video');
+            for (var v = 0; v < videos.length; v++) {
+                try { videos[v].pause(); } catch (e) { }
+            }
+
+            // Ticking happens on close, never on open - and never when the panel was dismissed straight away.
+            var tick = false;
+            if (current.key && !state[current.key]) {
+                if (current.kind === 'confirm') {
+                    tick = confirmed === true;
+                } else if (current.kind === 'watch') {
+                    tick = dwelled(current);
+                } else if (current.kind === 'link') {
+                    tick = !!state['evidence_' + current.key] || dwelled(current);
+                } else if (current.kind === 'video') {
+                    tick = !!state['evidence_' + current.key] || (!!videoFailed[current.key] && dwelled(current));
+                }
+            }
+
+            current.placeholder.parentNode.insertBefore(current.source, current.placeholder);
+            current.placeholder.parentNode.removeChild(current.placeholder);
+            current.source.style.display = current.previousDisplay;
+
+            overlayEl().style.display = 'none';
+            window.scrollTo(current.scrollX, current.scrollY);
+            if (tick) {
+                mark(current.key);
+            }
+            if (current.opener && typeof current.opener.focus === 'function') {
+                current.opener.focus();
+            }
+        }
+
+        window.iaCloseOverlay = function () {
+            closeOverlay(false);
+        };
+
+        window.iaConfirmOverlay = function () {
+            closeOverlay(true);
+        };
+
+        // "Uncheck" inside the panel of a confirmed requirement: takes the confirmation back and closes the panel.
+        window.iaUncheckOverlay = function () {
+            var key = overlay ? overlay.key : null;
+            closeOverlay(false);
+            if (key) {
+                unmark(key);
+            }
+        };
+
+        window.iaOpenRequirement = function (key, opener) {
+            var row = rowFor(key);
+            if (!row) {
+                return;
+            }
+            openOverlay({
+                key: key,
+                kind: row.getAttribute('data-kind'),
+                sourceId: row.getAttribute('data-source'),
+                title: row.getAttribute('data-title'),
+                confirmLabel: row.getAttribute('data-confirm'),
+                opener: opener || row.querySelector('.ia-pill')
+            });
+            if (key === 'checklist_3') {
+                var box = document.getElementById('iaNewQuestion');
+                if (box) {
+                    setTimeout(function () { box.focus(); }, 50);
+                }
+            }
+        };
+
+        // Panels that are not requirements (the candidate pre-check) open in the same shell and tick nothing.
+        window.iaOpenPanel = function (name, opener) {
+            if (name === 'precheck') {
+                openOverlay({ kind: 'panel', sourceId: 'hidden_fields_eight', title: 'Candidate Pre-Interview Screening Report', opener: opener });
+            }
+        };
+
+        // Esc and a click on the backdrop close the overlay.
+        document.addEventListener('keydown', function (e) {
+            if (overlay && (e.key === 'Escape' || e.key === 'Esc')) {
+                closeOverlay(false);
+            }
+        });
+        var shellEl = overlayEl();
+        if (shellEl) {
+            shellEl.addEventListener('click', function (e) {
+                if (e.target === shellEl || (e.target.classList && e.target.classList.contains('modal-dialog'))) {
+                    closeOverlay(false);
+                }
+            });
+        }
+
+        // Evidence the page can observe: a document opened from its panel, a video played.
+        function noteEvidence(key) {
+            if (!state['evidence_' + key]) {
+                state['evidence_' + key] = true;
+                saveState();
+            }
+            if (overlay && overlay.key === key) {
+                setNote();
+            }
+        }
+        var evidence = root.querySelectorAll('[data-ia-evidence]');
+        for (var ev = 0; ev < evidence.length; ev++) {
+            (function (el) {
+                var key = el.getAttribute('data-ia-evidence');
+                if (el.tagName === 'VIDEO') {
+                    el.addEventListener('play', function () { noteEvidence(key); });
+                    el.addEventListener('playing', function () { noteEvidence(key); });
+                    // A <video> with <source> children reports a missing/unsupported file on the source element.
+                    var markFailed = function () {
+                        videoFailed[key] = true;
+                        if (overlay && overlay.key === key) {
+                            setNote();
+                        }
+                    };
+                    el.addEventListener('error', markFailed);
+                    var sources = el.getElementsByTagName('source');
+                    if (sources.length) {
+                        sources[sources.length - 1].addEventListener('error', markFailed);
+                    }
+                    // In case the file failed before these listeners were attached: NETWORK_NO_SOURCE (3) with no data
+                    // loaded, checked a little later because the browser passes through that state while it starts.
+                    setTimeout(function () {
+                        if (el.error || (el.networkState === 3 && el.readyState === 0)) {
+                            markFailed();
+                        }
+                    }, 2500);
+                } else {
+                    el.addEventListener('click', function () { noteEvidence(key); });
+                    el.addEventListener('auxclick', function () { noteEvidence(key); });
+                }
+            })(evidence[ev]);
+        }
+
+        // ---- Trial onboarding ---------------------------------------------------------------------
+        window.iaOpenTrialOnboarding = function () {
+            var modal = document.getElementById('iaTrialOnboardingModal');
+            if (modal) {
+                modal.style.display = 'block';
+            }
+        };
+
+        window.iaAcknowledgeTrialOnboarding = function () {
+            var modal = document.getElementById('iaTrialOnboardingModal');
+            var close = function () {
+                if (modal) {
+                    modal.style.display = 'none';
+                    modal.setAttribute('data-auto-open', '0');
+                }
+            };
+            var $ = window.jQuery;
+            if (!$) {
+                close();
+                return;
+            }
+            $.ajax({
+                type: 'POST',
+                url: '/InterviewAlignment/AcknowledgeTrialOnboarding',
+                headers: { 'RequestVerificationToken': antiForgeryToken() },
+                data: { interviewId: interviewId },
+                complete: close
+            });
+        };
+
+        // ---- Sections 6 and 7: own record and flagged history on this channel --------------------
+        window.iaOpenInsightsModal = function () {
+            if (typeof window.InsightsDetails === 'function') {
+                window.InsightsDetails(root.getAttribute('data-interviewer') || '', root.getAttribute('data-irf-code') || '');
+            }
+        };
+
+        function stat(value, label, isFlag) {
+            var flagged = isFlag && Number(value) > 0;
+            return '<div class="ia-stat' + (flagged ? ' is-flag' : '') + '"><span class="ia-num">' + window.iaEscape(value) +
+                '</span><span class="ia-label">' + window.iaEscape(label) + '</span></div>';
+        }
+
+        function renderInsights(data) {
+            var record = document.getElementById('iaRecord');
+            var issues = document.getElementById('iaIssues');
+            if (!record || !issues) {
+                return;
+            }
+            if (!data || !data.success) {
+                record.innerHTML = '<div class="ia-empty">Your record could not be loaded. Use &ldquo;Open your full insights&rdquo; below for the full view.</div>';
+                issues.innerHTML = '';
+                return;
+            }
+            if (!data.completed) {
+                record.innerHTML = '<div class="ia-empty">This is your first interview on this channel, so there is nothing here yet. Your record across all channels is on your profile.</div>';
+                issues.innerHTML = '<div class="ia-empty">Nothing on this channel yet &mdash; not the same as &ldquo;no issues found&rdquo;.</div>';
+                return;
+            }
+            record.innerHTML = '<div class="ia-stats">' +
+                stat(data.completed, 'Completed') +
+                stat(data.candidateRatingFlags, 'Low candidate ratings', true) +
+                stat(data.clientRatingFlags, 'Low client ratings', true) +
+                stat(data.redFlags, 'Red flags', true) +
+                stat(data.redo, 'Redo requests', true) +
+                stat(data.joinedLate, 'Joined late', true) +
+                stat(data.reliability, 'Reliability') +
+                '</div>';
+            var flags = data.flags || [];
+            if (flags.length === 0) {
+                issues.innerHTML = '<div class="ia-empty">No issues recorded on this channel.</div>';
+                return;
+            }
+            var html = '<div class="table-responsive" style="clear:both;"><table class="table table-bordered mbn"><thead><tr>' +
+                '<th width="18%" class="table_heading">Flag</th><th class="table_heading">What the review said</th><th width="15%" class="table_heading">Date</th></tr></thead><tbody>';
+            for (var i = 0; i < flags.length; i++) {
+                html += '<tr><td><span class="ia-flag">' + window.iaEscape(flags[i].kind) + '</span></td>' +
+                    '<td>' + window.iaEscape(flags[i].comment || '—') + '</td>' +
+                    '<td>' + window.iaEscape(flags[i].on || '') + '</td></tr>';
+            }
+            issues.innerHTML = html + '</tbody></table></div>';
+        }
+
+        function loadInsights() {
+            var $ = window.jQuery;
+            if (!$ || !document.getElementById('iaInsights')) {
+                return;
+            }
+            $.ajax({
+                type: 'GET',
+                url: '/Interviewer/AlignmentInsights',
+                data: { interviewId: interviewId },
+                cache: false,
+                success: renderInsights,
+                error: function () { renderInsights(null); }
+            });
+        }
+
+        // ---- Code sessions -----------------------------------------------------------------------
+        var codeState = { questions: [], sessions: [] };
+        try {
+            var stateEl = document.getElementById('iaCodeState');
+            if (stateEl) {
+                codeState = JSON.parse(stateEl.textContent || '{}') || codeState;
+            }
+        } catch (e) {
+            codeState = { questions: [], sessions: [] };
+        }
+
+        function sessionState(item) {
+            if (item.submitted) {
+                return 'Submitted';
+            }
+            if (item.runCount > 0) {
+                return item.runCount + (item.runCount === 1 ? ' run' : ' runs');
+            }
+            return item.opened ? 'Opened' : 'Not opened yet';
+        }
+
+        function linkControls(link, item) {
+            return '<div class="ia-session"><input type="text" class="form-control ia-link" readonly value="' + window.iaEscape(link) + '" onclick="this.select()" aria-label="Candidate code session link" />' +
+                '<button type="button" class="ia-pill" onclick="iaCopyLink(this)" data-link="' + window.iaEscape(link) + '">Copy</button>' +
+                '<span class="ia-state">' + window.iaEscape(sessionState(item)) + '</span></div>';
+        }
+
+        function questionTable(rowsHtml) {
+            return '<div class="table-responsive"><table class="table table-bordered mbn"><thead><tr>' +
+                '<th width="52%" class="table_heading">Question</th><th width="48%" class="table_heading">Code session for the candidate</th>' +
+                '</tr></thead><tbody>' + rowsHtml + '</tbody></table></div>';
+        }
+
+        function renderCodeSessions() {
+            var list = document.getElementById('iaQuestionList');
+            var others = document.getElementById('iaOtherSessions');
+            if (!list) {
+                return;
+            }
+            var questions = codeState.questions || [];
+            var sessions = codeState.sessions || [];
+
+            if (questions.length === 0) {
+                list.innerHTML = '<div class="ia-empty">You have no questions for this channel yet. Type one below, or add them on your sample questions page.</div>';
+            } else {
+                var html = '';
+                for (var i = 0; i < questions.length; i++) {
+                    var q = questions[i];
+                    var limit = q.codingTimeLimitInMinutes || null;
+                    var badge = q.isCodingQuestion ? '<span class="ia-badge">CODE' + (limit ? ' &middot; ' + window.iaEscape(limit) + ' MIN' : '') + '</span>' : '';
+                    var side = q.hasSession && q.link
+                        ? linkControls(q.link, q)
+                        : '<button type="button" class="ia-pill" onclick="iaCreateCodeSession(' + Number(q.questionId) + ')">Create code session</button>';
+                    html += '<tr><td><span class="ia-q-text">' + window.iaEscape(q.comment) + '</span>' + badge + '</td><td>' + side + '</td></tr>';
+                }
+                list.innerHTML = questionTable(html);
+            }
+
+            // Sessions whose question row no longer exists in the list (edited away since) still work.
+            var known = {};
+            for (var j = 0; j < questions.length; j++) {
+                known[questions[j].questionId] = true;
+            }
+            var orphanHtml = '';
+            for (var k = 0; k < sessions.length; k++) {
+                if (!known[sessions[k].questionId]) {
+                    orphanHtml += '<tr><td><span class="ia-q-text">' + window.iaEscape(sessions[k].questionText) + '</span><span class="ia-badge">CODE</span></td><td>' +
+                        linkControls(sessions[k].link, sessions[k]) + '</td></tr>';
+                }
+            }
+            if (others) {
+                others.innerHTML = orphanHtml
+                    ? '<div class="answer-label" style="padding:10px 0 0 2px;"><span class="heading">Other code sessions on this interview</span></div>' + questionTable(orphanHtml)
+                    : '';
+            }
+
+            // The server-side fact the candidate-code row shows; informational, it never holds the Zoom link.
+            var ids = ['iaCodingQuestionCount', 'iaCodeCreatedCount'];
+            for (var n = 0; n < ids.length; n++) {
+                var countEl = document.getElementById(ids[n]);
+                if (countEl) {
+                    countEl.textContent = sessions.length;
+                }
+            }
+            var codeRow = rowFor('checklist_3');
+            var codePill = codeRow ? codeRow.querySelector('.ia-pill') : null;
+            if (codePill) {
+                codePill.textContent = sessions.length > 0 ? 'Open' : 'Create now';
+            }
+        }
+
+        function copyText(text, done) {
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(text).then(function () { done(true); }, function () { done(fallbackCopy(text)); });
+            } else {
+                done(fallbackCopy(text));
+            }
+        }
+
+        function fallbackCopy(text) {
+            var temp = document.createElement('textarea');
+            temp.value = text;
+            temp.setAttribute('readonly', '');
+            temp.style.position = 'fixed';
+            temp.style.top = '0';
+            temp.style.left = '-9999px';
+            document.body.appendChild(temp);
+            temp.select();
+            var ok = false;
+            try {
+                ok = document.execCommand('copy');
+            } catch (e) {
+                ok = false;
+            }
+            document.body.removeChild(temp);
+            return ok;
+        }
+
+        window.iaCopyLink = function (button) {
+            var link = button.getAttribute('data-link');
+            copyText(link, function (ok) {
+                button.textContent = ok ? 'Copied' : 'Copy failed';
+                setTimeout(function () { button.textContent = 'Copy'; }, 2000);
+            });
+        };
+
+        function showCodeMessage(text, isError) {
+            var msg = document.getElementById('iaCodeMsg');
+            if (msg) {
+                msg.textContent = text || '';
+                msg.className = 'ia-msg ' + (isError ? 'is-error' : 'is-ok');
+            }
+        }
+
+        window.iaCreateCodeSession = function (questionId) {
+            var $ = window.jQuery;
+            if (!$) {
+                return;
+            }
+            questionId = Number(questionId) || 0;
+            var data = { InterviewId: interviewId, QuestionId: questionId };
+            var limitInput = document.getElementById('iaNewTimeLimit');
+            var limit = limitInput ? parseInt(limitInput.value, 10) : NaN;
+
+            if (questionId === 0) {
+                var box = document.getElementById('iaNewQuestion');
+                var text = box ? box.value.trim() : '';
+                if (!text) {
+                    showCodeMessage('Type the coding question first.', true);
+                    if (box) { box.focus(); }
+                    return;
+                }
+                if (isNaN(limit) || limit < 1 || limit > 180) {
+                    showCodeMessage('Time limit must be between 1 and 180 minutes.', true);
+                    return;
+                }
+                data.QuestionText = text;
+                data.TimeLimitInMinutes = limit;
+                var skill = document.getElementById('iaNewSkill');
+                if (skill && skill.value) {
+                    data.SkillName = skill.value;
+                }
+            } else {
+                for (var i = 0; i < (codeState.questions || []).length; i++) {
+                    if (codeState.questions[i].questionId === questionId && codeState.questions[i].codingTimeLimitInMinutes) {
+                        data.TimeLimitInMinutes = codeState.questions[i].codingTimeLimitInMinutes;
+                    }
+                }
+                if (!data.TimeLimitInMinutes && !isNaN(limit) && limit >= 1 && limit <= 180) {
+                    data.TimeLimitInMinutes = limit;
+                }
+            }
+
+            var addButton = document.getElementById('iaAddAndCreate');
+            if (addButton) { addButton.disabled = true; }
+            showCodeMessage('Creating the code session…', false);
+
+            $.ajax({
+                type: 'POST',
+                url: '/InterviewAlignment/CreateCodeSession',
+                headers: { 'RequestVerificationToken': antiForgeryToken() },
+                data: data,
+                success: function (result) {
+                    if (!result || !result.success) {
+                        showCodeMessage((result && result.message) || 'The code session could not be created. Please try again.', true);
+                        return;
+                    }
+                    codeState.questions = result.questions || [];
+                    codeState.sessions = result.sessions || [];
+                    renderCodeSessions();
+                    if (questionId === 0) {
+                        var box = document.getElementById('iaNewQuestion');
+                        if (box) { box.value = ''; }
+                    }
+                    copyText(result.link, function (ok) {
+                        showCodeMessage(ok
+                            ? 'Code session created — the link is copied, paste it into the Zoom chat.'
+                            : 'Code session created — copy the link next to the question and paste it into the Zoom chat.', false);
+                    });
+                },
+                error: function () {
+                    showCodeMessage('The code session could not be created. Please try again.', true);
+                },
+                complete: function () {
+                    if (addButton) { addButton.disabled = false; }
+                }
+            });
+        };
+
+        function start() {
+            var rows = gateRows();
+            for (var i = 0; i < rows.length; i++) {
+                var box = boxOf(rows[i]);
+                if (box) {
+                    box.checked = !!state[rows[i].getAttribute('data-req')];
+                }
+            }
+            render();
+            renderCodeSessions();
+            loadInsights();
+            var onboarding = document.getElementById('iaTrialOnboardingModal');
+            if (onboarding && onboarding.getAttribute('data-auto-open') === '1') {
+                window.iaOpenTrialOnboarding();
+            }
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', start);
+        } else {
+            start();
+        }
+    })();
+</script>

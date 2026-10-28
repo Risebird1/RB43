@@ -1,3 +1,4 @@
+using System.Net.Http;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -25,11 +26,14 @@ namespace Risebird.AzureTimerFunctions
 
         //private readonly string ContainerName;
 
+        private readonly IHttpClientFactory _httpClientFactory;
+
         public CheckInterviewerSkillChannelSuitabilityOpenAI(ILoggerFactory loggerFactory, IConfiguration configuration,
             IApplicationErrorLogger applicationErrorLogger,
             IAssistantServiceHelper assistantServiceHelper, IIRFRepository irfRepository,
-            IAzureStorageHelper azureStorageHelper)
+            IAzureStorageHelper azureStorageHelper, IHttpClientFactory httpClientFactory)
         {
+            _httpClientFactory = httpClientFactory;
             _configuration = configuration;
             _applicationErrorLogger = applicationErrorLogger;
             _assistantServiceHelper = assistantServiceHelper;
@@ -146,7 +150,7 @@ namespace Risebird.AzureTimerFunctions
 
             try
             {
-                using (HttpClient client = new HttpClient())
+                using (HttpClient client = _httpClientFactory.CreateClient())
                 {
                     byte[] pdfBytes = await client.GetByteArrayAsync(pdfUrl);
 

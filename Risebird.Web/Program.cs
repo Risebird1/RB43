@@ -85,6 +85,17 @@ builder.Services.AddRateLimiter(options =>
                 Window = TimeSpan.FromMinutes(1),
                 QueueLimit = 0
             }));
+    // Candidate code sessions are opened without signing in (the token is the credential), and every
+    // run calls the external code runner, so run/submit are capped per caller.
+    options.AddPolicy("CodeSession", httpContext =>
+        RateLimitPartition.GetFixedWindowLimiter(
+            partitionKey: httpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown",
+            factory: _ => new FixedWindowRateLimiterOptions
+            {
+                PermitLimit = 30,
+                Window = TimeSpan.FromMinutes(1),
+                QueueLimit = 0
+            }));
 });
 
 //Configure session state
@@ -151,6 +162,8 @@ builder.Services.AddScoped<ICodeProjectQuestionRepository, CodeProjectQuestionRe
 builder.Services.AddScoped<ICodeProjectQuestionService, CodeProjectQuestionService>();
 builder.Services.AddSingleton<CodeProjectBackgroundQueue>();
 builder.Services.AddHostedService<CodeProjectBackgroundWorker>();
+builder.Services.AddSingleton<AIInterviewReportQueue>();
+builder.Services.AddHostedService<AIInterviewReportWorker>();
 builder.Services.AddScoped<IQcInterviewAIMergeJobService, QcInterviewAIMergeJobService>();
 builder.Services.AddScoped<ITransInterviewerAuditRepository, TransInterviewerAuditRepository>();
 builder.Services.AddScoped<IDmIvAutoQcRemovalService, DmIvAutoQcRemovalService>();
@@ -173,6 +186,9 @@ builder.Services.AddScoped<IDeductionReviewRepository, DeductionReviewRepository
 builder.Services.AddScoped<IDeductionReviewService, DeductionReviewService>();
 builder.Services.AddScoped<ITrialJudgmentRepository, TrialJudgmentRepository>();
 builder.Services.AddScoped<ITrialJudgmentService, TrialJudgmentService>();
+// Interview alignment page + per-question code sessions for human-led interviews.
+builder.Services.AddScoped<IInterviewAlignmentRepository, InterviewAlignmentRepository>();
+builder.Services.AddScoped<IInterviewAlignmentService, InterviewAlignmentService>();
 builder.Services.AddScoped<IDashboardService, DashboardService>();
 builder.Services.AddScoped<IGeneralSkillMatrixService, GeneralSkillMatrixService>();
 builder.Services.AddScoped<IJoinabilityMatrixService, JoinabilityMatrixService>();
@@ -299,6 +315,8 @@ builder.Services.AddScoped<IAWSRekognitionService, AWSRekognitionService>();
 builder.Services.AddScoped<IProctoringSessionEventRepository, ProctoringSessionEventRepository>();
 builder.Services.AddScoped<IOpenAIApiLogRepository, OpenAIApiLogRepository>();
 builder.Services.AddScoped<IOpenAIApiLogger, OpenAIApiLogger>();
+builder.Services.AddScoped<IInterviewProfitabilityRepository, InterviewProfitabilityRepository>();
+builder.Services.AddScoped<IInterviewProfitabilityService, InterviewProfitabilityService>();
 builder.Services.AddScoped<IResumeOptimizationHelper, ResumeOptimizationHelper>();
 builder.Services.AddScoped<ITranscriptOptimizationHelper, TranscriptOptimizationHelper>();
 builder.Services.AddScoped<IReportQCOptimizationHelper, ReportQCOptimizationHelper>();
@@ -384,6 +402,11 @@ builder.Services.AddScoped<Risebird.Business.Interface.IKycPayoutLapseService>(s
 
 
 var app = builder.Build();
+
+// Lets cached OpenAI answers be shared across instances through Redis. Inert until
+// OpenAI:CostOptimization:ResponseCache:UseRedis is turned on.
+OpenAIResponseCache.UseSharedStore(new RedisOpenAIResponseSharedStore(
+    app.Services.GetRequiredService<Microsoft.Extensions.Caching.Distributed.IDistributedCache>()));
 
 if (app.Environment.IsDevelopment())
 {

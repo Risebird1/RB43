@@ -28,7 +28,7 @@ namespace Risebird.Repository.Interface
         /// <summary>Adds the rows, skipping candidates already in the campaign. Returns how many were added.</summary>
         Task<int> AddCampaignCandidatesAsync(int campaignId, IEnumerable<PlivoCXCampaignCandidate> rows);
         Task<List<PlivoCXCampaignCandidate>> GetCampaignCandidatesAsync(int campaignId);
-        Task<PlivoCXCampaignCallStats>       GetCampaignCallStatsAsync(int campaignId);
+        Task<PlivoCXCampaignCallStats>       GetCampaignCallStatsAsync(int campaignId, int inFlightMinutes = 30);
         Task<PlivoCXCampaignCandidate>       GetCampaignCandidateAsync(int campaignId, int candidateId);
 
         /// <summary>
@@ -36,7 +36,7 @@ namespace Risebird.Repository.Interface
         /// still connecting). <paramref name="dayStartUtc"/> is the start of today in the campaign's
         /// time zone, as UTC.
         /// </summary>
-        Task<List<PlivoCXCampaignCandidate>> GetDueCandidatesAsync(int campaignId, int take, DateTime nowUtc, DateTime dayStartUtc);
+        Task<List<PlivoCXCampaignCandidate>> GetDueCandidatesAsync(int campaignId, int take, DateTime nowUtc, DateTime dayStartUtc, int inFlightMinutes = 30);
 
         /// <summary>
         /// Atomically takes the dial lock on a Pending candidate for <paramref name="seconds"/>.
@@ -61,11 +61,24 @@ namespace Risebird.Repository.Interface
         Task SetCampaignCandidateStateAsync(int campaignCandidateId, string state, string disposition, string bookedSlot, DateTime? nextAttemptAtUtc);
 
         /// <summary>Calls from this campaign still connecting (initiated / triggered in the last 30 minutes).</summary>
-        Task<int> CountInFlightAsync(int campaignId);
+        Task<int> CountInFlightAsync(int campaignId, int inFlightMinutes = 30);
+
+        /// <summary>
+        /// PlivoCX calls of any kind (campaigns, the legacy timer jobs, one-off calls) still initiated /
+        /// triggered within <paramref name="inFlightMinutes"/> - the lines in use on the account, whose
+        /// concurrency limit is account-wide.
+        /// </summary>
+        Task<int> CountAllInFlightAsync(int inFlightMinutes);
+
+        /// <summary>
+        /// Plivo rejected the call for capacity: give the attempt back (Attempts - 1, not below 0) and
+        /// make the candidate due again at <paramref name="nextAttemptAtUtc"/>, still Pending.
+        /// </summary>
+        Task RefundAttemptAsync(int campaignCandidateId, DateTime nextAttemptAtUtc);
         Task<int> CountPendingAsync(int campaignId);
 
         /// <summary>Pending candidates with every attempt used and nothing in flight become Cold. Returns how many.</summary>
-        Task<int> RetireExhaustedCandidatesAsync(int campaignId);
+        Task<int> RetireExhaustedCandidatesAsync(int campaignId, int inFlightMinutes = 30);
 
         // ── Create-screen sources ────────────────────────────────────────────────
         Task<List<PlivoCXCampaignIRFOption>>    GetActiveIRFsAsync();

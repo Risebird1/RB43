@@ -32,17 +32,22 @@ namespace Risebird.CommonHelper
         // than arriving with a deployment.
         private readonly bool _useStrictJsonSchema;
 
+        private readonly IHttpClientFactory _httpClientFactory;
+        private readonly OpenAICostOptimization _costOptimization;
+
         public OpenAIResponsesHelper(
             IConfiguration configuration,
             IApplicationErrorLogger applicationErrorLogger,
-            IOpenAIApiLogger openAIApiLogger)
+            IOpenAIApiLogger openAIApiLogger, IHttpClientFactory httpClientFactory)
         {
+            _httpClientFactory = httpClientFactory;
             _configuration = configuration;
             _applicationErrorLogger = applicationErrorLogger;
             _openAIApiLogger = openAIApiLogger;
             _apiKey = _configuration["OpenAI:ApiKey"];
             _baseUrl = _configuration["OpenAI:BaseUrl"];
             _responsesModel = _configuration["OpenAI:ResponsesModel"];
+            _costOptimization = new OpenAICostOptimization(_configuration);
 
             _useStrictJsonSchema = _configuration.GetValue("OpenAI:UseStrictJsonSchema", false);
 
@@ -140,34 +145,37 @@ namespace Risebird.CommonHelper
                 var tokenBudget = maxOutputTokens.HasValue && maxOutputTokens.Value > 0
                     ? Math.Min(maxOutputTokens.Value, _maxOutputTokensCeiling)
                     : (int?)null;
-                var escalationsLeft = MaxTokenBudgetEscalations;
 
-                while (true)
+                var plan = PlanFor(operationType, promptId, useStoredPromptModel);
+
+                // A chained call continues a conversation held by OpenAI, so its answer depends on state
+                // the request body does not show; it is never served from or stored in the cache.
+                var cacheTtl = string.IsNullOrWhiteSpace(previousResponseId)
+                    ? _costOptimization.CacheTtlMinutesFor(operationType)
+                    : null;
+                string cacheKey = null;
+                if (cacheTtl.HasValue)
                 {
-                    var attempt = await SendJsonResponseAttemptAsync(
-                        promptId, input, operationType, previousResponseId, tokenBudget, useStoredPromptModel,
-                        promptVersion, promptVariables, responseSchema, schemaName);
-
-                    if (attempt.Succeeded)
-                        return (ToRunResult(attempt.OutputText), attempt.ResponseId);
-
-                    if (!attempt.TruncatedByTokenLimit || escalationsLeft-- <= 0)
-                        return (null, attempt.ResponseId);
-
-                    var nextBudget = NextTokenBudget(tokenBudget ?? attempt.TokensAllowedOrUsed);
-                    if (!nextBudget.HasValue)
+                    cacheKey = OpenAIResponseCache.Key("json", operationType, JsonConvert.SerializeObject(
+                        BuildJsonResponseRequestBody(promptId, input, null, tokenBudget, useStoredPromptModel,
+                            promptVersion, promptVariables, responseSchema, schemaName, plan)));
+                    var hit = await GetCachedAsync(cacheKey);
+                    if (hit != null)
                     {
-                        await _applicationErrorLogger.LogMessage(
-                            LogLevelInfo.Exception,
-                            new Exception($"OpenAI Responses API truncated output for operation {operationType} at the maximum allowed budget of {_maxOutputTokensCeiling} tokens. Raise OpenAI:ResponsesMaxOutputTokensCeiling, shorten the requested output, or reduce the prompt's reasoning effort."));
-                        return (null, attempt.ResponseId);
+                        await LogCacheHitAsync(operationType, hit);
+                        return (ToRunResult(hit.OutputText), hit.ResponseId);
                     }
-
-                    await _applicationErrorLogger.LogMessage(
-                        LogLevelInfo.Info,
-                        $"OpenAI Responses API truncated output for operation {operationType}; retrying with max_output_tokens {nextBudget.Value}.");
-                    tokenBudget = nextBudget;
                 }
+
+                var outcome = await RunWithFallbackAsync(plan, operationType, requireJson: true,
+                    p => RunJsonWithBudgetEscalationAsync(p, promptId, input, operationType, previousResponseId,
+                        tokenBudget, useStoredPromptModel, promptVersion, promptVariables, responseSchema, schemaName));
+
+                if (outcome.OutputText == null)
+                    return (null, outcome.ResponseId);
+
+                await StoreInCacheAsync(cacheKey, cacheTtl, outcome);
+                return (ToRunResult(outcome.OutputText), outcome.ResponseId);
             }
             catch (Exception ex)
             {
@@ -176,12 +184,208 @@ namespace Risebird.CommonHelper
             }
         }
 
+        private async Task<CallOutcome> RunJsonWithBudgetEscalationAsync(
+            RequestPlan plan,
+            string promptId,
+            object input,
+            string operationType,
+            string previousResponseId,
+            int? tokenBudget,
+            bool useStoredPromptModel,
+            string promptVersion,
+            IDictionary<string, string> promptVariables,
+            object responseSchema,
+            string schemaName)
+        {
+            var escalationsLeft = MaxTokenBudgetEscalations;
+
+            while (true)
+            {
+                var attempt = await SendJsonResponseAttemptAsync(
+                    plan, promptId, input, operationType, previousResponseId, tokenBudget, useStoredPromptModel,
+                    promptVersion, promptVariables, responseSchema, schemaName);
+
+                if (attempt.Succeeded)
+                    return new CallOutcome(attempt.OutputText, attempt.ResponseId, attempt.Model, attempt.CostUSD);
+
+                if (!attempt.TruncatedByTokenLimit || escalationsLeft-- <= 0)
+                    return CallOutcome.Failed(attempt.ResponseId);
+
+                var nextBudget = NextTokenBudget(tokenBudget ?? attempt.TokensAllowedOrUsed);
+                if (!nextBudget.HasValue)
+                {
+                    await _applicationErrorLogger.LogMessage(
+                        LogLevelInfo.Exception,
+                        new Exception($"OpenAI Responses API truncated output for operation {operationType} at the maximum allowed budget of {_maxOutputTokensCeiling} tokens. Raise OpenAI:ResponsesMaxOutputTokensCeiling, shorten the requested output, or reduce the prompt's reasoning effort."));
+                    return CallOutcome.Failed(attempt.ResponseId);
+                }
+
+                await _applicationErrorLogger.LogMessage(
+                    LogLevelInfo.Info,
+                    $"OpenAI Responses API truncated output for operation {operationType}; retrying with max_output_tokens {nextBudget.Value}.");
+                tokenBudget = nextBudget;
+            }
+        }
+
+        /// <summary>
+        /// What this request changes from the default: a cheaper model configured for the operation
+        /// and/or a prompt cache key. Calls pinned to a stored prompt's model never get a model
+        /// override, because sending a conflicting model is rejected by the API.
+        /// </summary>
+        private RequestPlan PlanFor(string operationType, string promptId, bool useStoredPromptModel)
+        {
+            var overrideModel = useStoredPromptModel ? null : _costOptimization.ModelOverrideFor(operationType);
+            var modelOverridden = overrideModel != null
+                && !string.Equals(overrideModel, _responsesModel, StringComparison.OrdinalIgnoreCase);
+
+            return new RequestPlan
+            {
+                Model = modelOverridden ? overrideModel : _responsesModel,
+                ModelOverridden = modelOverridden,
+                PromptCacheKey = _costOptimization.UsePromptCacheKey
+                    ? OpenAICostOptimization.PromptCacheKey(operationType, promptId ?? "inline")
+                    : null
+            };
+        }
+
+        /// <summary>
+        /// Runs the optimised request and, if it fails, throws, or (for a JSON operation on an overridden
+        /// model) returns something that is not a JSON object, repeats it exactly as it would have been
+        /// sent with no optimisation configured. A cheaper model that cannot do the job therefore costs
+        /// one extra call, never a missing report.
+        /// </summary>
+        private async Task<CallOutcome> RunWithFallbackAsync(
+            RequestPlan plan, string operationType, bool requireJson, Func<RequestPlan, Task<CallOutcome>> run)
+        {
+            var baseline = RequestPlan.Baseline(_responsesModel);
+            if (!plan.IsOptimized)
+                return await run(baseline);
+
+            CallOutcome outcome;
+            try
+            {
+                outcome = await run(plan);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                outcome = CallOutcome.Failed(null);
+            }
+
+            var usable = outcome.OutputText != null
+                && (!requireJson || !plan.ModelOverridden || IsJsonObject(outcome.OutputText));
+            if (usable || !_costOptimization.FallbackToDefaultModelOnFailure)
+                return outcome;
+
+            await _applicationErrorLogger.LogMessage(
+                LogLevelInfo.Info,
+                $"OpenAI cost optimisation for operation {operationType} (model {(plan.ModelOverridden ? plan.Model : "default")}, prompt cache key {(plan.PromptCacheKey != null ? "on" : "off")}) did not return a usable answer; repeating the request with default settings.");
+            return await run(baseline);
+        }
+
+        private static bool IsJsonObject(string outputText) =>
+            TryValidateJsonObject(CleanJsonResponseText(outputText), out _);
+
+        private async Task<OpenAIResponseCache.Entry> GetCachedAsync(string cacheKey)
+        {
+            Exception sharedStoreError = null;
+            var hit = await OpenAIResponseCache.GetAsync(cacheKey, _costOptimization.CacheMemoryLimitMegabytes,
+                _costOptimization.SharedStorePolicy, ex => sharedStoreError = ex);
+            await LogSharedCacheErrorAsync(sharedStoreError);
+            return hit;
+        }
+
+        private async Task StoreInCacheAsync(string cacheKey, int? cacheTtl, CallOutcome outcome)
+        {
+            if (cacheKey == null || !cacheTtl.HasValue || outcome.OutputText == null)
+                return;
+
+            Exception sharedStoreError = null;
+            await OpenAIResponseCache.SetAsync(cacheKey, new OpenAIResponseCache.Entry
+            {
+                OutputText = outcome.OutputText,
+                ResponseId = outcome.ResponseId,
+                Model = outcome.Model,
+                OriginalCostUSD = outcome.CostUSD
+            }, cacheTtl.Value, _costOptimization.CacheMemoryLimitMegabytes,
+                _costOptimization.SharedStorePolicy, ex => sharedStoreError = ex);
+            await LogSharedCacheErrorAsync(sharedStoreError);
+        }
+
+        private Task LogSharedCacheErrorAsync(Exception ex) =>
+            ex == null
+                ? Task.CompletedTask
+                : _applicationErrorLogger.LogMessage(LogLevelInfo.Warning,
+                    $"Redis OpenAI response cache skipped for one minute ({ex.GetType().Name}: {ex.Message}); requests go to OpenAI meanwhile.");
+
+        /// <summary>
+        /// Records the reuse in OpenAIApiLogs at zero tokens so cache hits and the spend they avoided
+        /// are visible per operation, alongside the calls that did reach OpenAI.
+        /// </summary>
+        private Task<long> LogCacheHitAsync(string operationType, OpenAIResponseCache.Entry hit)
+        {
+            return _openAIApiLogger.LogApiCallAsync(
+                apiEndpoint: $"{_baseUrl}/responses",
+                apiMethod: CacheHitApiMethod,
+                requestPayload: JsonConvert.SerializeObject(new { cacheHit = true, avoidedCostUSD = hit.OriginalCostUSD, source = hit.Source }),
+                responsePayload: null,
+                responseTimeMs: 0,
+                statusCode: 200,
+                isSuccess: true,
+                errorMessage: null,
+                model: "cache:" + (hit.Model ?? _responsesModel ?? "unknown"),
+                assistantId: null,
+                threadId: null,
+                runId: hit.ResponseId,
+                fileId: null,
+                context: new OpenAIApiLogContext { OperationType = operationType });
+        }
+
+        /// <summary>The ApiMethod value of an OpenAIApiLogs row that was answered from the response cache.</summary>
+        public const string CacheHitApiMethod = "CACHE_HIT";
+
+        private sealed class RequestPlan
+        {
+            public string Model { get; set; }
+            public bool ModelOverridden { get; set; }
+            public string PromptCacheKey { get; set; }
+            public bool IsOptimized => ModelOverridden || PromptCacheKey != null;
+
+            public static RequestPlan Baseline(string defaultModel) => new RequestPlan { Model = defaultModel };
+        }
+
+        private sealed class CallOutcome
+        {
+            public CallOutcome(string outputText, string responseId, string model, decimal costUSD)
+            {
+                OutputText = outputText;
+                ResponseId = responseId;
+                Model = model;
+                CostUSD = costUSD;
+            }
+
+            public string OutputText { get; }
+            public string ResponseId { get; }
+            public string Model { get; }
+            public decimal CostUSD { get; }
+
+            public static CallOutcome Failed(string responseId) => new CallOutcome(null, responseId, null, 0);
+        }
+
+        /// <summary>Cost of a successful response, for the cache to report what a later hit avoided.</summary>
+        private decimal EstimateCostUSD(string model, string responseContent)
+        {
+            var (promptTokens, completionTokens, _) = _openAIApiLogger.ExtractTokenUsage(responseContent);
+            return _openAIApiLogger.CalculateCost(model, promptTokens, completionTokens);
+        }
+
         /// <summary>
         /// Performs a single Responses API call. A response truncated by the output token cap is reported
         /// back so the caller can retry with a larger budget; its partial text is never returned because
         /// truncated JSON cannot be deserialized.
         /// </summary>
         private async Task<JsonResponseAttempt> SendJsonResponseAttemptAsync(
+            RequestPlan plan,
             string promptId,
             object input,
             string operationType,
@@ -194,9 +398,9 @@ namespace Risebird.CommonHelper
             string schemaName = null)
         {
             object requestBody = BuildJsonResponseRequestBody(promptId, input, previousResponseId, maxOutputTokens,
-                useStoredPromptModel, promptVersion, promptVariables, responseSchema, schemaName);
+                useStoredPromptModel, promptVersion, promptVariables, responseSchema, schemaName, plan);
 
-            using var client = new HttpClient();
+            using var client = _httpClientFactory.CreateClient();
             client.Timeout = TimeSpan.FromMinutes(4);
             var request = new HttpRequestMessage(HttpMethod.Post, $"{_baseUrl}/responses")
             {
@@ -211,7 +415,7 @@ namespace Risebird.CommonHelper
             sw.Stop();
 
             var responseContent = await response.Content.ReadAsStringAsync();
-            var modelName = ExtractModelFromResponse(responseContent) ?? _responsesModel;
+            var modelName = ExtractModelFromResponse(responseContent) ?? plan.Model ?? _responsesModel;
             var responseId = ExtractResponseId(responseContent);
 
             await _openAIApiLogger.LogApiCallAsync(
@@ -273,7 +477,9 @@ namespace Risebird.CommonHelper
             {
                 Succeeded = true,
                 OutputText = outputText,
-                ResponseId = responseId
+                ResponseId = responseId,
+                Model = modelName,
+                CostUSD = EstimateCostUSD(modelName, responseContent)
             };
         }
 
@@ -297,6 +503,8 @@ namespace Risebird.CommonHelper
             public string ResponseId { get; set; }
             public bool TruncatedByTokenLimit { get; set; }
             public int? TokensAllowedOrUsed { get; set; }
+            public string Model { get; set; }
+            public decimal CostUSD { get; set; }
 
             public static JsonResponseAttempt Failed(string responseId) =>
                 new JsonResponseAttempt { ResponseId = responseId };
@@ -316,65 +524,111 @@ namespace Risebird.CommonHelper
                     throw new InvalidOperationException("OpenAI:ResponsesModel is not configured.");
                 if (string.IsNullOrWhiteSpace(input))
                     throw new InvalidOperationException($"OpenAI Responses input is required for operation {operationType}.");
+                // json_object output is refused (400) unless the *input* mentions JSON; the instructions do not count.
+                if (input.IndexOf("json", StringComparison.OrdinalIgnoreCase) < 0)
+                    input += "\n\nRespond with a single JSON object.";
 
-                // Inline instructions instead of a stored prompt: the caller owns the whole prompt in code.
-                var body = new Dictionary<string, object>
+                var plan = PlanFor(operationType, null, useStoredPromptModel: false);
+                var cacheTtl = _costOptimization.CacheTtlMinutesFor(operationType);
+                string cacheKey = null;
+                if (cacheTtl.HasValue)
                 {
-                    ["model"] = _responsesModel,
-                    ["instructions"] = instructions,
-                    ["input"] = input,
-                    ["text"] = new { format = new { type = "json_object" } },
-                    ["max_output_tokens"] = Math.Min(maxOutputTokens ?? _maxOutputTokensCeiling, _maxOutputTokensCeiling)
-                };
-
-                using var client = new HttpClient { Timeout = TimeSpan.FromMinutes(6) };
-                var jsonContent = JsonConvert.SerializeObject(body);
-                using var request = new HttpRequestMessage(HttpMethod.Post, $"{_baseUrl}/responses")
-                {
-                    Headers = { { "Authorization", $"Bearer {_apiKey}" } },
-                    Content = new StringContent(jsonContent, Encoding.UTF8, "application/json")
-                };
-
-                var sw = System.Diagnostics.Stopwatch.StartNew();
-                using var response = await client.SendAsync(request);
-                sw.Stop();
-                var responseContent = await response.Content.ReadAsStringAsync();
-
-                await _openAIApiLogger.LogApiCallAsync(
-                    apiEndpoint: $"{_baseUrl}/responses",
-                    apiMethod: "POST",
-                    requestPayload: jsonContent,
-                    responsePayload: responseContent,
-                    responseTimeMs: (int)sw.ElapsedMilliseconds,
-                    statusCode: (int)response.StatusCode,
-                    isSuccess: response.IsSuccessStatusCode,
-                    errorMessage: response.IsSuccessStatusCode ? null : responseContent,
-                    model: ExtractModelFromResponse(responseContent) ?? _responsesModel,
-                    assistantId: null,
-                    threadId: null,
-                    runId: ExtractResponseId(responseContent),
-                    fileId: null,
-                    context: new OpenAIApiLogContext { OperationType = operationType });
-
-                if (!response.IsSuccessStatusCode)
-                {
-                    await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception,
-                        new Exception($"OpenAI Responses API failed ({(int)response.StatusCode}) for {operationType}: {responseContent}"));
-                    return null;
+                    cacheKey = OpenAIResponseCache.Key("instructions", operationType,
+                        JsonConvert.SerializeObject(BuildInstructionsRequestBody(plan, instructions, input, maxOutputTokens)));
+                    var hit = await GetCachedAsync(cacheKey);
+                    if (hit != null)
+                    {
+                        await LogCacheHitAsync(operationType, hit);
+                        return hit.OutputText;
+                    }
                 }
-                if (IsIncompleteResponse(responseContent, out var incompleteReason))
-                {
-                    await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception,
-                        new Exception($"OpenAI Responses API returned incomplete output for {operationType}. Reason: {incompleteReason}"));
-                    return null;
-                }
-                return ExtractOutputText(responseContent);
+
+                var outcome = await RunWithFallbackAsync(plan, operationType, requireJson: true,
+                    p => SendInstructionsAttemptAsync(p, instructions, input, operationType, maxOutputTokens));
+
+                await StoreInCacheAsync(cacheKey, cacheTtl, outcome);
+                return outcome.OutputText;
             }
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return null;
             }
+        }
+
+        // Inline instructions instead of a stored prompt: the caller owns the whole prompt in code.
+        private Dictionary<string, object> BuildInstructionsRequestBody(
+            RequestPlan plan, string instructions, string input, int? maxOutputTokens)
+        {
+            var body = new Dictionary<string, object>
+            {
+                ["model"] = plan.Model ?? _responsesModel,
+                ["instructions"] = instructions,
+                ["input"] = input,
+                ["text"] = new { format = new { type = "json_object" } },
+                ["max_output_tokens"] = Math.Min(maxOutputTokens ?? _maxOutputTokensCeiling, _maxOutputTokensCeiling)
+            };
+
+            if (!string.IsNullOrWhiteSpace(plan.PromptCacheKey))
+                body["prompt_cache_key"] = plan.PromptCacheKey;
+
+            return body;
+        }
+
+        private async Task<CallOutcome> SendInstructionsAttemptAsync(
+            RequestPlan plan, string instructions, string input, string operationType, int? maxOutputTokens)
+        {
+            var body = BuildInstructionsRequestBody(plan, instructions, input, maxOutputTokens);
+
+            using var client = _httpClientFactory.CreateClient();
+            client.Timeout = TimeSpan.FromMinutes(6);
+            var jsonContent = JsonConvert.SerializeObject(body);
+            using var request = new HttpRequestMessage(HttpMethod.Post, $"{_baseUrl}/responses")
+            {
+                Headers = { { "Authorization", $"Bearer {_apiKey}" } },
+                Content = new StringContent(jsonContent, Encoding.UTF8, "application/json")
+            };
+
+            var sw = System.Diagnostics.Stopwatch.StartNew();
+            using var response = await client.SendAsync(request);
+            sw.Stop();
+            var responseContent = await response.Content.ReadAsStringAsync();
+            var modelName = ExtractModelFromResponse(responseContent) ?? plan.Model ?? _responsesModel;
+            var responseId = ExtractResponseId(responseContent);
+
+            await _openAIApiLogger.LogApiCallAsync(
+                apiEndpoint: $"{_baseUrl}/responses",
+                apiMethod: "POST",
+                requestPayload: jsonContent,
+                responsePayload: responseContent,
+                responseTimeMs: (int)sw.ElapsedMilliseconds,
+                statusCode: (int)response.StatusCode,
+                isSuccess: response.IsSuccessStatusCode,
+                errorMessage: response.IsSuccessStatusCode ? null : responseContent,
+                model: modelName,
+                assistantId: null,
+                threadId: null,
+                runId: responseId,
+                fileId: null,
+                context: new OpenAIApiLogContext { OperationType = operationType });
+
+            if (!response.IsSuccessStatusCode)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception,
+                    new Exception($"OpenAI Responses API failed ({(int)response.StatusCode}) for {operationType}: {responseContent}"));
+                return CallOutcome.Failed(responseId);
+            }
+            if (IsIncompleteResponse(responseContent, out var incompleteReason))
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception,
+                    new Exception($"OpenAI Responses API returned incomplete output for {operationType}. Reason: {incompleteReason}"));
+                return CallOutcome.Failed(responseId);
+            }
+
+            var outputText = ExtractOutputText(responseContent);
+            return outputText == null
+                ? CallOutcome.Failed(responseId)
+                : new CallOutcome(outputText, responseId, modelName, EstimateCostUSD(modelName, responseContent));
         }
 
         public Task<RunResult> CreateTextResponseAsync(
@@ -416,63 +670,29 @@ namespace Risebird.CommonHelper
                         $"OpenAI Responses input is required for operation {operationType}.");
                 }
 
-                var requestBody = BuildBaseRequestBody(promptId, input, useStoredPromptModel);
-
-                using var client = new HttpClient();
-                client.Timeout = TimeSpan.FromMinutes(4);
-                var request = new HttpRequestMessage(HttpMethod.Post, $"{_baseUrl}/responses")
+                var plan = PlanFor(operationType, promptId, useStoredPromptModel);
+                var cacheTtl = _costOptimization.CacheTtlMinutesFor(operationType);
+                string cacheKey = null;
+                if (cacheTtl.HasValue)
                 {
-                    Headers = { { "Authorization", $"Bearer {_apiKey}" } }
-                };
-
-                var jsonContent = JsonConvert.SerializeObject(requestBody);
-                request.Content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
-
-                var sw = System.Diagnostics.Stopwatch.StartNew();
-                var response = await client.SendAsync(request);
-                sw.Stop();
-
-                var responseContent = await response.Content.ReadAsStringAsync();
-                var modelName = ExtractModelFromResponse(responseContent) ?? _responsesModel;
-                var responseId = ExtractResponseId(responseContent);
-
-                await _openAIApiLogger.LogApiCallAsync(
-                    apiEndpoint: $"{_baseUrl}/responses",
-                    apiMethod: "POST",
-                    requestPayload: jsonContent,
-                    responsePayload: responseContent,
-                    responseTimeMs: (int)sw.ElapsedMilliseconds,
-                    statusCode: (int)response.StatusCode,
-                    isSuccess: response.IsSuccessStatusCode,
-                    errorMessage: response.IsSuccessStatusCode ? null : responseContent,
-                    model: modelName,
-                    assistantId: null,
-                    threadId: null,
-                    runId: responseId,
-                    fileId: null,
-                    context: new OpenAIApiLogContext
+                    cacheKey = OpenAIResponseCache.Key("text", operationType,
+                        JsonConvert.SerializeObject(BuildBaseRequestBody(promptId, input, useStoredPromptModel, plan: plan)));
+                    var hit = await GetCachedAsync(cacheKey);
+                    if (hit != null)
                     {
-                        OperationType = operationType
-                    });
-
-                if (!response.IsSuccessStatusCode)
-                {
-                    await _applicationErrorLogger.LogMessage(
-                        LogLevelInfo.Exception,
-                        new Exception($"OpenAI Responses API failed ({(int)response.StatusCode}): {responseContent}"));
-                    return null;
+                        await LogCacheHitAsync(operationType, hit);
+                        return ToRunResult(hit.OutputText);
+                    }
                 }
 
-                var outputText = ExtractOutputText(responseContent);
-                if (string.IsNullOrWhiteSpace(outputText))
-                {
-                    await _applicationErrorLogger.LogMessage(
-                        LogLevelInfo.Exception,
-                        new Exception($"OpenAI Responses API returned no output text for operation {operationType}."));
-                    return null;
-                }
+                var outcome = await RunWithFallbackAsync(plan, operationType, requireJson: false,
+                    p => SendTextAttemptAsync(p, promptId, input, operationType, useStoredPromptModel));
 
-                return ToRunResult(outputText);
+                if (outcome.OutputText == null)
+                    return null;
+
+                await StoreInCacheAsync(cacheKey, cacheTtl, outcome);
+                return ToRunResult(outcome.OutputText);
             }
             catch (Exception ex)
             {
@@ -481,12 +701,74 @@ namespace Risebird.CommonHelper
             }
         }
 
+        private async Task<CallOutcome> SendTextAttemptAsync(
+            RequestPlan plan, string promptId, object input, string operationType, bool useStoredPromptModel)
+        {
+            var requestBody = BuildBaseRequestBody(promptId, input, useStoredPromptModel, plan: plan);
+
+            using var client = _httpClientFactory.CreateClient();
+            client.Timeout = TimeSpan.FromMinutes(4);
+            var request = new HttpRequestMessage(HttpMethod.Post, $"{_baseUrl}/responses")
+            {
+                Headers = { { "Authorization", $"Bearer {_apiKey}" } }
+            };
+
+            var jsonContent = JsonConvert.SerializeObject(requestBody);
+            request.Content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
+
+            var sw = System.Diagnostics.Stopwatch.StartNew();
+            var response = await client.SendAsync(request);
+            sw.Stop();
+
+            var responseContent = await response.Content.ReadAsStringAsync();
+            var modelName = ExtractModelFromResponse(responseContent) ?? plan.Model ?? _responsesModel;
+            var responseId = ExtractResponseId(responseContent);
+
+            await _openAIApiLogger.LogApiCallAsync(
+                apiEndpoint: $"{_baseUrl}/responses",
+                apiMethod: "POST",
+                requestPayload: jsonContent,
+                responsePayload: responseContent,
+                responseTimeMs: (int)sw.ElapsedMilliseconds,
+                statusCode: (int)response.StatusCode,
+                isSuccess: response.IsSuccessStatusCode,
+                errorMessage: response.IsSuccessStatusCode ? null : responseContent,
+                model: modelName,
+                assistantId: null,
+                threadId: null,
+                runId: responseId,
+                fileId: null,
+                context: new OpenAIApiLogContext
+                {
+                    OperationType = operationType
+                });
+
+            if (!response.IsSuccessStatusCode)
+            {
+                await _applicationErrorLogger.LogMessage(
+                    LogLevelInfo.Exception,
+                    new Exception($"OpenAI Responses API failed ({(int)response.StatusCode}): {responseContent}"));
+                return CallOutcome.Failed(responseId);
+            }
+
+            var outputText = ExtractOutputText(responseContent);
+            if (string.IsNullOrWhiteSpace(outputText))
+            {
+                await _applicationErrorLogger.LogMessage(
+                    LogLevelInfo.Exception,
+                    new Exception($"OpenAI Responses API returned no output text for operation {operationType}."));
+                return CallOutcome.Failed(responseId);
+            }
+
+            return new CallOutcome(outputText, responseId, modelName, EstimateCostUSD(modelName, responseContent));
+        }
+
         private object BuildJsonResponseRequestBody(string promptId, object input, string previousResponseId,
             int? maxOutputTokens, bool useStoredPromptModel, string promptVersion = null,
             IDictionary<string, string> promptVariables = null, object responseSchema = null,
-            string schemaName = null)
+            string schemaName = null, RequestPlan plan = null)
         {
-            var body = BuildBaseRequestBody(promptId, input, useStoredPromptModel, promptVersion, promptVariables);
+            var body = BuildBaseRequestBody(promptId, input, useStoredPromptModel, promptVersion, promptVariables, plan);
 
             // json_object asks only for syntactically valid JSON, so a prompt that renames a field or
             // invents a verdict still returns 200 and the report silently renders empty. A schema
@@ -519,7 +801,7 @@ namespace Risebird.CommonHelper
         /// conflicting model is rejected with an unsupported_value error.
         /// </summary>
         private Dictionary<string, object> BuildBaseRequestBody(string promptId, object input, bool useStoredPromptModel,
-            string promptVersion = null, IDictionary<string, string> promptVariables = null)
+            string promptVersion = null, IDictionary<string, string> promptVariables = null, RequestPlan plan = null)
         {
             var prompt = new Dictionary<string, object> { ["id"] = promptId };
 
@@ -536,8 +818,12 @@ namespace Risebird.CommonHelper
                 ["input"] = input
             };
 
-            if (!useStoredPromptModel && !string.IsNullOrWhiteSpace(_responsesModel))
-                body["model"] = _responsesModel;
+            var model = plan?.Model ?? _responsesModel;
+            if (!useStoredPromptModel && !string.IsNullOrWhiteSpace(model))
+                body["model"] = model;
+
+            if (!string.IsNullOrWhiteSpace(plan?.PromptCacheKey))
+                body["prompt_cache_key"] = plan.PromptCacheKey;
 
             return body;
         }

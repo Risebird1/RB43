@@ -15,8 +15,11 @@ namespace Risebird.CommonHelper
 
         private readonly string subscriptionKey;// = "8ee1181083bc4035b5a803421ef73f40";
         private readonly string uriBase;// = "https://facedetectionapigroup.cognitiveservices.azure.com/face/v1.0/detect";
-        public AzureFaceApi(IConfiguration configuration)
+        private readonly IHttpClientFactory _httpClientFactory;
+
+        public AzureFaceApi(IConfiguration configuration, IHttpClientFactory httpClientFactory)
         {
+            _httpClientFactory = httpClientFactory;
             _configuration = configuration;
             subscriptionKey = _configuration["AzureFaceApi:subscriptionKey"];
             uriBase = _configuration["AzureFaceApi:uriBase"];
@@ -40,7 +43,7 @@ namespace Risebird.CommonHelper
 
         async Task<string> MakeAnalysisRequest(string imageFilePath)
         {
-            HttpClient client = new HttpClient();
+            HttpClient client = _httpClientFactory.CreateClient();
 
             client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", subscriptionKey);
             string requestParameters = "returnFaceId=true&returnFaceLandmarks=false" +

@@ -3,6 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
 using Risebird.Entities.Enum;
+using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
 using System;
 using System.Collections.Generic;
@@ -420,6 +421,25 @@ namespace Risebird.Repository
                     CostByModel = costByModel,
                     DailyCosts = dailyCosts
                 };
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+        public async Task<List<OpenAICostOptimizationRow>> GetCostOptimizationReportAsync(DateTime startDate, DateTime endDate)
+        {
+            try
+            {
+                using var conn = new SqlConnection(connectionString);
+                var rows = await conn.QueryAsync<OpenAICostOptimizationRow>(
+                    "usp_GetOpenAICostOptimizationReport",
+                    new { StartDate = startDate.Date, EndDate = endDate.Date },
+                    commandType: System.Data.CommandType.StoredProcedure,
+                    commandTimeout: 180);
+                return rows.ToList();
             }
             catch (Exception ex)
             {

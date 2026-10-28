@@ -231,13 +231,13 @@ namespace Risebird.Repository
             }
         }
 
-        public async Task<PlivoCXCampaignCallStats> GetCampaignCallStatsAsync(int campaignId)
+        public async Task<PlivoCXCampaignCallStats> GetCampaignCallStatsAsync(int campaignId, int inFlightMinutes = 30)
         {
             try
             {
                 using var conn = new SqlConnection(_connectionString);
                 using var multi = await conn.QueryMultipleAsync(
-                    "usp_GetPlivoCXCampaignCandidates", new { CampaignId = campaignId },
+                    "usp_GetPlivoCXCampaignCandidates", new { CampaignId = campaignId, InFlightMinutes = inFlightMinutes },
                     commandType: CommandType.StoredProcedure);
                 await multi.ReadAsync<PlivoCXCampaignCandidate>();
                 var stats = await multi.ReadFirstOrDefaultAsync<PlivoCXCampaignCallStatsRow>();
@@ -279,7 +279,7 @@ namespace Risebird.Repository
             }
         }
 
-        public async Task<List<PlivoCXCampaignCandidate>> GetDueCandidatesAsync(int campaignId, int take, DateTime nowUtc, DateTime dayStartUtc)
+        public async Task<List<PlivoCXCampaignCandidate>> GetDueCandidatesAsync(int campaignId, int take, DateTime nowUtc, DateTime dayStartUtc, int inFlightMinutes = 30)
         {
             if (take <= 0) return new List<PlivoCXCampaignCandidate>();
             try
@@ -287,7 +287,7 @@ namespace Risebird.Repository
                 using var conn = new SqlConnection(_connectionString);
                 var rows = await conn.QueryAsync<PlivoCXCampaignCandidate>(
                     "usp_GetDuePlivoCXCampaignCandidates",
-                    new { CampaignId = campaignId, Take = take, NowUtc = nowUtc, DayStartUtc = dayStartUtc },
+                    new { CampaignId = campaignId, Take = take, NowUtc = nowUtc, DayStartUtc = dayStartUtc, InFlightMinutes = inFlightMinutes },
                     commandType: CommandType.StoredProcedure);
                 return rows.ToList();
             }
@@ -401,7 +401,7 @@ namespace Risebird.Repository
             }
         }
 
-        public async Task<int> CountInFlightAsync(int campaignId)
+        public async Task<int> CountInFlightAsync(int campaignId, int inFlightMinutes = 30)
         {
             try
             {
@@ -410,13 +410,44 @@ namespace Risebird.Repository
                     SELECT COUNT(*) FROM PlivoCXCallLogs
                     WHERE CampaignId = @CampaignId
                       AND CallStatus IN ('initiated', 'triggered')
-                      AND CreatedAt >= DATEADD(MINUTE, -30, GETUTCDATE())",
-                    new { CampaignId = campaignId });
+                      AND CreatedAt >= DATEADD(MINUTE, -@InFlightMinutes, GETUTCDATE())",
+                    new { CampaignId = campaignId, InFlightMinutes = inFlightMinutes });
             }
             catch (Exception ex)
             {
                 await _logger.LogMessage(LogLevelInfo.Exception, ex);
                 return 0;
+            }
+        }
+
+        public async Task<int> CountAllInFlightAsync(int inFlightMinutes)
+        {
+            // Not swallowed: if the count cannot be read, the dispatcher must not assume free lines.
+            using var conn = new SqlConnection(_connectionString);
+            return await conn.ExecuteScalarAsync<int>(@"
+                SELECT COUNT(*) FROM PlivoCXCallLogs
+                WHERE CallStatus IN ('initiated', 'triggered')
+                  AND CreatedAt >= DATEADD(MINUTE, -@InFlightMinutes, GETUTCDATE())",
+                new { InFlightMinutes = inFlightMinutes });
+        }
+
+        public async Task RefundAttemptAsync(int campaignCandidateId, DateTime nextAttemptAtUtc)
+        {
+            try
+            {
+                using var conn = new SqlConnection(_connectionString);
+                await conn.ExecuteAsync(@"
+                    UPDATE PlivoCXCampaignCandidate SET
+                        Attempts      = CASE WHEN Attempts > 0 THEN Attempts - 1 ELSE 0 END,
+                        State         = 'Pending',
+                        NextAttemptAt = @NextAttemptAt,
+                        UpdatedAt     = GETUTCDATE()
+                    WHERE Id = @Id",
+                    new { Id = campaignCandidateId, NextAttemptAt = nextAttemptAtUtc });
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
             }
         }
 
@@ -436,7 +467,7 @@ namespace Risebird.Repository
             }
         }
 
-        public async Task<int> RetireExhaustedCandidatesAsync(int campaignId)
+        public async Task<int> RetireExhaustedCandidatesAsync(int campaignId, int inFlightMinutes = 30)
         {
             try
             {
@@ -457,8 +488,8 @@ namespace Risebird.Repository
                             WHERE l.CampaignId  = cc.CampaignId
                               AND l.CandidateId = cc.CandidateId
                               AND l.CallStatus IN ('initiated', 'triggered')
-                              AND l.CreatedAt >= DATEADD(MINUTE, -30, GETUTCDATE()))",
-                    new { CampaignId = campaignId });
+                              AND l.CreatedAt >= DATEADD(MINUTE, -@InFlightMinutes, GETUTCDATE()))",
+                    new { CampaignId = campaignId, InFlightMinutes = inFlightMinutes });
             }
             catch (Exception ex)
             {

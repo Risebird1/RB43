@@ -77,6 +77,7 @@ namespace Risebird.Entities.ViewModel
         /// </summary>
         public string Username { get; set; }
         public string Password { get; set; }
+        public List<CodeProjectIntegrityFlag> IntegrityFlags { get; set; } = new List<CodeProjectIntegrityFlag>();
     }
 
     public class CodeProjectCommit
@@ -100,6 +101,8 @@ namespace Risebird.Entities.ViewModel
         public string BaselineSha { get; set; }
         public string HeadSha { get; set; }
         public List<CodeProjectCommit> Commits { get; set; } = new List<CodeProjectCommit>();
+        /// <summary>From the Bastion session monitor, for the reviewer.</summary>
+        public List<CodeProjectIntegrityFlag> IntegrityFlags { get; set; } = new List<CodeProjectIntegrityFlag>();
     }
 
     /// <summary>What ResultsJson holds for a graded code project.</summary>
@@ -115,5 +118,12 @@ namespace Risebird.Entities.ViewModel
         public string BaselineSha { get; set; }
         public string HeadSha { get; set; }
         public string Error { get; set; }
+        /// <summary>
+        /// True when the platform, not the candidate, prevented a fair attempt (the machine never started,
+        /// the workspace could not be read, the runner failed). The question is then left out of scoring.
+        /// </summary>
+        public bool Excluded { get; set; }
+        public string ExclusionReason { get; set; }
+        public List<CodeProjectIntegrityFlag> IntegrityFlags { get; set; } = new List<CodeProjectIntegrityFlag>();
     }
 }

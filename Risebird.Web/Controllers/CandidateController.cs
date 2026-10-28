@@ -72,6 +72,8 @@ namespace Risebird.Web.Controllers
         //private static string Searchvalue;
         private readonly IAdvancedScreeningService _advancedScreeningService;
 
+        private readonly IHttpClientFactory _httpClientFactory;
+
         public CandidateController(ICandidateService candidateService, IApplicationErrorLogger applicationErrorLogger, IIRFService irfService, IAzureStorageHelper azureStorageHelper, IEvaluatorService evaluatorService,
             IMeetingService meetingService, IUserService userService, IIRFRepository iRFRepository, INotificationHelper notificationHelper, IWhatsAppHelper whatsAppHelper,
             ISASUrlHelper sasUrlHelper, IClientService clientService, ICalendlyHelper calendlyHelper, IFileMimeTypeHelper fileMimeTypeHelper, IIRFRepository irfRepository,
@@ -80,8 +82,9 @@ namespace Risebird.Web.Controllers
             IAffIndaResumeParserHelper affIndaResumeParserHelper,
             IInterviewSchedulerService interviewSchedulerservice, IWebHostEnvironment env,
             IEncryptionHelper encryptionHelper, IZohoMeetingHelper zoho, IAIInterviewerService aiInterviewerService,
-            IAdvancedScreeningService advancedScreeningService)
+            IAdvancedScreeningService advancedScreeningService, IHttpClientFactory httpClientFactory)
         {
+            _httpClientFactory = httpClientFactory;
             _advancedScreeningService = advancedScreeningService;
             _candidateService = candidateService;
             _applicationErrorLogger = applicationErrorLogger;
@@ -5622,7 +5625,7 @@ namespace Risebird.Web.Controllers
                 {
                     var model = new Candidate();
 
-                    HttpClient myWebClient = new HttpClient();
+                    HttpClient myWebClient = _httpClientFactory.CreateClient();
                     string uploadedCodedResumeLink = string.Empty;
                     using (Stream myStream = await myWebClient.GetStreamAsync(redactedResumeLink))
                     {

@@ -1,3 +1,4 @@
+using System.Net.Http;
 using Azure.Core;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Configuration;
@@ -34,14 +35,17 @@ namespace Risebird.AzureTimerFunctions
         private readonly IAssistantServiceHelper _assistantServiceHelper;
         //private readonly string SASConnectionString;
 
+        private readonly IHttpClientFactory _httpClientFactory;
+
         public ZoomService(ILoggerFactory loggerFactory, IConfiguration configuration,
             IApplicationErrorLogger applicationErrorLogger,
             IAzureStorageHelper azureStorageHelper, IMeetingRespository meetingRespository,
             IZoomHelper zoomHelper, ISASUrlHelper sasUrlHelper,
             ITeamsMeetingHelper iteamsMeetingHelper, IGoogleEventHelper googleEventHelper,
             IZohoMeetingHelper zoho,
-            IAssistantServiceHelper assistantServiceHelper)
+            IAssistantServiceHelper assistantServiceHelper, IHttpClientFactory httpClientFactory)
         {
+            _httpClientFactory = httpClientFactory;
             _configuration = configuration;
             _applicationErrorLogger = applicationErrorLogger;
             _azureStorageHelper = azureStorageHelper;
@@ -141,7 +145,7 @@ namespace Risebird.AzureTimerFunctions
                                 //WebClient myWebClient = new WebClient();
                                 if (downloadUrl != null)
                                 {
-                                    HttpClient myWebClient = new HttpClient();
+                                    HttpClient myWebClient = _httpClientFactory.CreateClient();
                                     string uploadedVideoUrl = string.Empty;
                                     //url of the video uploaded to the client's storage exclusively in cases where the client has requested for such a service. 
                                     using (Stream myStream = myWebClient.GetStreamAsync(downloadUrl).Result)
@@ -238,7 +242,7 @@ namespace Risebird.AzureTimerFunctions
                                 //upload the video to azure blob using the download_Url
                                 if (downloadUrl != null)
                                 {
-                                    HttpClient myWebClient = new HttpClient();
+                                    HttpClient myWebClient = _httpClientFactory.CreateClient();
                                     string uploadedTranscriptUrl = string.Empty;
                                     using (Stream myStream = myWebClient.GetStreamAsync(downloadUrl).Result)
                                     {
@@ -361,7 +365,7 @@ namespace Risebird.AzureTimerFunctions
 
                                     if (downloadUrl != null)
                                     {
-                                        HttpClient myWebClient = new HttpClient();
+                                        HttpClient myWebClient = _httpClientFactory.CreateClient();
                                         string uploadedVideoUrl = string.Empty;
                                         var accessToken = accesstoken;
                                         myWebClient.DefaultRequestHeaders.Authorization =
@@ -421,7 +425,7 @@ namespace Risebird.AzureTimerFunctions
                                     var transcriptionDownloadUrl = _recordingupload.transcriptionDownloadUrl;
                                     if (transcriptionDownloadUrl != null)
                                     {
-                                        HttpClient myWebClient = new HttpClient();
+                                        HttpClient myWebClient = _httpClientFactory.CreateClient();
                                         string uploadedTranscriptUrl = string.Empty;
                                         var accessToken = accesstoken;
                                         myWebClient.DefaultRequestHeaders.Authorization =
@@ -474,6 +478,7 @@ namespace Risebird.AzureTimerFunctions
                                         var transcriptString = await DownloadTranscriptStringAsync(transcriptionDownloadUrl, accessToken);
                                         if (!string.IsNullOrEmpty(transcriptString))
                                         {
+                                            using var aiCostScope = OpenAIApiLogScope.Begin(meetingId: meeting.imid);
                                             var runResult = await _assistantServiceHelper.GenerateIntervieweeResponseExtraction(transcriptString);
                                             transcriptSummaryCleanedJson = OpenAIResponsesHelper.CleanJsonResponseText(
                                                 runResult?.Data?.FirstOrDefault()?.Content?.FirstOrDefault()?.Text?.Value);
@@ -496,7 +501,7 @@ namespace Risebird.AzureTimerFunctions
                                     {
                                         try
                                         {
-                                            using (HttpClient client = new HttpClient())
+                                            using (HttpClient client = _httpClientFactory.CreateClient())
                                             {
                                                 client.Timeout = TimeSpan.FromMinutes(15);
                                                 //var request = new HttpRequestMessage(HttpMethod.Get, $"https://portal.risebird.io/Interview/AIClientReport?interviewId={meeting.imid}&irfId={meeting.irfIntId}&IsContradictionAI=true&isBackgroudJobRequest=true");
@@ -627,7 +632,7 @@ namespace Risebird.AzureTimerFunctions
                                 //upload the video to azure blob using the download_Url
                                 if (downloadUrl != null)
                                 {
-                                    HttpClient myWebClient = new HttpClient();
+                                    HttpClient myWebClient = _httpClientFactory.CreateClient();
                                     string uploadedTranscriptUrl = string.Empty;
                                     using (Stream myStream = myWebClient.GetStreamAsync(downloadUrl).Result)
                                     {
@@ -739,7 +744,7 @@ namespace Risebird.AzureTimerFunctions
 
                                     if (downloadUrl != null)
                                     {
-                                        HttpClient myWebClient = new HttpClient();
+                                        HttpClient myWebClient = _httpClientFactory.CreateClient();
                                         string uploadedVideoUrl = string.Empty;
                                         var accessToken = accesstoken;
                                         myWebClient.DefaultRequestHeaders.Authorization =
@@ -797,7 +802,7 @@ namespace Risebird.AzureTimerFunctions
                                     var transcriptionDownloadUrl = _recordingupload.transcriptionDownloadUrl;
                                     if (transcriptionDownloadUrl != null)
                                     {
-                                        HttpClient myWebClient = new HttpClient();
+                                        HttpClient myWebClient = _httpClientFactory.CreateClient();
                                         string uploadedTranscriptUrl = string.Empty;
                                         var accessToken = accesstoken;
                                         myWebClient.DefaultRequestHeaders.Authorization =
@@ -890,7 +895,7 @@ namespace Risebird.AzureTimerFunctions
         private async Task<string> DownloadTranscriptStringAsync(string url, string accessToken)
         {
 
-            using var myWebClient = new HttpClient();
+            using var myWebClient = _httpClientFactory.CreateClient();
 
             myWebClient.DefaultRequestHeaders.Authorization =
                 new System.Net.Http.Headers.AuthenticationHeaderValue("Zoho-oauthtoken", accessToken);

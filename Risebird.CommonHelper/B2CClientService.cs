@@ -35,8 +35,11 @@ namespace Risebird.CommonHelper
         private ClientCredential credential;
         private readonly IApplicationErrorLogger _errorLogger;
 
-        public B2CClientService(IConfiguration configuration, IApplicationErrorLogger errorLogger)
+        private readonly IHttpClientFactory _httpClientFactory;
+
+        public B2CClientService(IConfiguration configuration, IApplicationErrorLogger errorLogger, IHttpClientFactory httpClientFactory)
         {
+            _httpClientFactory = httpClientFactory;
             _errorLogger = errorLogger;
             clientId = configuration["RisebirdGraphB2C:RisebirdGraphClientId"];
             clientSecret = configuration["RisebirdGraphB2C:RisebirdGraphClientSecret"];
@@ -138,7 +141,7 @@ namespace Risebird.CommonHelper
             AuthenticationResult result = await authContext.AcquireTokenAsync("https://graph.windows.net", credential);
 
             // For B2C user managment, be sure to use the 1.6 Graph API version.
-            HttpClient http = new HttpClient();
+            HttpClient http = _httpClientFactory.CreateClient();
             string url = "https://graph.windows.net/" + tenant + api + "?" + aadGraphVersion;
             if (!string.IsNullOrEmpty(query))
             {

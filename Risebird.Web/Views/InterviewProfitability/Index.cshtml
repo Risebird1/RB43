@@ -1,0 +1,585 @@
+@using System.Globalization
+@using Risebird.Entities.ViewModel
+@model InterviewProfitabilityReport
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Interview Profitability";
+
+    var inr = new CultureInfo("en-IN");
+    string Rs(decimal v) => (v < 0 ? "-₹" : "₹") + Math.Abs(Math.Round(v, 0)).ToString("N0", inr);
+    string Rs2(decimal v) => (v < 0 ? "-₹" : "₹") + Math.Abs(v).ToString("N2", inr);
+    // AI and voice are often under a rupee per interview; in whole rupees they would read as zero.
+    string RsSmall(decimal v) => Math.Abs(v) < 100 ? Rs2(v) : Rs(v);
+
+    var f = Model.Filter ?? new InterviewProfitabilityFilter();
+    var options = ViewBag.FilterOptions as InterviewProfitabilityFilterOptions ?? new InterviewProfitabilityFilterOptions();
+    var allFactors = ViewBag.CostFactors as List<OperationalCostFactor> ?? new List<OperationalCostFactor>();
+    var t = Model.Totals ?? new InterviewProfitabilityLine();
+    var grouped = !string.IsNullOrEmpty(f.GroupBy) && f.GroupBy != "Interview";
+    var marginPct = t.MarginPercent;
+    var avgCost = Model.InterviewCount > 0 ? t.TotalCost / Model.InterviewCount : 0;
+    var returnUrl = Context.Request.Path + Context.Request.QueryString;
+    var exportUrl = "/InterviewProfitability/Export" + Context.Request.QueryString;
+    string Sel(string a, string b) => string.Equals(a ?? "", b ?? "", StringComparison.OrdinalIgnoreCase) ? "selected" : null;
+}
+
+<link rel="stylesheet" type="text/css" href="~/Newassets/css/dashboard-new.css?v=2024" />
+<style>
+    .ip-wrap { padding: 16px 20px 40px; }
+    .ip-filters { background: #fff; border: 1px solid #e3e6ec; border-radius: 8px; padding: 14px 16px 6px; margin-bottom: 16px; }
+    .ip-filters label { font-size: 12px; color: #5f6b7a; margin-bottom: 2px; }
+    .ip-filters .form-control, .ip-filters .form-select { font-size: 13px; height: 34px; padding: 4px 8px; }
+    .ip-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; margin-bottom: 16px; }
+    .ip-card { background: #fff; border: 1px solid #e3e6ec; border-radius: 8px; padding: 12px 14px; }
+    .ip-card .k { font-size: 12px; color: #5f6b7a; }
+    .ip-card .v { font-size: 22px; font-weight: 600; color: #1f2937; line-height: 1.3; }
+    .ip-card .s { font-size: 12px; color: #6b7280; }
+    .ip-neg { color: #b42318 !important; }
+    .ip-pos { color: #067647 !important; }
+    .ip-panel { background: #fff; border: 1px solid #e3e6ec; border-radius: 8px; padding: 14px 16px; margin-bottom: 16px; }
+    .ip-panel h5 { font-size: 15px; font-weight: 600; margin: 0 0 10px; }
+    .ip-bar { display: flex; height: 14px; border-radius: 7px; overflow: hidden; background: #f1f3f6; margin-bottom: 10px; }
+    .ip-bar span { display: block; height: 100%; }
+    .ip-legend { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 4px 18px; font-size: 13px; }
+    .ip-legend div { display: flex; justify-content: space-between; gap: 8px; }
+    .ip-legend i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 6px; }
+    .ip-warn { background: #fffaeb; border: 1px solid #fedf89; color: #93370d; border-radius: 6px; padding: 8px 12px; font-size: 13px; margin-bottom: 8px; }
+    .ip-msg { background: #ecfdf3; border: 1px solid #abefc6; color: #067647; border-radius: 6px; padding: 8px 12px; font-size: 13px; margin-bottom: 8px; }
+    .ip-err { background: #fef3f2; border: 1px solid #fecdca; color: #b42318; border-radius: 6px; padding: 8px 12px; font-size: 13px; margin-bottom: 8px; }
+    .ip-help { font-size: 13px; color: #374151; }
+    .ip-help li { margin-bottom: 4px; }
+    .ip-badge { display: inline-block; font-size: 11px; padding: 1px 6px; border-radius: 10px; background: #eef2ff; color: #3538cd; }
+    .ip-badge.off { background: #f2f4f7; color: #667085; }
+    /* The site theme hides native checkboxes and rounds table-footer cells; undo both here only. */
+    .ip-check input[type="checkbox"] { position: static !important; opacity: 1 !important; visibility: visible !important; pointer-events: auto !important; left: auto !important; width: 16px; height: 16px; margin: 0 6px 0 0; vertical-align: middle; float: none; }
+    .ip-check label { display: inline; padding-left: 0 !important; vertical-align: middle; }
+    .ip-check label::before, .ip-check label::after { display: none !important; }
+    /* Grid. Classes are ip-* only: the site theme styles generic names such as .num (a 26px circle). */
+    .ip-grid-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; margin-bottom: 8px; }
+    .ip-grid-head .text-muted { font-size: 12px; }
+    .ip-grid-scroll { overflow-x: auto; }
+    table.ip-table { font-size: 13px; border-collapse: collapse !important; }
+    table.ip-table thead th { background: #f8f9fb !important; color: #475467; font-weight: 600; font-size: 12px; text-transform: none !important; letter-spacing: normal !important; padding: 8px 8px !important; border-bottom: 1px solid #e4e7ec !important; white-space: nowrap; height: auto !important; }
+    table.ip-table tbody td { padding: 6px 8px !important; border-bottom: 1px solid #f2f4f7; vertical-align: middle; background: #fff; height: auto !important; }
+    table.ip-table tbody tr.ip-row { cursor: pointer; }
+    table.ip-table tbody tr.ip-row:hover td { background: #f9fafb; }
+    table.ip-table tbody tr.ip-open td { background: #f5f8ff; }
+    table.ip-table tfoot td { font-weight: 600; background: #f8f9fb !important; padding: 8px 8px !important; border: 0 !important; border-top: 2px solid #e4e7ec !important; border-radius: 0 !important; white-space: nowrap; }
+    table.ip-table .ip-n { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
+    table.ip-table .ip-strong { font-weight: 600; }
+    /* A table cell ignores max-width, so the text sits in a block that does the truncating. */
+    table.ip-table .ip-ellipsis { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 190px; }
+    table.ip-table .ip-ellipsis.ip-short { max-width: 150px; }
+    table.ip-table .ip-toggle-col { width: 26px; padding-right: 0 !important; text-align: center; }
+    .ip-toggle { display: inline-block; width: 18px; height: 18px; line-height: 16px; border: 1px solid #d0d5dd; border-radius: 4px; color: #475467; font-weight: 600; font-size: 13px; text-align: center; }
+    tr.ip-open .ip-toggle { background: #2a78d6; border-color: #2a78d6; color: #fff; }
+    .ip-badge.human { background: #ecfdf3; color: #067647; }
+    .ip-detail { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 8px 28px; padding: 8px 6px 10px 32px; font-size: 12.5px; }
+    .ip-detail h6 { font-size: 12px; font-weight: 600; color: #475467; text-transform: uppercase; letter-spacing: .03em; margin: 0 0 6px; }
+    .ip-detail dl { display: grid; grid-template-columns: max-content 1fr; gap: 3px 14px; margin: 0; }
+    .ip-detail dt { font-weight: 400; color: #667085; }
+    .ip-detail dd { margin: 0; color: #1f2937; }
+    .ip-detail dl.ip-money dd { text-align: right; font-variant-numeric: tabular-nums; }
+</style>
+
+<div class="main-panel" id="main-panel">
+    <div class="pt30">
+        <div class="col-md-12 nopad">
+            <div class="card-header bg-w clearfix interviewer-page-header interview-header-flex">
+                <div class="interview-header-left">
+                    <h4 class="card-title"></h4>
+                    <div class="mobile-view"><h4 class="card-title">Interviews</h4></div>
+                </div>
+                <div class="interview-tabs-wrap">
+                    <div class="feedback-tab" onclick="location.href='/Interview/Index?type=TemplateInterviews'"><strong>Template Interviews</strong></div>
+                    <div class="feedback-tab" onclick="location.href='/Interview/Index?type=Interviews'"><strong>Interviews</strong></div>
+                    <div class="feedback-tab" onclick="location.href='/Interview/Index?type=RedoInterviews'"><strong>Redo Interviews</strong></div>
+                    <div class="feedback-tab" onclick="location.href='/Interview/Index?type=CancelInterviews'"><strong>Cancelled Interviews</strong></div>
+                    <div class="feedback-tab feedback-tab-ac"><strong>Profitability</strong></div>
+                </div>
+                <div class="interview-header-right client-ms">
+                    <button type="button" class="mdc-button mdc-button--outlined card-title-space" onclick="location.href='@exportUrl'" title="Download the grid as CSV">
+                        <span class="mdc-button__label"><span class="fa fa-file-excel" style="font-size:12px;"></span> Export</span>
+                    </button>
+                    <button type="button" class="mdc-button mdc-button--outlined card-title-space" onclick="location.href='/AICostOptimization'" title="Where AI spend goes and what caching or a smaller model would save">
+                        <span class="mdc-button__label"><span class="fa fa-robot" style="font-size:12px;"></span> AI cost optimizer</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="ip-wrap">
+            @if (!string.IsNullOrEmpty(ViewBag.Message as string))
+            {
+                <div class="ip-msg">@ViewBag.Message</div>
+            }
+            @if (Model.Error != null)
+            {
+                <div class="ip-err">@Model.Error</div>
+            }
+            @foreach (var w in Model.Warnings)
+            {
+                <div class="ip-warn"><i class="fa fa-exclamation-triangle"></i> @w</div>
+            }
+
+            <form method="get" action="/InterviewProfitability/Index" class="ip-filters" id="ipFilterForm">
+                <div class="row g-2">
+                    <div class="col-6 col-md-2">
+                        <label for="StartDate">From</label>
+                        <input type="date" class="form-control" id="StartDate" name="StartDate" value="@Model.StartDate.ToString("yyyy-MM-dd")" />
+                    </div>
+                    <div class="col-6 col-md-2">
+                        <label for="EndDate">To</label>
+                        <input type="date" class="form-control" id="EndDate" name="EndDate" value="@Model.EndDate.ToString("yyyy-MM-dd")" />
+                    </div>
+                    <div class="col-12 col-md-3">
+                        <label for="ClientId">Client</label>
+                        <select class="form-select" id="ClientId" name="ClientId">
+                            <option value="">All clients</option>
+                            @foreach (var c in options.Clients)
+                            {
+                                <option value="@c.Id" selected="@(f.ClientId == c.Id)">@c.Name</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="col-12 col-md-3">
+                        <label for="IRFIntId">IRF</label>
+                        <select class="form-select" id="IRFIntId" name="IRFIntId" disabled="@(f.ClientId == null)">
+                            <option value="">@(f.ClientId == null ? "Choose a client first" : "All IRFs")</option>
+                            @foreach (var i in options.IRFs)
+                            {
+                                <option value="@i.Id" selected="@(f.IRFIntId == i.Id)">@i.Code — @(i.Title?.Length > 60 ? i.Title.Substring(0, 60) + "…" : i.Title)</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="col-12 col-md-2">
+                        <label for="InterviewerEmail">Interviewer email</label>
+                        <input type="email" class="form-control" id="InterviewerEmail" name="InterviewerEmail" value="@f.InterviewerEmail" placeholder="All interviewers" />
+                    </div>
+                    <div class="col-6 col-md-2">
+                        <label for="InterviewType">Interview type</label>
+                        <select class="form-select" id="InterviewType" name="InterviewType">
+                            <option value="All" selected="@Sel(f.InterviewType, "All")">AI and human</option>
+                            <option value="AI" selected="@Sel(f.InterviewType, "AI")">AI only</option>
+                            <option value="Human" selected="@Sel(f.InterviewType, "Human")">Human only</option>
+                        </select>
+                    </div>
+                    <div class="col-6 col-md-2">
+                        <label for="Billability">Billing</label>
+                        <select class="form-select" id="Billability" name="Billability">
+                            <option value="All" selected="@Sel(f.Billability, "All")">All</option>
+                            <option value="Billable" selected="@Sel(f.Billability, "Billable")">Billable</option>
+                            <option value="NonBillable" selected="@Sel(f.Billability, "NonBillable")">Not billable</option>
+                        </select>
+                    </div>
+                    <div class="col-6 col-md-2">
+                        <label for="Margin">Margin</label>
+                        <select class="form-select" id="Margin" name="Margin">
+                            <option value="All" selected="@Sel(f.Margin, "All")">All</option>
+                            <option value="Loss" selected="@Sel(f.Margin, "Loss")">Loss-making only</option>
+                            <option value="Profit" selected="@Sel(f.Margin, "Profit")">Profitable only</option>
+                        </select>
+                    </div>
+                    <div class="col-6 col-md-2">
+                        <label for="GroupBy">Group by</label>
+                        <select class="form-select" id="GroupBy" name="GroupBy">
+                            <option value="Interview" selected="@Sel(f.GroupBy, "Interview")">Interview</option>
+                            <option value="IRF" selected="@Sel(f.GroupBy, "IRF")">IRF</option>
+                            <option value="Client" selected="@Sel(f.GroupBy, "Client")">Client</option>
+                            <option value="Interviewer" selected="@Sel(f.GroupBy, "Interviewer")">Interviewer</option>
+                            <option value="Day" selected="@Sel(f.GroupBy, "Day")">Day</option>
+                        </select>
+                    </div>
+                    <div class="col-6 col-md-1">
+                        <label for="UsdToInr" title="Rupees per US dollar, used for AI and call costs billed in USD">₹ per $</label>
+                        <input type="number" step="0.01" min="1" class="form-control" id="UsdToInr" name="UsdToInr" value="@Model.Settings?.UsdToInr.ToString("0.##", CultureInfo.InvariantCulture)" />
+                    </div>
+                    <div class="col-6 col-md-1 d-flex align-items-end">
+                        <div class="ip-check" style="margin-bottom:8px;" title="Include cancelled interviews (they carry their direct costs only)">
+                            <input type="checkbox" id="IncludeCancelled" name="IncludeCancelled" value="true" checked="@f.IncludeCancelled" />
+                            <label for="IncludeCancelled">Cancelled</label>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-2 d-flex align-items-end gap-2" style="margin-bottom:6px;">
+                        <button type="submit" class="mdc-button mdc-button--raised">Apply</button>
+                        <a href="/InterviewProfitability/Index" class="mdc-button mdc-button--outlined">Reset</a>
+                    </div>
+                </div>
+            </form>
+
+            <div class="ip-cards">
+                <div class="ip-card"><div class="k">Interviews</div><div class="v">@Model.InterviewCount.ToString("N0", inr)</div><div class="s">@Model.StartDate.ToString("dd MMM") – @Model.EndDate.ToString("dd MMM yyyy")</div></div>
+                <div class="ip-card"><div class="k">Revenue</div><div class="v">@Rs(t.Revenue)</div><div class="s">as invoiced, before GST</div></div>
+                <div class="ip-card"><div class="k">Total cost</div><div class="v">@Rs(t.TotalCost)</div><div class="s">@Rs(avgCost) per interview</div></div>
+                <div class="ip-card"><div class="k">Margin</div><div class="v @(t.Margin < 0 ? "ip-neg" : "ip-pos")">@Rs(t.Margin)</div><div class="s">@(marginPct.HasValue ? marginPct.Value.ToString("0.0") + "% of revenue" : "no revenue")</div></div>
+                <div class="ip-card"><div class="k">Loss-making interviews</div><div class="v @(Model.LossMakingCount > 0 ? "ip-neg" : "")">@Model.LossMakingCount.ToString("N0", inr)</div><div class="s">@(Model.InterviewCount > 0 ? (Model.LossMakingCount * 100.0 / Model.InterviewCount).ToString("0.0") + "% of interviews" : "")</div></div>
+                <div class="ip-card" title="Running costs and AI spend on days with no interview held. Real spend that no row in the grid carries."><div class="k">Cost on idle days <i class="fa fa-info-circle"></i></div><div class="v">@Rs(Model.UnabsorbedCost)</div><div class="s">not in the grid</div></div>
+            </div>
+
+            @if (Model.CostBreakdown.Any())
+            {
+                var palette = new[] { "#2a78d6", "#1fa37a", "#e68a00", "#8e44ad", "#d64545", "#0f8fa8", "#7a8b99", "#b8860b", "#c2185b", "#4a5bd4", "#5d8a2f", "#a0522d" };
+                <div class="ip-panel">
+                    <h5>Where the money goes</h5>
+                    <div class="ip-bar">
+                        @for (var i = 0; i < Model.CostBreakdown.Count; i++)
+                        {
+                            var s = Model.CostBreakdown[i];
+                            if (s.PercentOfCost > 0)
+                            {
+                                <span style="width:@(s.PercentOfCost.ToString(CultureInfo.InvariantCulture))%;background:@palette[i % palette.Length]" title="@s.Name: @Rs(s.Amount) (@s.PercentOfCost%)"></span>
+                            }
+                        }
+                    </div>
+                    <div class="ip-legend">
+                        @for (var i = 0; i < Model.CostBreakdown.Count; i++)
+                        {
+                            var s = Model.CostBreakdown[i];
+                            <div><span><i style="background:@palette[i % palette.Length]"></i>@s.Name</span><span>@Rs(s.Amount) <span class="text-muted">· @s.PercentOfCost%</span></span></div>
+                        }
+                    </div>
+                </div>
+            }
+
+            <div class="ip-panel">
+                <div class="ip-grid-head">
+                    <h5 style="margin:0;">@(grouped ? "Profitability by " + f.GroupBy.ToLowerInvariant() : "Profitability per interview")</h5>
+                    <span class="text-muted">Click a row for client, IRF, interviewer and the full cost split. Export has every column.</span>
+                </div>
+                <div class="ip-grid-scroll">
+                    <table id="ipGrid" class="ip-table" style="width:100%">
+                        <thead>
+                            <tr>
+                                <th class="ip-toggle-col"></th>
+                                @if (!grouped)
+                                {
+                                    <th>Date</th>
+                                    <th>Candidate</th>
+                                    <th>Type</th>
+                                    <th>Billing basis</th>
+                                }
+                                else
+                                {
+                                    <th>@f.GroupBy</th>
+                                    <th class="ip-n">Interviews</th>
+                                }
+                                <th class="ip-n">Revenue</th>
+                                <th class="ip-n" title="InterviewPoints after penalty, surcharge, QC points, video reward and payment SLA">Payout</th>
+                                <th class="ip-n" title="OpenAI spend: this interview, its IRF's share, and its share of AI that is not tied to anything">AI</th>
+                                <th class="ip-n" title="Vapi and Plivo calls and recordings: this interview, and its IRF's share">Voice</th>
+                                <th class="ip-n" title="Running costs (cloud, email, licences, ...) shared across interviews">Running costs</th>
+                                <th class="ip-n">Total cost</th>
+                                <th class="ip-n">Margin</th>
+                                <th class="ip-n">Margin %</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for (var i = 0; i < Model.Lines.Count; i++)
+                            {
+                                var l = Model.Lines[i];
+                                <tr class="ip-row" data-detail="ipd-@i">
+                                    <td class="ip-toggle-col"><span class="ip-toggle" aria-label="Show details">+</span></td>
+                                    @if (!grouped)
+                                    {
+                                        <td data-order="@(l.InterviewDate?.ToString("yyyyMMddHHmm"))" style="white-space:nowrap;">
+                                            <span title="@(l.InterviewDate?.ToString("dd MMM yyyy, HH:mm"))">@(l.InterviewDate?.ToString("dd MMM yy"))</span>
+                                            @if (l.IsCancelled) { <span class="ip-badge off">Cancelled</span> }
+                                        </td>
+                                        <td title="@l.CandidateEmail">
+                                            <span class="ip-ellipsis">
+                                                @if (!string.IsNullOrEmpty(l.Note)) { <i class="fa fa-info-circle text-warning" title="@l.Note"></i> }
+                                                @l.CandidateEmail
+                                            </span>
+                                        </td>
+                                        <td><span class="ip-badge @(l.InterviewType == "AI" ? "" : "human")">@l.InterviewType</span></td>
+                                        <td title="@l.BillingBasis"><span class="ip-ellipsis ip-short">@l.BillingBasis</span></td>
+                                    }
+                                    else
+                                    {
+                                        <td title="@l.Label">
+                                            <span class="ip-ellipsis">@l.Label</span>
+                                            @if (f.GroupBy == "IRF" && !string.IsNullOrEmpty(l.ClientName))
+                                            {
+                                                <div class="text-muted" style="font-size:11px;">@l.ClientName</div>
+                                            }
+                                        </td>
+                                        <td class="ip-n">@l.Interviews.ToString("N0", inr)</td>
+                                    }
+                                    <td class="ip-n" data-order="@l.Revenue">@Rs(l.Revenue)</td>
+                                    <td class="ip-n" data-order="@l.InterviewerPayout">@Rs(l.InterviewerPayout)</td>
+                                    <td class="ip-n" data-order="@l.AITotal">@RsSmall(l.AITotal)</td>
+                                    <td class="ip-n" data-order="@l.VoiceTotal">@RsSmall(l.VoiceTotal)</td>
+                                    <td class="ip-n" data-order="@l.OverheadTotal">@Rs(l.OverheadTotal)</td>
+                                    <td class="ip-n ip-strong" data-order="@l.TotalCost">@Rs(l.TotalCost)</td>
+                                    <td class="ip-n ip-strong @(l.Margin < 0 ? "ip-neg" : "ip-pos")" data-order="@l.Margin">@Rs(l.Margin)</td>
+                                    <td class="ip-n @(l.Margin < 0 ? "ip-neg" : "")" data-order="@(l.MarginPercent ?? -100000)">@(l.MarginPercent.HasValue ? l.MarginPercent.Value.ToString("0.0") + "%" : "–")</td>
+                                </tr>
+                            }
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td></td>
+                                @if (!grouped)
+                                {
+                                    <td colspan="4">Total · @Model.InterviewCount.ToString("N0", inr) interviews</td>
+                                }
+                                else
+                                {
+                                    <td>Total</td>
+                                    <td class="ip-n">@t.Interviews.ToString("N0", inr)</td>
+                                }
+                                <td class="ip-n">@Rs(t.Revenue)</td>
+                                <td class="ip-n">@Rs(t.InterviewerPayout)</td>
+                                <td class="ip-n">@RsSmall(t.AITotal)</td>
+                                <td class="ip-n">@RsSmall(t.VoiceTotal)</td>
+                                <td class="ip-n">@Rs(t.OverheadTotal)</td>
+                                <td class="ip-n">@Rs(t.TotalCost)</td>
+                                <td class="ip-n @(t.Margin < 0 ? "ip-neg" : "ip-pos")">@Rs(t.Margin)</td>
+                                <td class="ip-n">@(marginPct.HasValue ? marginPct.Value.ToString("0.0") + "%" : "–")</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+
+                @* Row details, moved into an expanded row when its row is clicked. *@
+                <div style="display:none;">
+                    @for (var i = 0; i < Model.Lines.Count; i++)
+                    {
+                        var l = Model.Lines[i];
+                        <div id="ipd-@i">
+                            <div class="ip-detail">
+                                <div>
+                                    <h6>Interview</h6>
+                                    <dl>
+                                        @if (l.MeetingId.HasValue)
+                                        {
+                                            <dt>Interview</dt><dd><a href="/Interview/Edit/@l.MeetingId" target="_blank">#@l.MeetingId <i class="fa fa-external-link-alt"></i></a></dd>
+                                            @if (l.InterviewDate.HasValue) { <dt>When</dt><dd>@l.InterviewDate.Value.ToString("dd MMM yyyy, HH:mm")</dd> }
+                                        }
+                                        else
+                                        {
+                                            <dt>@f.GroupBy</dt><dd>@l.Label</dd>
+                                            <dt>Interviews</dt><dd>@l.Interviews.ToString("N0", inr)</dd>
+                                        }
+                                        @if (!string.IsNullOrEmpty(l.ClientName)) { <dt>Client</dt><dd>@l.ClientName</dd> }
+                                        @if (!string.IsNullOrEmpty(l.IRFCode)) { <dt>IRF</dt><dd>@l.IRFCode@(string.IsNullOrEmpty(l.IRFTitle) ? "" : " · " + l.IRFTitle)</dd> }
+                                        @if (!string.IsNullOrEmpty(l.InterviewerEmail) || !string.IsNullOrEmpty(l.InterviewerName))
+                                        {
+                                            <dt>Interviewer</dt><dd>@l.InterviewerName <span class="text-muted">@l.InterviewerEmail</span></dd>
+                                        }
+                                        @if (!string.IsNullOrEmpty(l.Status)) { <dt>Status</dt><dd>@l.Status</dd> }
+                                        @if (!string.IsNullOrEmpty(l.BillingBasis)) { <dt>Billing</dt><dd>@l.BillingBasis@(l.IsBillable ? "" : " (not billable)")</dd> }
+                                        @if (!string.IsNullOrEmpty(l.Note)) { <dt>Note</dt><dd>@l.Note</dd> }
+                                    </dl>
+                                </div>
+                                <div>
+                                    <h6>AI and voice</h6>
+                                    <dl class="ip-money">
+                                        <dt>AI – this interview</dt><dd>@Rs2(l.AIDirect)</dd>
+                                        <dt>AI – IRF share</dt><dd>@Rs2(l.AIIrfShare)</dd>
+                                        <dt>AI – shared</dt><dd>@Rs2(l.AISharedShare)</dd>
+                                        <dt>Voice – this interview</dt><dd>@Rs2(l.VoiceDirect)</dd>
+                                        <dt>Voice – IRF share</dt><dd>@Rs2(l.VoiceIrfShare)</dd>
+                                    </dl>
+                                </div>
+                                <div>
+                                    <h6>Running costs</h6>
+                                    <dl class="ip-money">
+                                        @foreach (var fc in Model.FactorColumns)
+                                        {
+                                            <dt>@fc.Name</dt><dd>@Rs2(l.Factors.TryGetValue(fc.Id, out var fv) ? fv : 0)</dd>
+                                        }
+                                        @if (!Model.FactorColumns.Any()) { <dt class="text-muted">None set up</dt><dd></dd> }
+                                    </dl>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <div class="ip-panel">
+                <div class="d-flex justify-content-between align-items-center" style="margin-bottom:10px;">
+                    <h5 style="margin:0;">Running costs <span class="text-muted" style="font-weight:400;font-size:13px;">— shared across interviews; each becomes a column above</span></h5>
+                    <button type="button" class="mdc-button mdc-button--raised" onclick="ipEditFactor(null)"><span class="fa fa-plus"></span>&nbsp;Add cost</button>
+                </div>
+                <table class="table table-sm" style="font-size:13px;">
+                    <thead><tr><th>Name</th><th>Category</th><th class="text-end">Amount</th><th>Charged</th><th>From</th><th>To</th><th>Status</th><th>Notes</th><th></th></tr></thead>
+                    <tbody>
+                        @if (!allFactors.Any())
+                        {
+                            <tr><td colspan="9" class="text-muted">No running costs yet. Add cloud, email, licences and other shared costs so each interview carries its share.</td></tr>
+                        }
+                        @foreach (var fc in allFactors)
+                        {
+                            <tr class="@(fc.IsActive ? "" : "text-muted")">
+                                <td>@fc.Name</td>
+                                <td>@fc.Category</td>
+                                <td class="text-end">@fc.Amount.ToString("N2", inr) @fc.Currency</td>
+                                <td>@(fc.Basis switch { "PerDay" => "per day", "PerMonth" => "per month", "PerInterview" => "per interview", "PerAIInterview" => "per AI interview", "PerHumanInterview" => "per human interview", _ => fc.Basis })</td>
+                                <td>@fc.EffectiveFrom.ToString("dd MMM yyyy")</td>
+                                <td>@(fc.EffectiveTo?.ToString("dd MMM yyyy") ?? "—")</td>
+                                <td><span class="ip-badge @(fc.IsActive ? "" : "off")">@(fc.IsActive ? "Active" : "Inactive")</span></td>
+                                <td>@fc.Notes</td>
+                                <td class="text-end">
+                                    <button type="button" class="btn btn-link btn-sm p-0" title="Edit"
+                                            onclick='ipEditFactor(@Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(new { fc.Id, fc.Name, fc.Category, fc.Amount, fc.Currency, fc.Basis, EffectiveFrom = fc.EffectiveFrom.ToString("yyyy-MM-dd"), EffectiveTo = fc.EffectiveTo?.ToString("yyyy-MM-dd"), fc.IsActive, fc.Notes }, new Newtonsoft.Json.JsonSerializerSettings { StringEscapeHandling = Newtonsoft.Json.StringEscapeHandling.EscapeHtml })))'>
+                                        <i class="fa fa-pen"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+                <div class="text-muted" style="font-size:12px;">To change a running cost from a date, end-date the current row and add a new one, so earlier periods keep the cost they actually had.</div>
+            </div>
+
+            <div class="ip-panel">
+                <a data-bs-toggle="collapse" href="#ipHow" role="button" aria-expanded="false" aria-controls="ipHow" style="font-weight:600;font-size:15px;color:inherit;text-decoration:none;">
+                    <i class="fa fa-question-circle"></i> How these numbers are worked out
+                </a>
+                <div class="collapse ip-help" id="ipHow">
+                    <ul style="margin-top:10px;">
+                        <li><b>Revenue</b> follows client invoicing exactly: completed and dropped interviews (statuses 4, 6, 7, 8) are billable, redo interviews are not, and the rate comes from the client's billing type (client rate, skill-channel rate or interviewer rate). Amounts are before GST.</li>
+                        <li><b>Interviewer payout</b> is the interviewer's points for the interview that are owed or paid (Submitted, Pending, Advance, Paid), net of penalty and payment SLA, plus surcharge, QC points and video reward — the same formula as the payout run. Lapsed points are excluded.</li>
+                        <li><b>AI – this interview</b> is every OpenAI call logged against the interview or its AI-interview session. <b>AI – IRF share</b> is AI spent on the IRF itself (JD, rubric, question sets, screening) divided across the IRF's held interviews in the period. <b>AI – shared</b> is AI spend that could not be tied to an interview or IRF, divided across that day's held interviews.</li>
+                        <li><b>Voice</b> covers Vapi and Plivo call costs and call recordings for the interview, plus the IRF's unanswered scheduling and phone-screen calls shared the same way as IRF AI.</li>
+                        <li><b>Running costs</b> charged per day or per month are divided equally across all interviews held that day; per-interview costs are added to each held interview. Shares always divide by <i>all</i> interviews held, so filtering to one client does not load it with everyone's overhead.</li>
+                        <li>Cancelled interviews carry their direct costs only. <b>Cost on idle days</b> is running cost and AI spend on days with no interview held.</li>
+                        <li>US-dollar costs are converted at ₹@(Model.Settings?.UsdToInr.ToString("0.##")) per dollar (change it above). AI calls made before per-interview attribution was switched on appear under AI – shared.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="ipFactorModal" tabindex="-1" aria-labelledby="ipFactorTitle" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form method="post" action="/InterviewProfitability/SaveCostFactor">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="returnUrl" value="@returnUrl" />
+                <input type="hidden" name="Id" id="cfId" value="0" />
+                <div class="modal-header">
+                    <h5 class="modal-title" id="ipFactorTitle">Running cost</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row g-2">
+                        <div class="col-12">
+                            <label class="form-label" for="cfName">Name</label>
+                            <input class="form-control" id="cfName" name="Name" maxlength="100" required placeholder="e.g. Zoom licences" />
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label" for="cfCategory">Category</label>
+                            <input class="form-control" id="cfCategory" name="Category" maxlength="50" required list="cfCategories" />
+                            <datalist id="cfCategories">
+                                <option value="Cloud"></option><option value="Email"></option><option value="Video meetings"></option>
+                                <option value="Telephony"></option><option value="Speech &amp; voice AI"></option><option value="Code execution"></option>
+                                <option value="Identity verification"></option><option value="Storage"></option><option value="Software licences"></option>
+                                <option value="Support staff"></option><option value="Other"></option>
+                            </datalist>
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label" for="cfBasis">Charged</label>
+                            <select class="form-select" id="cfBasis" name="Basis">
+                                <option value="PerDay">per day</option>
+                                <option value="PerMonth">per month</option>
+                                <option value="PerInterview">per interview</option>
+                                <option value="PerAIInterview">per AI interview</option>
+                                <option value="PerHumanInterview">per human interview</option>
+                            </select>
+                        </div>
+                        <div class="col-8">
+                            <label class="form-label" for="cfAmount">Amount</label>
+                            <input class="form-control" type="number" step="0.01" min="0" id="cfAmount" name="Amount" required />
+                        </div>
+                        <div class="col-4">
+                            <label class="form-label" for="cfCurrency">Currency</label>
+                            <select class="form-select" id="cfCurrency" name="Currency"><option>INR</option><option>USD</option></select>
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label" for="cfFrom">From</label>
+                            <input class="form-control" type="date" id="cfFrom" name="EffectiveFrom" required />
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label" for="cfTo">To <span class="text-muted">(blank = ongoing)</span></label>
+                            <input class="form-control" type="date" id="cfTo" name="EffectiveTo" />
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label" for="cfNotes">Notes</label>
+                            <input class="form-control" id="cfNotes" name="Notes" maxlength="500" />
+                        </div>
+                        <div class="col-12 ip-check" style="margin-left:6px;">
+                            <input class="form-check-input" type="checkbox" id="cfActive" name="IsActive" value="true" checked />
+                            <label class="form-check-label" for="cfActive">Active</label>
+                            @* After the checkbox: the binder takes the first value, so a ticked box wins. *@
+                            <input type="hidden" name="IsActive" value="false" />
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="mdc-button mdc-button--outlined" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="mdc-button mdc-button--raised">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    function ipEditFactor(f) {
+        f = f || { Id: 0, Name: '', Category: '', Amount: '', Currency: 'INR', Basis: 'PerDay', EffectiveFrom: new Date().toISOString().substring(0, 10), EffectiveTo: '', IsActive: true, Notes: '' };
+        $('#cfId').val(f.Id); $('#cfName').val(f.Name); $('#cfCategory').val(f.Category); $('#cfAmount').val(f.Amount);
+        $('#cfCurrency').val(f.Currency); $('#cfBasis').val(f.Basis); $('#cfFrom').val(f.EffectiveFrom); $('#cfTo').val(f.EffectiveTo || '');
+        $('#cfActive').prop('checked', !!f.IsActive); $('#cfNotes').val(f.Notes || '');
+        $('#ipFactorTitle').text(f.Id ? 'Edit running cost' : 'Add running cost');
+        bootstrap.Modal.getOrCreateInstance(document.getElementById('ipFactorModal')).show();
+    }
+
+    $(function () {
+        $('#ClientId').on('change', function () {
+            var clientId = $(this).val();
+            var irf = $('#IRFIntId');
+            irf.empty();
+            if (!clientId) {
+                irf.append($('<option>', { value: '', text: 'Choose a client first' })).prop('disabled', true);
+                return;
+            }
+            irf.append($('<option>', { value: '', text: 'Loading…' })).prop('disabled', true);
+            $.getJSON('/InterviewProfitability/IRFs', { clientId: clientId }, function (rows) {
+                irf.empty().append($('<option>', { value: '', text: 'All IRFs' }));
+                $.each(rows, function (_, r) {
+                    var title = r.title && r.title.length > 60 ? r.title.substring(0, 60) + '…' : (r.title || '');
+                    irf.append($('<option>', { value: r.id, text: r.code + ' — ' + title }));
+                });
+                irf.prop('disabled', false);
+            });
+        });
+
+        if ($.fn.DataTable) {
+            var ipTable = $('#ipGrid').DataTable({
+                pageLength: 50,
+                lengthMenu: [25, 50, 100, 250, 1000],
+                autoWidth: false,
+                order: [],
+                columnDefs: [{ targets: 0, orderable: false, searchable: false }],
+                language: { search: 'Search:', emptyTable: 'No interviews match these filters.' }
+            });
+
+            // A click anywhere on a row (except a link) opens its details underneath.
+            $('#ipGrid tbody').on('click', 'tr.ip-row', function (e) {
+                if ($(e.target).closest('a').length) return;
+                var tr = $(this), row = ipTable.row(tr);
+                if (row.child.isShown()) {
+                    row.child.hide();
+                    tr.removeClass('ip-open');
+                } else {
+                    row.child($('#' + tr.data('detail')).html()).show();
+                    tr.addClass('ip-open');
+                }
+            });
+        }
+    });
+</script>

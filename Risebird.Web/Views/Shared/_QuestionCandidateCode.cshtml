@@ -1,0 +1,120 @@
+@model Risebird.Entities.ViewModel.QuestionCandidateCodeVM
+@*
+    One question's candidate code, directly under the question in a client report's "Questions Discussed".
+    Only rendered for interviews that have code sessions (CodeSessionQuestionMatcher.Enabled), so reports of
+    interviews without a coding question are unchanged.
+      - submitted: the submitted code, the last run's compile/run output and when it was submitted
+      - not submitted: "No code is submitted yet" (with what the candidate did do, if anything)
+    ShowQuestion: a code session that no discussed question matched, shown with its question so no code is hidden.
+    All text is HTML-encoded by Razor.
+*@
+@{
+    var s = Model.Session;
+    var submitted = s != null && !string.IsNullOrEmpty(s.SubmittedSource);
+    var language = s == null ? null : Risebird.Entities.ViewModel.CodeLanguageCatalog.Find(s.LanguageId);
+    var meta = new List<string>();
+    if (submitted)
+    {
+        if (language != null) { meta.Add(language.Label); }
+        if (s.CodingTimeLimitInMinutes.HasValue) { meta.Add(s.CodingTimeLimitInMinutes.Value + " min allowed"); }
+        if (s.MinutesUsed.HasValue) { meta.Add(s.MinutesUsed.Value + " min used"); }
+        if (s.SubmittedOn.HasValue) { meta.Add("Submitted " + s.SubmittedOn.Value.ToString("dd MMM yyyy, HH:mm")); }
+    }
+    string notSubmittedDetail = null;
+    if (s != null && !submitted)
+    {
+        notSubmittedDetail = s.RunCount > 0
+            ? "The candidate ran code " + s.RunCount + (s.RunCount == 1 ? " time" : " times") + " but did not submit it."
+            : s.OpenedOn.HasValue ? "The candidate opened the code session but did not submit any code." : null;
+    }
+
+    // The styles go out once per page, however many questions there are.
+    var renderStyles = !(Context.Items.ContainsKey("rb-qcode-styles"));
+    Context.Items["rb-qcode-styles"] = true;
+    var wrapper = string.IsNullOrEmpty(Model.Wrapper) ? "div" : Model.Wrapper;
+}
+@if (renderStyles)
+{
+    <style>
+        /* One card per question: the question (and its rating) with the candidate's code under it. The selectors carry
+           #reportForm / #pdfdownload so they outrank Report.css and the PDF's own list rules (which put a tick image and
+           30px padding on every ".question ul li"); the card itself shows no tick. */
+        li.rb-qunit, div.rb-qunit,
+        .question ul li.rb-qunit,
+        #reportForm .question ul li.rb-qunit,
+        #pdfdownload.client-report .question ul li.rb-qunit {
+            display: block; list-style: none !important; background: #fff !important; background-image: none !important;
+            margin: 0 0 14px 0 !important; padding: 12px 14px 12px 14px !important; border: 1px solid #e3e6ea; border-radius: 8px;
+            box-shadow: 0 1px 2px rgba(16, 24, 40, .05); text-align: left; page-break-inside: avoid; }
+        .rb-qunit-num { display: inline-block; margin: 0 0 6px 0; padding: 2px 10px; border-radius: 10px; background: #eaf2fb; color: #1f6fb2;
+            font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; line-height: 16px; }
+        ul.rb-qunit-q, .question ul.rb-qunit-q, #reportForm .question ul.rb-qunit-q, #pdfdownload.client-report .question ul.rb-qunit-q {
+            margin: 0 !important; padding: 0 !important; list-style: none !important; }
+        ul.rb-qunit-q li, .question ul.rb-qunit-q li, #reportForm .question ul.rb-qunit-q li, #pdfdownload.client-report .question ul.rb-qunit-q li {
+            list-style: none !important; background: none !important; background-image: none !important; padding: 0 !important; margin: 0 !important;
+            font-size: 14.5px !important; font-weight: 600; line-height: 1.5; color: #2f3337; }
+        ul.rb-qunit-q label, #reportForm .question ul.rb-qunit-q label, #pdfdownload.client-report .question ul.rb-qunit-q label {
+            display: block; margin: 4px 0 0 0 !important; padding: 0 !important; font-size: 13px !important; color: #7a7f85 !important; }
+        .rb-qunit-qtext { font-size: 14.5px; font-weight: 600; line-height: 1.5; color: #2f3337; white-space: pre-wrap; word-break: break-word; }
+
+        .rb-qcode { margin: 6px 0 12px 0; padding: 8px 10px; background: #fbfcfd; border: 1px solid #e3e6ea; border-left: 3px solid #42a5f5; border-radius: 4px; list-style: none; text-align: left; }
+        /* Inside a question card the code is a part of the card, not a second box. */
+        .rb-qunit .rb-qcode { margin: 10px 0 0 0; padding: 10px 0 0 0; background: none; border: 0; border-top: 1px dashed #e3e6ea; border-radius: 0; }
+        .rb-qcode-q { font-size: 13.5px; font-weight: 600; color: #2f3337; margin-bottom: 6px; white-space: pre-wrap; word-break: break-word; }
+        .rb-qcode-label { font-size: 10.5px; font-weight: 700; letter-spacing: .1em; color: #6b7480; text-transform: uppercase; }
+        .rb-qcode-meta { font-size: 11.5px; color: #7a7f85; margin-left: 6px; text-transform: none; letter-spacing: 0; font-weight: 400; }
+        .rb-qcode-pre { margin: 5px 0 0 0; max-height: 320px; overflow: auto; padding: 8px 10px; background: #f6f8fa; border: 1px solid #e6e9ec; border-radius: 6px;
+            font-family: Consolas, Menlo, Monaco, monospace; font-size: 12px; line-height: 1.45; color: #23272b; white-space: pre-wrap; word-break: break-all; }
+        .rb-qcode-out { margin-top: 8px; }
+        .rb-qcode-none { font-size: 13px; color: #8a5300; margin-top: 3px; }
+        .rb-qcode-none span { display: block; font-size: 12px; color: #8d949b; margin-top: 2px; }
+    </style>
+}
+@switch (wrapper)
+{
+    case "tr":
+        @:<tr class="rb-qcode-row"><td colspan="@Model.ColumnSpan" style="border-top:0;padding-top:0;">
+        break;
+    case "li":
+        @:<li class="rb-qcode" style="padding-left:10px;">
+        break;
+    default:
+        @:<div class="rb-qcode" onclick="event.stopPropagation();">
+        break;
+}
+@if (wrapper == "tr")
+{
+    @:<div class="rb-qcode">
+}
+@if (Model.ShowQuestion && s != null)
+{
+    <div class="rb-qcode-q">@s.QuestionText</div>
+}
+<div class="rb-qcode-label">Candidate code @if (meta.Count > 0) {<span class="rb-qcode-meta">@string.Join(" · ", meta)</span>}</div>
+@if (submitted)
+{
+    <pre class="rb-qcode-pre">@s.SubmittedSource</pre>
+    @if (s.RunCount > 0)
+    {
+        <div class="rb-qcode-out">
+            <div class="rb-qcode-label">Compile and run <span class="rb-qcode-meta">last run of @s.RunCount@(string.IsNullOrEmpty(s.LastRunStatus) ? "" : " · " + s.LastRunStatus)</span></div>
+            <pre class="rb-qcode-pre">@(string.IsNullOrEmpty(s.LastRunOutput) ? "(no output)" : s.LastRunOutput)</pre>
+        </div>
+    }
+}
+else
+{
+    <div class="rb-qcode-none">No code is submitted yet.@if (!string.IsNullOrEmpty(notSubmittedDetail)) {<span>@notSubmittedDetail</span>}</div>
+}
+@if (wrapper == "tr")
+{
+    @:</div></td></tr>
+}
+else if (wrapper == "li")
+{
+    @:</li>
+}
+else
+{
+    @:</div>
+}

@@ -279,6 +279,22 @@ namespace Risebird.Entities.ViewModel
         public bool showChatBox { get; set; }
         [Display(Name = "Proctoring Required")]
         public bool IsProctoring { get; set; } = true;
+
+        /// <summary>
+        /// Interview alignment rollout switch (IRF.IsInterviewerAlignmentRequired). On: interviewers on this
+        /// channel get the alignment page and the gated Zoom link. Read-only on this model: Edit IRF displays it, but
+        /// it is saved on its own by IRF/UpdateInterviewerAlignmentRequired, never by the Edit IRF save, because that
+        /// save re-applies the interviewer panel and toggling this switch must not change interviewers or assignments.
+        /// </summary>
+        [Display(Name = "Interviewer alignment required")]
+        public bool? IsInterviewerAlignmentRequired { get; set; }
+
+        /// <summary>
+        /// Set by IRFRepository.UpdateIRFDetails when the save throws: the underlying error (usually the SQL error that
+        /// usp_UpdateIRFDetails re-raises), so Edit IRF can say why "edits were not saved" instead of only that they
+        /// were not. Not a form field: IRFController.EditIRF clears it before saving.
+        /// </summary>
+        public string SaveFailureReason { get; set; }
         public bool generateTranscriptSummary { get; set; }
         public int AIInterviewType { get; set; }
         public IList<SkillComment> DeliveryHeadSampleQuestions { get; set; }
@@ -316,6 +332,27 @@ namespace Risebird.Entities.ViewModel
         /// </summary>
         [Display(Name = "MCQ Duration (minutes)")]
         public int? McqAssessmentMinutes { get; set; }
+
+        /// <summary>
+        /// How the client report shows each technical skill's level. Null or 0 keeps today's single
+        /// "Evaluated at" line; see <see cref="Risebird.Entities.ViewModel.LevelDisplayModes"/>.
+        /// </summary>
+        [Display(Name = "Skill level display")]
+        public int? LevelDisplayMode { get; set; }
+
+        /// <summary>
+        /// How many times the candidate may reschedule. Null = unlimited. Never applies to Risebird
+        /// internal or client users.
+        /// </summary>
+        [Display(Name = "Max candidate reschedules")]
+        public int? MaxCandidateReschedules { get; set; }
+
+        /// <summary>
+        /// The candidate may not pick a slot more than this many days after the first scheduled date.
+        /// Null = no deadline.
+        /// </summary>
+        [Display(Name = "Complete interview within (days)")]
+        public int? InterviewCompleteByDays { get; set; }
 
         [DisplayName("AssistantId")]
         public string OpenAIAssistantId { get; set; }

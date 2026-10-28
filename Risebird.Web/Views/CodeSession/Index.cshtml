@@ -1,0 +1,318 @@
+@model Risebird.Entities.ViewModel.CodeSessionPageViewModel
+@{
+    Layout = null;
+    var languages = Model?.Languages?.Select(l => new { id = l.Id, label = l.Label, mode = l.CodeMirrorMode, template = l.Template }).ToList();
+    var pageState = Model == null ? null : new
+    {
+        token = Model.Token,
+        languageId = Model.LanguageId,
+        source = Model.Source,
+        lastRunOutput = Model.LastRunOutput,
+        limitMinutes = Model.CodingTimeLimitInMinutes,
+        openedOnMs = Model.OpenedOn.HasValue ? (long?)(Model.OpenedOn.Value - Model.ServerNow).TotalMilliseconds : null,
+        submittedOn = Model.SubmittedOn?.ToString("dd MMM yyyy, HH:mm"),
+        runEnabled = Model.RunEnabled,
+        languages
+    };
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="referrer" content="no-referrer" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Code session · Risebird</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+        :root { --ink: #23272b; --muted: #6d747b; --line: #e3e6ea; --accent: #1f6fb2; --ok: #2e7d32; --warn: #8a5300; --bad: #c62828; --bg: #f4f6f8; }
+        * { box-sizing: border-box; }
+        html, body { margin: 0; height: 100%; background: var(--bg); color: var(--ink); font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+        .cs-wrap { display: flex; flex-direction: column; min-height: 100%; }
+        .cs-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 16px; background: #fff; border-bottom: 1px solid var(--line); flex-wrap: wrap; }
+        .cs-brand { font-weight: 700; color: var(--accent); letter-spacing: .02em; }
+        .cs-head-right { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+        .cs-timer { font-variant-numeric: tabular-nums; font-weight: 700; padding: 4px 10px; border-radius: 4px; background: #eef4fa; color: var(--accent); }
+        .cs-timer.is-low { background: #fff4e0; color: var(--warn); }
+        .cs-timer.is-over { background: #fdecea; color: var(--bad); }
+        .cs-select { padding: 5px 8px; border: 1px solid #cfd6dc; border-radius: 4px; background: #fff; font-size: 14px; }
+        .cs-body { flex: 1 1 auto; display: grid; grid-template-columns: minmax(260px, 1fr) minmax(0, 2fr); gap: 12px; padding: 12px 16px; }
+        @@media (max-width: 900px) { .cs-body { grid-template-columns: 1fr; } }
+        .cs-panel { background: #fff; border: 1px solid var(--line); border-radius: 6px; min-width: 0; }
+        .cs-label { font-size: 10.5px; font-weight: 700; letter-spacing: .12em; color: #8d949b; text-transform: uppercase; padding: 10px 12px 0 12px; }
+        .cs-question { padding: 8px 12px 12px 12px; font-size: 15px; line-height: 1.5; white-space: pre-wrap; word-break: break-word; }
+        .cs-right { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+        .cs-editor .CodeMirror { height: 52vh; min-height: 280px; border-top: 1px solid var(--line); font-size: 14px; }
+        .cs-stdin { width: 100%; min-height: 44px; border: 0; border-top: 1px solid var(--line); padding: 8px 12px; font-family: Consolas, Menlo, monospace; font-size: 13px; resize: vertical; }
+        .cs-actions { display: flex; align-items: center; justify-content: flex-end; gap: 10px; padding: 10px 12px; border-top: 1px solid var(--line); flex-wrap: wrap; }
+        .cs-btn { font-size: 14px; font-weight: 600; border-radius: 4px; padding: 8px 16px; cursor: pointer; border: 1px solid var(--accent); background: #fff; color: var(--accent); }
+        .cs-btn.is-primary { background: var(--accent); color: #fff; }
+        .cs-btn:disabled { opacity: .55; cursor: default; }
+        .cs-output { margin: 0; padding: 10px 12px 12px 12px; max-height: 30vh; overflow: auto; font-family: Consolas, Menlo, monospace; font-size: 13px; line-height: 1.45; white-space: pre-wrap; word-break: break-all; }
+        .cs-status { font-size: 13px; color: var(--muted); margin-right: auto; }
+        .cs-status.is-ok { color: var(--ok); }
+        .cs-status.is-bad { color: var(--bad); }
+        .cs-note { padding: 40px 16px; text-align: center; color: var(--muted); font-size: 16px; }
+    </style>
+</head>
+<body>
+    @if (Model == null)
+    {
+        <div class="cs-note">This code session link is not valid. Please check the link your interviewer shared.</div>
+    }
+    else if (Model.IsExpired)
+    {
+        <div class="cs-wrap">
+            <div class="cs-head"><span class="cs-brand">Risebird</span></div>
+            <div class="cs-note">This code session has ended. If your interview is still in progress, ask your interviewer for a new link.</div>
+        </div>
+    }
+    else
+    {
+        <div class="cs-wrap">
+            <div class="cs-head">
+                <span class="cs-brand">Risebird &middot; Code session</span>
+                <div class="cs-head-right">
+                    <label for="csLanguage" style="font-size:13px;color:#6d747b;">Language</label>
+                    <select id="csLanguage" class="cs-select"></select>
+                    <span class="cs-timer" id="csTimer" style="display:none;" aria-live="polite"></span>
+                </div>
+            </div>
+            <div class="cs-body">
+                <div class="cs-panel">
+                    <div class="cs-label">Question</div>
+                    <div class="cs-question">@Model.QuestionText</div>
+                </div>
+                <div class="cs-right">
+                    <div class="cs-panel cs-editor">
+                        <div class="cs-label" style="padding-bottom:8px;">Your code</div>
+                        <div id="csEditor"></div>
+                        <textarea id="csStdin" class="cs-stdin" placeholder="Input for your program (optional)" aria-label="Program input"></textarea>
+                        <div class="cs-actions">
+                            <span class="cs-status" id="csStatus" role="status"></span>
+                            @if (Model.RunEnabled)
+                            {
+                                <button type="button" class="cs-btn" id="csRun">Run</button>
+                            }
+                            <button type="button" class="cs-btn is-primary" id="csSubmit">Submit answer</button>
+                        </div>
+                    </div>
+                    <div class="cs-panel">
+                        <div class="cs-label">Output</div>
+                        <pre class="cs-output" id="csOutput">@(Model.RunEnabled ? "Run your code to see its output here." : "Running code is not available here. Write your answer and submit it.")</pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script type="application/json" id="csState">@Html.Raw(System.Text.Json.JsonSerializer.Serialize(pageState))</script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/mode/simple.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/javascript/javascript.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/python/python.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/clike/clike.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/xml/xml.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/css/css.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/htmlmixed/htmlmixed.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/sql/sql.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/go/go.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/ruby/ruby.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/php/php.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/rust/rust.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/swift/swift.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/closebrackets.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/matchbrackets.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+        <script>
+            (function () {
+                var state = JSON.parse(document.getElementById('csState').textContent);
+                var languages = state.languages || [];
+                var draftKey = 'rb-code-session-' + state.token;
+                var select = document.getElementById('csLanguage');
+                var output = document.getElementById('csOutput');
+                var status = document.getElementById('csStatus');
+                var runButton = document.getElementById('csRun');
+                var submitButton = document.getElementById('csSubmit');
+                var stdin = document.getElementById('csStdin');
+
+                function findLanguage(id) {
+                    for (var i = 0; i < languages.length; i++) {
+                        if (languages[i].id === id) { return languages[i]; }
+                    }
+                    return null;
+                }
+
+                function readDraft() {
+                    try { return JSON.parse(window.localStorage.getItem(draftKey) || 'null'); } catch (e) { return null; }
+                }
+
+                function writeDraft(languageId, code) {
+                    try { window.localStorage.setItem(draftKey, JSON.stringify({ languageId: languageId, code: code })); } catch (e) { }
+                }
+
+                for (var i = 0; i < languages.length; i++) {
+                    var option = document.createElement('option');
+                    option.value = languages[i].id;
+                    option.textContent = languages[i].label;
+                    select.appendChild(option);
+                }
+
+                // A local draft wins over the server copy only when it is newer work than the last run - never once the
+                // answer is submitted: a submitted answer is final and always shows exactly what was submitted.
+                var draft = state.submittedOn ? null : readDraft();
+                if (state.submittedOn) {
+                    try { window.localStorage.removeItem(draftKey); } catch (e) { }
+                }
+                var startLanguage = (draft && findLanguage(draft.languageId)) || findLanguage(state.languageId) || languages[0];
+                var startCode = (draft && typeof draft.code === 'string' && draft.code.length > 0) ? draft.code
+                    : (state.source || (startLanguage ? startLanguage.template : ''));
+                select.value = startLanguage ? startLanguage.id : '';
+
+                var editor = window.CodeMirror(document.getElementById('csEditor'), {
+                    value: startCode || '',
+                    mode: startLanguage ? startLanguage.mode : 'text/plain',
+                    lineNumbers: true,
+                    indentUnit: 4,
+                    tabSize: 4,
+                    autoCloseBrackets: true,
+                    matchBrackets: true
+                });
+                editor.on('change', function () { writeDraft(select.value, editor.getValue()); });
+
+                var previousLanguage = select.value;
+                select.addEventListener('change', function () {
+                    var next = findLanguage(select.value);
+                    var prev = findLanguage(previousLanguage);
+                    if (!next) { return; }
+                    var current = editor.getValue();
+                    var untouched = !current.trim() || (prev && current === prev.template);
+                    if (untouched || window.confirm('Replace your code with the ' + next.label + ' starter template?')) {
+                        editor.setValue(next.template || '');
+                    }
+                    editor.setOption('mode', next.mode);
+                    previousLanguage = next.id;
+                    writeDraft(next.id, editor.getValue());
+                });
+
+                if (state.lastRunOutput) {
+                    output.textContent = state.lastRunOutput;
+                }
+
+                function setStatus(text, cls) {
+                    status.textContent = text || '';
+                    status.className = 'cs-status' + (cls ? ' ' + cls : '');
+                }
+
+                // Once submitted, the answer is locked for everyone who opens this link (the candidate, or an interviewer):
+                // the code is read-only and nothing can be run or submitted again. The server refuses both as well.
+                var locked = false;
+                var stopTimer = null;
+                function lockSubmitted(submittedOn) {
+                    locked = true;
+                    editor.setOption('readOnly', true);
+                    select.disabled = true;
+                    stdin.disabled = true;
+                    if (runButton) { runButton.disabled = true; runButton.style.display = 'none'; }
+                    submitButton.disabled = true;
+                    submitButton.style.display = 'none';
+                    if (stopTimer) { stopTimer(); }
+                    try { window.localStorage.removeItem(draftKey); } catch (e) { }
+                    setStatus('Submitted ' + (submittedOn || '') + '. This answer is locked and can no longer be changed.', 'is-ok');
+                }
+
+                function post(url, body) {
+                    return fetch(url, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(body),
+                        credentials: 'same-origin'
+                    }).then(function (response) {
+                        if (response.status === 429) {
+                            return { success: false, rateLimited: true };
+                        }
+                        return response.json();
+                    });
+                }
+
+                if (runButton) {
+                    runButton.addEventListener('click', function () {
+                        if (locked) { return; }
+                        runButton.disabled = true;
+                        setStatus('Running…');
+                        output.textContent = 'Running…';
+                        post('/CodeSession/Run', { token: state.token, language: select.value, code: editor.getValue(), stdin: stdin.value })
+                            .then(function (result) {
+                                if (result.rateLimited) {
+                                    output.textContent = 'Too many runs in a short time. Wait a moment and run again.';
+                                    setStatus('', '');
+                                    return;
+                                }
+                                output.textContent = result.output || result.message || '(no output)';
+                                setStatus(result.status ? 'Last run: ' + result.status : '', result.success ? 'is-ok' : 'is-bad');
+                            })
+                            .catch(function () {
+                                output.textContent = 'The code runner is temporarily unavailable. Your code is safe — you can still submit it.';
+                                setStatus('', '');
+                            })
+                            .then(function () { runButton.disabled = false; });
+                    });
+                }
+
+                submitButton.addEventListener('click', function () {
+                    if (locked) { return; }
+                    if (!editor.getValue().trim()) {
+                        setStatus('Write some code before submitting it.', 'is-bad');
+                        return;
+                    }
+                    if (!window.confirm('Submit your answer? Once submitted, your code is final and cannot be changed.')) {
+                        return;
+                    }
+                    submitButton.disabled = true;
+                    setStatus('Submitting…');
+                    post('/CodeSession/Submit', { token: state.token, language: select.value, code: editor.getValue() })
+                        .then(function (result) {
+                            if (result.rateLimited) {
+                                setStatus('Too many requests. Wait a moment and submit again.', 'is-bad');
+                            } else if (result.success) {
+                                lockSubmitted(result.submittedOn);
+                            } else if (result.submittedOn) {
+                                // It had already been submitted (for example from another tab): the stored answer stands.
+                                lockSubmitted(result.submittedOn);
+                                setStatus(result.message || 'This answer was already submitted and can no longer be changed.', 'is-ok');
+                            } else {
+                                setStatus(result.message || 'Your answer could not be saved. Please try again.', 'is-bad');
+                            }
+                        })
+                        .catch(function () { setStatus('Your answer could not be saved. Please try again.', 'is-bad'); })
+                        .then(function () { if (!locked) { submitButton.disabled = false; } });
+                });
+
+                // Soft countdown from when the link was first opened. Time running out never blocks submitting;
+                // the interviewer sees the time used in the report.
+                var timer = document.getElementById('csTimer');
+                if (state.limitMinutes && state.openedOnMs !== null && state.openedOnMs !== undefined) {
+                    var deadline = Date.now() + state.openedOnMs + state.limitMinutes * 60000;
+                    var tick = function () {
+                        var left = Math.round((deadline - Date.now()) / 1000);
+                        timer.style.display = '';
+                        if (left <= 0) {
+                            timer.textContent = 'Time is up — submit your answer';
+                            timer.className = 'cs-timer is-over';
+                            return;
+                        }
+                        var m = Math.floor(left / 60), s = left % 60;
+                        timer.textContent = m + ':' + (s < 10 ? '0' : '') + s + ' left';
+                        timer.className = 'cs-timer' + (left <= 120 ? ' is-low' : '');
+                    };
+                    tick();
+                    var timerHandle = setInterval(tick, 1000);
+                    stopTimer = function () { clearInterval(timerHandle); timer.textContent = 'Submitted'; timer.className = 'cs-timer'; };
+                }
+
+                if (state.submittedOn) {
+                    lockSubmitted(state.submittedOn);
+                }
+            })();
+        </script>
+    }
+</body>
+</html>
