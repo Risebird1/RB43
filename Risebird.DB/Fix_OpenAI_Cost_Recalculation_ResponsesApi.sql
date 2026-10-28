@@ -69,27 +69,33 @@ BEGIN
 END
 GO
 
--- 1. Fill in token counts for Responses API rows that were logged with none. Batched so the log
---    table is never locked for long.
-DECLARE @Batch INT = 5000, @Rows INT = 1;
-WHILE @Rows > 0
+-- 1. Fill in token counts for Responses API rows that were logged with none. Walks the table once
+--    in Id ranges so the log table is never locked for long. (An earlier version looped "until no
+--    row matches", which never ended when a response really reported 0 tokens: such a row is
+--    "filled" with 0 again and still matches.)
+DECLARE @Batch INT = 5000, @LastId BIGINT = 0, @MaxId BIGINT, @Filled INT = 0;
+SELECT @MaxId = MAX(Id) FROM OpenAIApiLogs;
+
+WHILE @LastId < ISNULL(@MaxId, 0)
 BEGIN
-    UPDATE TOP (@Batch) l
+    UPDATE l
     SET PromptTokens     = TRY_CAST(JSON_VALUE(l.ResponsePayload, '$.usage.input_tokens') AS INT),
         CompletionTokens = TRY_CAST(JSON_VALUE(l.ResponsePayload, '$.usage.output_tokens') AS INT),
         TotalTokens      = ISNULL(TRY_CAST(JSON_VALUE(l.ResponsePayload, '$.usage.total_tokens') AS INT),
                                   ISNULL(TRY_CAST(JSON_VALUE(l.ResponsePayload, '$.usage.input_tokens') AS INT), 0)
                                 + ISNULL(TRY_CAST(JSON_VALUE(l.ResponsePayload, '$.usage.output_tokens') AS INT), 0))
     FROM OpenAIApiLogs l
-    WHERE ISNULL(l.PromptTokens, 0) = 0
+    WHERE l.Id > @LastId AND l.Id <= @LastId + @Batch
+      AND ISNULL(l.PromptTokens, 0) = 0
       AND ISNULL(l.CompletionTokens, 0) = 0
       AND l.ResponsePayload IS NOT NULL
       AND ISJSON(l.ResponsePayload) = 1
       AND JSON_VALUE(l.ResponsePayload, '$.usage.input_tokens') IS NOT NULL;
 
-    SET @Rows = @@ROWCOUNT;
-    PRINT CONCAT('Token counts filled: ', @Rows);
+    SET @Filled += @@ROWCOUNT;
+    SET @LastId += @Batch;
 END
+PRINT CONCAT('Token counts filled: ', @Filled);
 GO
 
 -- 2. Re-price every row that has tokens. Whisper and TTS rows are priced by audio length / characters,
