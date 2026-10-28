@@ -114,6 +114,13 @@ namespace Risebird.CommonHelper
                     model = model ?? "tts-1";
                 }
 
+                // Realtime (voice) sessions bill audio and text tokens at their own rates; the payload
+                // is one whole session summed by OpenAIRealtimeUsage.
+                if (apiEndpoint?.Contains("/realtime") == true)
+                {
+                    estimatedCost = OpenAIRealtimeUsage.FromPayload(responsePayload).CostUSD(model);
+                }
+
                 var log = new OpenAIApiLog
                 {
                     LogDate = DateTime.UtcNow,

@@ -8,6 +8,8 @@
     var inr = new CultureInfo("en-IN");
     string Rs(decimal v) => (v < 0 ? "-₹" : "₹") + Math.Abs(Math.Round(v, 0)).ToString("N0", inr);
     string Rs2(decimal v) => (v < 0 ? "-₹" : "₹") + Math.Abs(v).ToString("N2", inr);
+    // AI and voice are often under a rupee per interview; in whole rupees they would read as zero.
+    string RsSmall(decimal v) => Math.Abs(v) < 100 ? Rs2(v) : Rs(v);
 
     var f = Model.Filter ?? new InterviewProfitabilityFilter();
     var options = ViewBag.FilterOptions as InterviewProfitabilityFilterOptions ?? new InterviewProfitabilityFilterOptions();
@@ -305,8 +307,8 @@
                                     }
                                     <td class="ip-n" data-order="@l.Revenue">@Rs(l.Revenue)</td>
                                     <td class="ip-n" data-order="@l.InterviewerPayout">@Rs(l.InterviewerPayout)</td>
-                                    <td class="ip-n" data-order="@l.AITotal">@Rs(l.AITotal)</td>
-                                    <td class="ip-n" data-order="@l.VoiceTotal">@Rs(l.VoiceTotal)</td>
+                                    <td class="ip-n" data-order="@l.AITotal">@RsSmall(l.AITotal)</td>
+                                    <td class="ip-n" data-order="@l.VoiceTotal">@RsSmall(l.VoiceTotal)</td>
                                     <td class="ip-n" data-order="@l.OverheadTotal">@Rs(l.OverheadTotal)</td>
                                     <td class="ip-n ip-strong" data-order="@l.TotalCost">@Rs(l.TotalCost)</td>
                                     <td class="ip-n ip-strong @(l.Margin < 0 ? "ip-neg" : "ip-pos")" data-order="@l.Margin">@Rs(l.Margin)</td>
@@ -328,8 +330,8 @@
                                 }
                                 <td class="ip-n">@Rs(t.Revenue)</td>
                                 <td class="ip-n">@Rs(t.InterviewerPayout)</td>
-                                <td class="ip-n">@Rs(t.AITotal)</td>
-                                <td class="ip-n">@Rs(t.VoiceTotal)</td>
+                                <td class="ip-n">@RsSmall(t.AITotal)</td>
+                                <td class="ip-n">@RsSmall(t.VoiceTotal)</td>
                                 <td class="ip-n">@Rs(t.OverheadTotal)</td>
                                 <td class="ip-n">@Rs(t.TotalCost)</td>
                                 <td class="ip-n @(t.Margin < 0 ? "ip-neg" : "ip-pos")">@Rs(t.Margin)</td>

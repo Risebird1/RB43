@@ -427,6 +427,46 @@ namespace Risebird.Business.Tests.FinanceTests
         }
 
         [Fact]
+        public void AI_calls_logged_without_a_cost_are_reported_with_the_fix()
+        {
+            var warnings = InterviewProfitabilityService.DataGapWarnings(
+                new InterviewProfitabilityRawData { UnpricedAICalls = 1234 }, new InterviewProfitabilitySettings(),
+                start: new DateTime(2026, 10, 20), today: new DateTime(2026, 10, 28)).ToList();
+
+            var warning = Assert.Single(warnings);
+            Assert.Contains("1,234 AI calls", warning);
+            Assert.Contains("Fix_OpenAI_Cost_Recalculation_ResponsesApi.sql", warning);
+        }
+
+        [Fact]
+        public void A_window_older_than_the_purge_says_which_costs_are_gone()
+        {
+            var settings = new InterviewProfitabilitySettings { AILogRetentionDays = 60, CallLogRetentionDays = 30 };
+            var today = new DateTime(2026, 10, 28);
+
+            var fortyDaysBack = InterviewProfitabilityService.DataGapWarnings(
+                new InterviewProfitabilityRawData(), settings, today.AddDays(-40), today).ToList();
+            var ninetyDaysBack = InterviewProfitabilityService.DataGapWarnings(
+                new InterviewProfitabilityRawData(), settings, today.AddDays(-90), today).ToList();
+            var lastWeek = InterviewProfitabilityService.DataGapWarnings(
+                new InterviewProfitabilityRawData(), settings, today.AddDays(-7), today).ToList();
+
+            Assert.Contains(fortyDaysBack, w => w.StartsWith("Vapi and Plivo call logs are kept for 30 days"));
+            Assert.DoesNotContain(fortyDaysBack, w => w.StartsWith("AI call logs"));
+            Assert.Contains(ninetyDaysBack, w => w.StartsWith("AI call logs are kept for 60 days"));
+            Assert.Empty(lastWeek);
+        }
+
+        [Fact]
+        public void The_retention_follows_the_purge_job_settings()
+        {
+            var settings = Sut(new() { ["Purge:OpenAIRetentionDays"] = "120", ["Purge:VapiPlivoRetentionDays"] = "45" }).GetSettings();
+
+            Assert.Equal(120, settings.AILogRetentionDays);
+            Assert.Equal(45, settings.CallLogRetentionDays);
+        }
+
+        [Fact]
         public async Task The_reason_a_query_failed_is_shown_on_the_page()
         {
             _repository.Setup(r => r.GetRawDataAsync(It.IsAny<DateTime>(), It.IsAny<DateTime>(), It.IsAny<int?>(), It.IsAny<int?>(),

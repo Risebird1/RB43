@@ -93,7 +93,7 @@ END
 GO
 
 -- 2. Re-price every row that has tokens. Whisper and TTS rows are priced by audio length / characters,
---    not tokens, and are left alone.
+--    and Realtime (voice) sessions by audio and text tokens separately, so all three are left alone.
 DECLARE @Batch INT = 5000, @LastId BIGINT = 0, @MaxId BIGINT;
 SELECT @MaxId = MAX(Id) FROM OpenAIApiLogs;
 
@@ -110,7 +110,8 @@ BEGIN
     FROM OpenAIApiLogs l
     WHERE l.Id > @LastId AND l.Id <= @LastId + @Batch
       AND (ISNULL(l.PromptTokens, 0) > 0 OR ISNULL(l.CompletionTokens, 0) > 0)
-      AND ISNULL(l.ApiEndpoint, '') NOT LIKE '%/audio/%';
+      AND ISNULL(l.ApiEndpoint, '') NOT LIKE '%/audio/%'
+      AND ISNULL(l.ApiEndpoint, '') NOT LIKE '%/realtime%';
 
     SET @LastId = @LastId + @Batch;
 END

@@ -32,7 +32,12 @@ namespace Risebird.Business
                     ? "INR" : "USD",
                 PlivoCXCostPerMinuteINR = Math.Max(0, _configuration.GetValue<decimal?>($"{SettingsSection}:PlivoCXCostPerMinuteINR") ?? 0),
                 MaxRangeDays = _configuration.GetValue<int?>($"{SettingsSection}:MaxRangeDays") is int days && days > 0
-                    ? days : defaults.MaxRangeDays
+                    ? days : defaults.MaxRangeDays,
+                // The purge job's own settings, so the warning follows whatever retention is configured.
+                AILogRetentionDays = _configuration.GetValue<int?>("Purge:OpenAIRetentionDays") is int aiDays && aiDays > 0
+                    ? aiDays : defaults.AILogRetentionDays,
+                CallLogRetentionDays = _configuration.GetValue<int?>("Purge:VapiPlivoRetentionDays") is int callDays && callDays > 0
+                    ? callDays : defaults.CallLogRetentionDays
             };
         }
 
@@ -82,8 +87,29 @@ namespace Risebird.Business
             var report = InterviewProfitabilityCalculator.Build(raw, filter, settings, start, end);
             foreach (var table in raw.MissingCostTables ?? new List<string>())
                 warnings.Add($"{CostSourceName(table)} costs are not included: the {table} table does not exist on this database.");
+            warnings.AddRange(DataGapWarnings(raw, settings, start, DateTime.Today));
             report.Warnings.InsertRange(0, warnings);
             return report;
+        }
+
+        /// <summary>
+        /// Why AI or voice cost may read low for this window: calls logged without a cost before the
+        /// logging fix, and logs the nightly purge has already deleted.
+        /// </summary>
+        internal static IEnumerable<string> DataGapWarnings(InterviewProfitabilityRawData raw,
+            InterviewProfitabilitySettings settings, DateTime start, DateTime today)
+        {
+            if (raw.UnpricedAICalls > 0)
+                yield return $"{raw.UnpricedAICalls:N0} AI calls in this period were logged without a cost (before the logging fix), " +
+                             "so AI cost is understated. Run Risebird.DB/Fix_OpenAI_Cost_Recalculation_ResponsesApi.sql once to reprice them.";
+
+            var aiCutoff = today.AddDays(-settings.AILogRetentionDays);
+            if (start < aiCutoff)
+                yield return $"AI call logs are kept for {settings.AILogRetentionDays} days, so AI cost before {aiCutoff:dd MMM yyyy} is not available.";
+
+            var callCutoff = today.AddDays(-settings.CallLogRetentionDays);
+            if (start < callCutoff)
+                yield return $"Vapi and Plivo call logs are kept for {settings.CallLogRetentionDays} days, so voice cost before {callCutoff:dd MMM yyyy} is not available.";
         }
 
         private static string CostSourceName(string table) => table switch

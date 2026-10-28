@@ -125,6 +125,9 @@ namespace Risebird.Entities.ViewModel
         /// <summary>Call-cost tables that do not exist on this database; their costs are left out.</summary>
         public List<string> MissingCostTables { get; set; } = new();
 
+        /// <summary>AI calls in the window logged with no tokens and $0, before the logging fix: spend the report cannot see.</summary>
+        public int UnpricedAICalls { get; set; }
+
         /// <summary>Set instead of data when the report query failed: why, in words an admin can act on.</summary>
         public string LoadError { get; set; }
     }
@@ -141,6 +144,12 @@ namespace Risebird.Entities.ViewModel
         public decimal PlivoCXCostPerMinuteINR { get; set; }
 
         public int MaxRangeDays { get; set; } = 92;
+
+        /// <summary>Days of OpenAIApiLogs kept by the nightly purge (Purge:OpenAIRetentionDays); older AI cost is gone.</summary>
+        public int AILogRetentionDays { get; set; } = 60;
+
+        /// <summary>Days of Vapi and Plivo call logs kept by the nightly purge (Purge:VapiPlivoRetentionDays).</summary>
+        public int CallLogRetentionDays { get; set; } = 30;
     }
 
     /// <summary>One row of the grid: an interview, or a group of interviews. Money is in rupees.</summary>

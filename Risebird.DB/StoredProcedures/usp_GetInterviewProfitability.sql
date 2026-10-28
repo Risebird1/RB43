@@ -22,6 +22,7 @@ GO
 --      not be tied to an interview or IRF.
 --   4. The operational cost factors in force at any point in the window.
 --   5. Call-cost tables that do not exist on this database, whose costs are therefore left out.
+--   6. How many AI calls in the window were logged without a cost (before the logging fix).
 --
 -- The shares in 2 and 3 are divided by counts over ALL held interviews, never only the filtered
 -- ones, so filtering the grid to one client does not load that client with everyone's overhead.
@@ -403,6 +404,19 @@ BEGIN
 
     -- ── 5. Call-cost tables not on this database (their costs are left out) ─
     SELECT TableName FROM #MissingSources ORDER BY TableName;
+
+    -- ── 6. AI calls in the window logged without a cost ────────────────────
+    -- Before the logging fix, Responses API calls were stored with no tokens and $0: real spend this
+    -- report cannot see until Fix_OpenAI_Cost_Recalculation_ResponsesApi.sql reprices them. Cache
+    -- hits (free by design) and GET status checks are not POSTs to /responses, so are not counted.
+    SELECT COUNT(*) AS UnpricedAICalls
+    FROM OpenAIApiLogs l
+    WHERE l.LogDate >= @From AND l.LogDate < @To
+      AND l.IsSuccess = 1
+      AND ISNULL(l.EstimatedCostUSD, 0) = 0
+      AND ISNULL(l.TotalTokens, 0) = 0
+      AND l.ApiMethod = 'POST'
+      AND l.ApiEndpoint LIKE '%/responses%';
 
     DROP TABLE #MissingSources;
     DROP TABLE #CallCost;

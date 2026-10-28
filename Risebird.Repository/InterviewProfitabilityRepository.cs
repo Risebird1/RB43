@@ -60,7 +60,8 @@ namespace Risebird.Repository
                     Days = (await multi.ReadAsync<InterviewProfitabilityDayRow>()).ToList(),
                     CostFactors = (await multi.ReadAsync<OperationalCostFactor>()).ToList(),
                     // Result 5 is absent when the database still has the previous version of the procedure.
-                    MissingCostTables = multi.IsConsumed ? new List<string>() : (await multi.ReadAsync<string>()).ToList()
+                    MissingCostTables = multi.IsConsumed ? new List<string>() : (await multi.ReadAsync<string>()).ToList(),
+                    UnpricedAICalls = multi.IsConsumed ? 0 : (await multi.ReadAsync<int>()).FirstOrDefault()
                 };
             }
             catch (Exception ex)
