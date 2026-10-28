@@ -74,12 +74,16 @@
     .ip-toggle { display: inline-block; width: 18px; height: 18px; line-height: 16px; border: 1px solid #d0d5dd; border-radius: 4px; color: #475467; font-weight: 600; font-size: 13px; text-align: center; }
     tr.ip-open .ip-toggle { background: #2a78d6; border-color: #2a78d6; color: #fff; }
     .ip-badge.human { background: #ecfdf3; color: #067647; }
-    .ip-detail { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 8px 28px; padding: 8px 6px 10px 32px; font-size: 12.5px; }
+    .ip-detail { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 8px 28px; padding: 8px 6px 10px 32px; font-size: 12.5px; box-sizing: border-box;
+        /* width 0 + min-width 100%: fill the expanded row without making the table wider than the page. */
+        width: 0; min-width: 100%; }
     .ip-detail h6 { font-size: 12px; font-weight: 600; color: #475467; text-transform: uppercase; letter-spacing: .03em; margin: 0 0 6px; }
     .ip-detail dl { display: grid; grid-template-columns: max-content 1fr; gap: 3px 14px; margin: 0; }
     .ip-detail dt { font-weight: 400; color: #667085; }
     .ip-detail dd { margin: 0; color: #1f2937; }
     .ip-detail dl.ip-money dd { text-align: right; font-variant-numeric: tabular-nums; }
+    /* The theme sets nowrap on every table cell; the details text must wrap. */
+    .ip-detail, .ip-detail * { white-space: normal !important; }
 </style>
 
 <div class="main-panel" id="main-panel">
