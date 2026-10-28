@@ -6972,7 +6972,7 @@ NEVER:
 
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> GetColdCandidatesList(int ColdCandidateValue, int returnBack)
+        public async Task<IActionResult> GetColdCandidatesList(int ColdCandidateValue, int returnBack, DateTime? startDate = null, DateTime? endDate = null)
         {
             try
             {
@@ -6986,7 +6986,15 @@ NEVER:
                     ViewBag.ReturnBack = returnBack;
                     if (profileName == "Admin" || profileName == "SeniorHR" || profileName == "SupportAdmin")
                     {
-                        var data = await _dashboardService.GetColdCandidatesList(ColdCandidateValue, emailid);
+                        // Cold Candidate tab: default to the last 45 days of cold-marked candidates
+                        if (ColdCandidateValue == 1)
+                        {
+                            endDate ??= DateTime.Today;
+                            startDate ??= endDate.Value.Date.AddDays(-45);
+                            ViewBag.StartDate = startDate.Value.ToString("yyyy-MM-dd");
+                            ViewBag.EndDate = endDate.Value.ToString("yyyy-MM-dd");
+                        }
+                        var data = await _dashboardService.GetColdCandidatesList(ColdCandidateValue, emailid, startDate, endDate);
                         //data = data.Select(x =>
                         //{
                         //    x.MeetingStatusStatusDesc = x.MeetingStatus.HasValue ? ((MeetingStatus)Convert.ToInt32(x.MeetingStatus)).GetDescription() : string.Empty;
