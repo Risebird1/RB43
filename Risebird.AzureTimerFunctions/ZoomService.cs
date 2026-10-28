@@ -478,6 +478,7 @@ namespace Risebird.AzureTimerFunctions
                                         var transcriptString = await DownloadTranscriptStringAsync(transcriptionDownloadUrl, accessToken);
                                         if (!string.IsNullOrEmpty(transcriptString))
                                         {
+                                            using var aiCostScope = OpenAIApiLogScope.Begin(meetingId: meeting.imid);
                                             var runResult = await _assistantServiceHelper.GenerateIntervieweeResponseExtraction(transcriptString);
                                             transcriptSummaryCleanedJson = OpenAIResponsesHelper.CleanJsonResponseText(
                                                 runResult?.Data?.FirstOrDefault()?.Content?.FirstOrDefault()?.Text?.Value);

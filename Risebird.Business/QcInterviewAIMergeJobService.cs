@@ -125,6 +125,7 @@ namespace Risebird.Business
         private async Task<bool> ProcessRowAsync(QcInterviewAIMergePendingRow row, string assistantId, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
+            using var aiCostScope = OpenAIApiLogScope.Begin(meetingId: row.InterviewId);
 
             var userMessage = BuildMergeUserMessage(row.ReportAIDetails, row.TranscritAiDetails, row.ContradictionJson, row.interviewDate, row.Joinedon, row.ActualDuration, row.RequiredDuration, row.CandidateRating, row.CandidateRedoRequest, row.InterviewerVideoOff);
             var runResult = await _assistantServiceHelper.GenerateQcAnalysisInterviewAIMerge(userMessage, assistantId, useJsonResponseFormat: true);

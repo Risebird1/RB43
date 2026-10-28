@@ -28,7 +28,33 @@ namespace Risebird.CommonHelper
         private readonly decimal GPT4O_MINI_INPUT_COST_PER_1K = 0.00015m;   // $0.15 per 1M tokens
         private readonly decimal GPT4O_MINI_OUTPUT_COST_PER_1K = 0.00060m;  // $0.60 per 1M tokens
         private readonly decimal GPT4O_MINI_CACHED_COST_PER_1K = 0.000075m; // $0.075 per 1M tokens
-        
+
+        // GPT-4.1 models (OpenAI:ResponsesModel and most stored prompts). Every one of these names
+        // contains "gpt-4", so they must be matched before the legacy GPT-4 tier, which billed them
+        // at fifteen to seventy-five times their real price.
+        private readonly decimal GPT41_INPUT_COST_PER_1K = 0.0020m;          // $2.00 per 1M tokens
+        private readonly decimal GPT41_OUTPUT_COST_PER_1K = 0.0080m;         // $8.00 per 1M tokens
+        private readonly decimal GPT41_CACHED_COST_PER_1K = 0.0005m;         // $0.50 per 1M tokens
+        private readonly decimal GPT41_MINI_INPUT_COST_PER_1K = 0.0004m;     // $0.40 per 1M tokens
+        private readonly decimal GPT41_MINI_OUTPUT_COST_PER_1K = 0.0016m;    // $1.60 per 1M tokens
+        private readonly decimal GPT41_MINI_CACHED_COST_PER_1K = 0.0001m;    // $0.10 per 1M tokens
+        private readonly decimal GPT41_NANO_INPUT_COST_PER_1K = 0.0001m;     // $0.10 per 1M tokens
+        private readonly decimal GPT41_NANO_OUTPUT_COST_PER_1K = 0.0004m;    // $0.40 per 1M tokens
+        private readonly decimal GPT41_NANO_CACHED_COST_PER_1K = 0.000025m;  // $0.025 per 1M tokens
+
+        // GPT-5 models, priced so a model-routing trial (OpenAI:CostOptimization:ModelOverrides) is
+        // measured at its real cost rather than at the gpt-4o fallback. Verify against
+        // https://openai.com/api/pricing before relying on them.
+        private readonly decimal GPT5_INPUT_COST_PER_1K = 0.00125m;          // $1.25 per 1M tokens
+        private readonly decimal GPT5_OUTPUT_COST_PER_1K = 0.0100m;          // $10.00 per 1M tokens
+        private readonly decimal GPT5_CACHED_COST_PER_1K = 0.000125m;        // $0.125 per 1M tokens
+        private readonly decimal GPT5_MINI_INPUT_COST_PER_1K = 0.00025m;     // $0.25 per 1M tokens
+        private readonly decimal GPT5_MINI_OUTPUT_COST_PER_1K = 0.0020m;     // $2.00 per 1M tokens
+        private readonly decimal GPT5_MINI_CACHED_COST_PER_1K = 0.000025m;   // $0.025 per 1M tokens
+        private readonly decimal GPT5_NANO_INPUT_COST_PER_1K = 0.00005m;     // $0.05 per 1M tokens
+        private readonly decimal GPT5_NANO_OUTPUT_COST_PER_1K = 0.0004m;     // $0.40 per 1M tokens
+        private readonly decimal GPT5_NANO_CACHED_COST_PER_1K = 0.000005m;   // $0.005 per 1M tokens
+
         // Legacy GPT-4 models
         private readonly decimal GPT4_INPUT_COST_PER_1K = 0.03m;
         private readonly decimal GPT4_OUTPUT_COST_PER_1K = 0.06m;
@@ -68,8 +94,11 @@ namespace Risebird.CommonHelper
         {
             try
             {
+                context = OpenAIApiLogScope.Apply(context);
+
                 var (promptTokens, completionTokens, totalTokens) = ExtractTokenUsage(responsePayload);
-                var estimatedCost = CalculateCost(model, promptTokens, completionTokens);
+                var cachedPromptTokens = ExtractCachedInputTokens(responsePayload);
+                var estimatedCost = CalculateCost(model, promptTokens, completionTokens, cachedPromptTokens);
 
                 // For Whisper (speech-to-text), estimate cost differently
                 if (apiEndpoint?.Contains("/audio/transcriptions") == true)
@@ -127,11 +156,22 @@ namespace Risebird.CommonHelper
 
         public decimal CalculateCost(string model, int promptTokens, int completionTokens)
         {
+            return CalculateCost(model, promptTokens, completionTokens, 0);
+        }
+
+        /// <summary>
+        /// Prices a call whose prompt was partly served from OpenAI's prompt cache. The provider counts
+        /// cached tokens inside the prompt total, so only the remainder is billed at the full input rate.
+        /// Models without a published cached rate bill cached tokens at the normal input rate.
+        /// </summary>
+        public decimal CalculateCost(string model, int promptTokens, int completionTokens, int cachedPromptTokens)
+        {
             if (string.IsNullOrEmpty(model) || (promptTokens == 0 && completionTokens == 0))
                 return 0;
 
             decimal inputCost = 0;
             decimal outputCost = 0;
+            decimal? cachedCost = null;
 
             model = model.ToLower();
 
@@ -140,11 +180,50 @@ namespace Risebird.CommonHelper
             {
                 inputCost = GPT4O_MINI_INPUT_COST_PER_1K;
                 outputCost = GPT4O_MINI_OUTPUT_COST_PER_1K;
+                cachedCost = GPT4O_MINI_CACHED_COST_PER_1K;
             }
             else if (model.Contains("gpt-4o"))
             {
                 inputCost = GPT4O_INPUT_COST_PER_1K;
                 outputCost = GPT4O_OUTPUT_COST_PER_1K;
+                cachedCost = GPT4O_CACHED_COST_PER_1K;
+            }
+            // GPT-4.1 tiers, smallest first because "gpt-4.1-mini" also contains "gpt-4.1"
+            else if (model.Contains("gpt-4.1-nano"))
+            {
+                inputCost = GPT41_NANO_INPUT_COST_PER_1K;
+                outputCost = GPT41_NANO_OUTPUT_COST_PER_1K;
+                cachedCost = GPT41_NANO_CACHED_COST_PER_1K;
+            }
+            else if (model.Contains("gpt-4.1-mini"))
+            {
+                inputCost = GPT41_MINI_INPUT_COST_PER_1K;
+                outputCost = GPT41_MINI_OUTPUT_COST_PER_1K;
+                cachedCost = GPT41_MINI_CACHED_COST_PER_1K;
+            }
+            else if (model.Contains("gpt-4.1"))
+            {
+                inputCost = GPT41_INPUT_COST_PER_1K;
+                outputCost = GPT41_OUTPUT_COST_PER_1K;
+                cachedCost = GPT41_CACHED_COST_PER_1K;
+            }
+            else if (model.Contains("gpt-5-nano"))
+            {
+                inputCost = GPT5_NANO_INPUT_COST_PER_1K;
+                outputCost = GPT5_NANO_OUTPUT_COST_PER_1K;
+                cachedCost = GPT5_NANO_CACHED_COST_PER_1K;
+            }
+            else if (model.Contains("gpt-5-mini"))
+            {
+                inputCost = GPT5_MINI_INPUT_COST_PER_1K;
+                outputCost = GPT5_MINI_OUTPUT_COST_PER_1K;
+                cachedCost = GPT5_MINI_CACHED_COST_PER_1K;
+            }
+            else if (model.Contains("gpt-5"))
+            {
+                inputCost = GPT5_INPUT_COST_PER_1K;
+                outputCost = GPT5_OUTPUT_COST_PER_1K;
+                cachedCost = GPT5_CACHED_COST_PER_1K;
             }
             // Legacy GPT-4 models
             else if (model.Contains("gpt-4-turbo") || model.Contains("gpt-4-1106") || model.Contains("gpt-4-0125"))
@@ -169,8 +248,38 @@ namespace Risebird.CommonHelper
                 outputCost = GPT4O_OUTPUT_COST_PER_1K;
             }
 
-            var totalCost = (promptTokens / 1000m * inputCost) + (completionTokens / 1000m * outputCost);
+            var cached = Math.Clamp(cachedPromptTokens, 0, Math.Max(promptTokens, 0));
+            var uncachedPromptTokens = promptTokens - cached;
+
+            var totalCost = (uncachedPromptTokens / 1000m * inputCost)
+                + (cached / 1000m * (cachedCost ?? inputCost))
+                + (completionTokens / 1000m * outputCost);
             return Math.Round(totalCost, 6);
+        }
+
+        /// <summary>
+        /// Reads the cached share of the prompt from either API shape: the Responses API reports it under
+        /// <c>usage.input_tokens_details</c>, Chat Completions under <c>usage.prompt_tokens_details</c>.
+        /// </summary>
+        public int ExtractCachedInputTokens(string responsePayload)
+        {
+            if (string.IsNullOrEmpty(responsePayload))
+                return 0;
+
+            try
+            {
+                var usage = JObject.Parse(responsePayload)["usage"];
+                if (usage == null || usage.Type != JTokenType.Object)
+                    return 0;
+
+                return usage["input_tokens_details"]?["cached_tokens"]?.Value<int?>()
+                    ?? usage["prompt_tokens_details"]?["cached_tokens"]?.Value<int?>()
+                    ?? 0;
+            }
+            catch
+            {
+                return 0;
+            }
         }
 
         public (int promptTokens, int completionTokens, int totalTokens) ExtractTokenUsage(string responsePayload)
@@ -192,6 +301,14 @@ namespace Risebird.CommonHelper
                     
                     if (promptTokens > 0 || completionTokens > 0)
                         return (promptTokens, completionTokens, totalTokens);
+
+                    // The Responses API (OpenAIResponsesHelper, every stored-prompt call) names the same
+                    // counts input_tokens / output_tokens. Without this branch those calls log zero
+                    // tokens and zero cost.
+                    var inputTokens = usage["input_tokens"]?.Value<int>() ?? 0;
+                    var outputTokens = usage["output_tokens"]?.Value<int>() ?? 0;
+                    if (inputTokens > 0 || outputTokens > 0)
+                        return (inputTokens, outputTokens, usage["total_tokens"]?.Value<int>() ?? (inputTokens + outputTokens));
                 }
 
                 // Check for camelCase version (some APIs return this)
