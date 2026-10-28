@@ -9576,6 +9576,7 @@ namespace Risebird.Web.Controllers
 
         public async Task<AIReportQCAnalysisSchema> PerformQualityCheck(InterviewReport model, bool? regenerateAIQC = null, bool? isBackgroudJobRequest = null)
         {
+            using var aiCostScope = OpenAIApiLogScope.Begin(meetingId: model?.InterviewId);
             try
             {
                 if (isBackgroudJobRequest == null || (isBackgroudJobRequest.HasValue && isBackgroudJobRequest.Value == false))
@@ -10590,6 +10591,7 @@ namespace Risebird.Web.Controllers
         }
         public async Task<bool> GenerateContradictionAI(InterviewReport model, int interviewId)
         {
+            using var aiCostScope = OpenAIApiLogScope.Begin(meetingId: interviewId);
             try
             {
                 var modelset = await _meetingService.CheckForAiContradiction(interviewId);
@@ -10642,6 +10644,7 @@ namespace Risebird.Web.Controllers
         [HttpGet]
         public async Task<JsonResult> GenerateTranscriptSummary(int interviewId)
         {
+            using var aiCostScope = OpenAIApiLogScope.Begin(meetingId: interviewId);
             try
             {
                 var item = await _meetingService.GetPendingQcInterviewAIMergeById(interviewId);

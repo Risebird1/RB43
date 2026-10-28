@@ -1390,6 +1390,7 @@ namespace Risebird.Web.Controllers
 
         public async Task<IActionResult> TransciptAnalysis(int interviewId, int irfId, bool isRedo = false)
         {
+            using var aiCostScope = OpenAIApiLogScope.Begin(meetingId: interviewId, irfId: irfId);
             try
             {
                 if (!CompletedInterviewsViewMode.TryAuthorizeEvidenceEndpoints(HttpContext, out _))
