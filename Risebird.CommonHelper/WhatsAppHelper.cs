@@ -25,6 +25,38 @@ namespace Risebird.CommonHelper
     {
         private const string TrackUsersUrl = "https://api.interakt.ai/v1/public/track/users/";
         private const string TrackEventsUrl = "https://api.interakt.ai/v1/public/track/events/";
+        private const string SendMessageUrl = "https://api.interakt.ai/v1/public/message/";
+
+        /// <summary>
+        /// An approved Interakt template and where each of its variables comes from. Body and Buttons list trait keys
+        /// in template order ("name" = the recipient's name); Buttons[i] fills the {{1}} of URL button i.
+        /// </summary>
+        private sealed class TemplateSpec
+        {
+            public string Name;
+            public string[] Body;
+            public string[] Buttons;
+        }
+
+        // Events sent directly as approved templates (Send Template Message API), so no Interakt campaign is needed.
+        // Template names can be overridden without a deploy: WhatsApp:Templates:<event without spaces/punctuation>,
+        // e.g. WhatsApp:Templates:ScheduleInterview. Events not listed here still go to Track Events (campaign-driven).
+        private static readonly Dictionary<string, TemplateSpec> Templates = new Dictionary<string, TemplateSpec>(StringComparer.OrdinalIgnoreCase)
+        {
+            ["Schedule Interview"] = new TemplateSpec { Name = "interview_invitation", Body = new[] { "name", "Client", "JdTitle" }, Buttons = new[] { "ScheduleLink", "UnsubscribeLink" } },
+            ["Reschedule Interview"] = new TemplateSpec { Name = "reschedule_interview_candidate_iaas", Body = new[] { "name", "Client", "JdTitle" }, Buttons = new[] { "ScheduleLink", "UnsubscribeLink" } },
+            ["Interview Reminder"] = new TemplateSpec { Name = "candidate_interview_reminder_iaas", Body = new[] { "CandidateName", "Client", "JdTitle", "InterviewDate", "TimeZone" }, Buttons = new[] { "buttonlink", "DashboardLink" } },
+            ["Interviewer Waiting"] = new TemplateSpec { Name = "interviewer_waiting_for_candidate_iaas_cs", Body = new[] { "CandidateName" }, Buttons = new[] { "Buttonlink" } },
+            ["Risebird: Interview Feedback"] = new TemplateSpec { Name = "candidate_rating_after_interview_iaas", Body = new[] { "CandidateName" }, Buttons = new[] { "buttonlink" } },
+            ["Feedback Remainder"] = new TemplateSpec { Name = "candidate_rating_after_interview_iaas", Body = new[] { "CandidateName" }, Buttons = new[] { "buttonlink" } },
+            ["Naukri Interviewer Invitation"] = new TemplateSpec { Name = "new_interviewer_onboarding_mag_iaas", Body = new[] { "Name", "MagName" }, Buttons = new[] { "RegisterLink", "UnsubscribeLink" } },
+            ["Interviewer Common Interview"] = new TemplateSpec { Name = "open_interviews_skill_channel_", Body = new[] { "InterviewerName", "TotalCount" }, Buttons = new[] { "buttonlink", "UnsubscribeLink" } },
+            ["Interviewer Confirmation"] = new TemplateSpec { Name = "interviewer_confirmation_joining_or_unassign_iaas", Body = new[] { "InterviewerName" }, Buttons = new[] { "buttonlink", "UnsubscribeLink" } },
+            ["Candidate Waiting"] = new TemplateSpec { Name = "candidate_waiting_for_interviewer_iaas", Body = new[] { "InterviewerName", "InterviewId" }, Buttons = new[] { "Buttonlink", "UnsubscribeLink" } },
+            ["Emergency Notification"] = new TemplateSpec { Name = "emergency_interview_message_to_other_interviewers_iaas", Body = new[] { "InterviewerName", "InterviewId", "JdTitle" }, Buttons = new[] { "ButtonLink", "UnsubscribeLink" } },
+            ["Interviewer Feedback Remainder"] = new TemplateSpec { Name = "interviewer_feedback_reminder_iaas_", Body = new[] { "InterviewerName", "InterviewId", "InterviewDate" }, Buttons = new[] { "ReportLink", "UnsubscribeLink" } },
+            ["Interviewer QC Report"] = new TemplateSpec { Name = "interviewer_quality_reporting_iaas", Body = new[] { "InterviewerName", "FlaggedCount" }, Buttons = new[] { "QualityLink", "UnsubscribeLink" } },
+        };
         private const string DateFormat = "dd MMM yyyy, hh:mm tt";
 
         // Audiences for the WhatsApp-only opt-out (dbo.WhatsAppOptOut.Audience).
@@ -284,17 +316,39 @@ namespace Risebird.CommonHelper
                 }
             }
 
+            // Buttons need a non-empty value: fall back to the unsubscribe page, which explains an incomplete link.
+            if (!traits.ContainsKey("UnsubscribeLink"))
+            {
+                traits["UnsubscribeLink"] = audience == AudienceInterviewer ? "Interviewer/Unsubscribe?id=" : CandidateUnsubscribeLink(email, vm.irfId);
+            }
+
             await TrackUser(phone.Number, phone.CountryCode, recipientName, email);
 
-            var bodyData = new
+            RestResponse response;
+            var template = TemplateFor(vm.Event);
+            if (template != null)
             {
-                userId = "",
-                phoneNumber = phone.Number,
-                countryCode = phone.CountryCode,
-                @event = vm.Event,
-                traits
-            };
-            var response = await _httpRequestHelper.MakeHttpRequest(TrackEventsUrl, Method.Post, bodyData, Headers());
+                var message = BuildTemplateMessage(template, traits, recipientName, phone, vm.Event, out var missing);
+                if (missing != null)
+                {
+                    await _errorLogger.LogMessage(LogLevelInfo.Error, "WhatsApp '" + vm.Event + "' to " + email + " not sent: template " + template.Name + " has no value for " + missing);
+                    await SaveAttempt(vm, "Failed");
+                    return FailedMessage;
+                }
+                response = await _httpRequestHelper.MakeHttpRequest(SendMessageUrl, Method.Post, message, Headers());
+            }
+            else
+            {
+                var bodyData = new
+                {
+                    userId = "",
+                    phoneNumber = phone.Number,
+                    countryCode = phone.CountryCode,
+                    @event = vm.Event,
+                    traits
+                };
+                response = await _httpRequestHelper.MakeHttpRequest(TrackEventsUrl, Method.Post, bodyData, Headers());
+            }
             if (IsSuccess(response))
             {
                 await SaveAttempt(vm, "Sent");
@@ -304,6 +358,68 @@ namespace Risebird.CommonHelper
             await _errorLogger.LogMessage(LogLevelInfo.Error, "Interakt event '" + vm.Event + "' failed for " + email + ": " + (response?.Content ?? response?.ErrorMessage ?? "no response"));
             await SaveAttempt(vm, "Failed");
             return FailedMessage;
+        }
+
+        private TemplateSpec TemplateFor(string eventName)
+        {
+            if (string.IsNullOrWhiteSpace(eventName) || !Templates.TryGetValue(eventName, out var spec))
+                return null;
+            var overrideName = _configuration["WhatsApp:Templates:" + Regex.Replace(eventName, "[^A-Za-z0-9]", "")];
+            return string.IsNullOrWhiteSpace(overrideName) ? spec : new TemplateSpec { Name = overrideName.Trim(), Body = spec.Body, Buttons = spec.Buttons };
+        }
+
+        // WhatsApp rejects template values with new lines, tabs or more than 4 spaces in a row.
+        private static string CleanValue(object value)
+        {
+            var text = Convert.ToString(value, CultureInfo.InvariantCulture) ?? "";
+            text = Regex.Replace(text, @"[\r\n\t]+", " ");
+            text = Regex.Replace(text, @" {2,}", " ");
+            return text.Trim();
+        }
+
+        /// <summary>Request body for the Send Template Message API; <paramref name="missing"/> names the first empty variable.</summary>
+        private static object BuildTemplateMessage(TemplateSpec template, Dictionary<string, object> traits, string recipientName,
+            (string CountryCode, string Number) phone, string eventName, out string missing)
+        {
+            missing = null;
+            string ValueOf(string key)
+            {
+                if (key == "name")
+                    return FirstName(recipientName);
+                return traits.TryGetValue(key, out var v) ? CleanValue(v) : "";
+            }
+
+            var bodyValues = new List<string>();
+            foreach (var key in template.Body)
+            {
+                var value = ValueOf(key);
+                if (value.Length == 0 && missing == null)
+                    missing = key;
+                bodyValues.Add(value);
+            }
+            var buttonValues = new Dictionary<string, string[]>();
+            for (int i = 0; i < template.Buttons.Length; i++)
+            {
+                var value = ValueOf(template.Buttons[i]);
+                if (value.Length == 0 && missing == null)
+                    missing = template.Buttons[i];
+                buttonValues[i.ToString(CultureInfo.InvariantCulture)] = new[] { value };
+            }
+
+            return new
+            {
+                countryCode = phone.CountryCode,
+                phoneNumber = phone.Number,
+                callbackData = eventName,
+                type = "Template",
+                template = new
+                {
+                    name = template.Name,
+                    languageCode = "en",
+                    bodyValues,
+                    buttonValues
+                }
+            };
         }
 
         private async Task SaveAttempt(WhatsAppVM vm, string status)
@@ -412,15 +528,18 @@ namespace Risebird.CommonHelper
                 });
             }
 
-            if (string.IsNullOrWhiteSpace(_whatsAppVM?.MeetingLink))
-                return "Skipped: no meeting link";
+            // The approved template (interviewer_waiting_for_candidate_iaas_cs) has one button, https://portal.risebird.io/{{1}},
+            // so it can only open a portal page: the candidate's interview page, which carries the Join button.
+            // MeetingLink and Buttonlink carry the same path so either mapping in the campaign works.
+            var dashboardPath = ToPath(_whatsAppVM?.buttonlink);
+            if (string.IsNullOrEmpty(dashboardPath))
+                return "Skipped: no link";
             return await SendToRecipients(_whatsAppVM, AudienceCandidate, name => new Dictionary<string, object>
             {
                 ["CandidateName"] = FirstName(name),
                 ["InterviewDate"] = FormatDate(_whatsAppVM.InterviewDate),
-                // Opened through https://api.interakt.ai/cta?redirect={{1}}: the full meeting URL.
-                ["MeetingLink"] = _whatsAppVM.MeetingLink.Trim(),
-                ["Buttonlink"] = ToPath(_whatsAppVM.buttonlink)
+                ["MeetingLink"] = dashboardPath,
+                ["Buttonlink"] = dashboardPath
             });
         }
 
@@ -506,11 +625,9 @@ namespace Risebird.CommonHelper
         {
             if (string.IsNullOrWhiteSpace(_whatsAppVM?.buttonlink))
                 return "Skipped: no link";
-            // Button 1 is https://portal.risebird.io/Interview/CandidateMeetingsStatus{{1}}: the query string only.
-            var yesLink = _whatsAppVM.buttonlink.Trim();
-            var queryStart = yesLink.IndexOf('?');
-            if (queryStart >= 0)
-                yesLink = yesLink.Substring(queryStart);
+            // The approved template (candidate_interview_reminder_iaas) has button 1 as https://portal.risebird.io/{{1}},
+            // so send the full path: Interview/CandidateMeetingsStatus?meetingid=...
+            var yesLink = ToPath(_whatsAppVM.buttonlink);
             return await SendToRecipients(_whatsAppVM, AudienceCandidate, name => new Dictionary<string, object>
             {
                 ["CandidateName"] = FirstName(name),
@@ -673,7 +790,9 @@ namespace Risebird.CommonHelper
             return await SendToRecipients(_whatsAppVM, AudienceInterviewer, name => new Dictionary<string, object>
             {
                 ["InterviewerName"] = FirstName(name),
-                ["FlaggedCount"] = _whatsAppVM.FlaggedCount.ToString()
+                ["FlaggedCount"] = _whatsAppVM.FlaggedCount.ToString(),
+                // The approved template (interviewer_quality_reporting_iaas) has a dynamic first button: https://portal.risebird.io/{{1}}.
+                ["QualityLink"] = "Interviewer/MyQuality"
             });
         }
 
