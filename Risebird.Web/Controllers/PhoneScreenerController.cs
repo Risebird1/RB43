@@ -37,6 +37,8 @@ namespace Risebird.Web.Controllers
         private readonly IElevenLabsAgentService _elevenLabsAgentService;
         private readonly IConfiguration _configuration;
         private readonly IApplicationErrorLogger _applicationErrorLogger;
+        // ElevenLabs posts every post-call webhook of the workspace here, campaign calls included.
+        private readonly Risebird.Web.Services.PlivoCXCallOutcomeProcessor _campaignOutcomeProcessor;
 
         private static readonly string[] AllowedRoles =
         {
@@ -51,8 +53,10 @@ namespace Risebird.Web.Controllers
             IPlivoWhatsAppService plivoWhatsAppService,
             IElevenLabsAgentService elevenLabsAgentService,
             IConfiguration configuration,
-            IApplicationErrorLogger applicationErrorLogger)
+            IApplicationErrorLogger applicationErrorLogger,
+            Risebird.Web.Services.PlivoCXCallOutcomeProcessor campaignOutcomeProcessor)
         {
+            _campaignOutcomeProcessor = campaignOutcomeProcessor;
             _phoneScreenRepository = phoneScreenRepository;
             _irfService = irfService;
             _plivoCXService = plivoCXService;
@@ -630,6 +634,17 @@ namespace Risebird.Web.Controllers
                 return Content("OK. No data object.", "text/html");
 
             var conversationId = (string)data["conversation_id"];
+
+            // A PlivoCX campaign call run on ElevenLabs: the workspace has one post-call webhook URL,
+            // so its events land here too. Its log_id is a PlivoCXCallLogs id, not a phone-screen
+            // row - it must be handed off before the lookup below could match the wrong record.
+            if (Risebird.Business.PlivoCX.ElevenLabsCampaignWebhook.IsCampaignEvent(data))
+            {
+                var campaignPayload = Risebird.Business.PlivoCX.ElevenLabsCampaignWebhook.Map(type, data);
+                if (campaignPayload != null)
+                    await _campaignOutcomeProcessor.ProcessAsync(campaignPayload);
+                return Content("OK. Campaign call.", "text/html");
+            }
 
             // Resolve the row: log_id (our PK, echoed in dynamic_variables) → conversation_id.
             var dynamicVars = data.SelectToken("conversation_initiation_client_data.dynamic_variables") as JObject;

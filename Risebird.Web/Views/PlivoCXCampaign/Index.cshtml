@@ -1,5 +1,6 @@
 @model List<Risebird.Entities.Data.PlivoCXModels.PlivoCXCampaignVM>
 @using Risebird.Business.PlivoCX
+@using Risebird.Entities.Data.PlivoCXModels
 @{
     ViewData["Title"] = "PlivoCX Campaigns";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -57,7 +58,7 @@
                                     <div>@c.IRFName</div>
                                     <div class="pcx-muted pcx-small">@c.ClientName</div>
                                 </td>
-                                <td>@(c.AgentName ?? "—")</td>
+                                <td>@(c.AgentName ?? "—")<div class="pcx-muted pcx-small">@(PlivoCXCampaignProvider.Normalize(c.Provider))</div></td>
                                 <td><span class="pcx-chip @c.Status">@c.Status</span></td>
                                 <td class="pcx-num">@c.Candidates</td>
                                 <td class="pcx-num">@c.Booked</td>
