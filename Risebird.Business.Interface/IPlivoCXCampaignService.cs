@@ -52,6 +52,19 @@ namespace Risebird.Business.Interface
         /// <summary>Lines on the Plivo account that all campaigns together may use (PlivoCX:CampaignConcurrencyBudget).</summary>
         int ConcurrencyBudget { get; }
 
+        /// <summary>
+        /// The line budget all campaigns on one provider share: Plivo's (PlivoCX:CampaignConcurrencyBudget)
+        /// or ElevenLabs' (ElevenLabs:Campaigns:ConcurrencyBudget).
+        /// </summary>
+        int ConcurrencyBudgetFor(string provider);
+
+        /// <summary>
+        /// Creates (or, when they exist, updates) the ElevenLabs Schedule, Reschedule and Confirm
+        /// attendance agents and records them as PlivoCXAgent rows with Provider ElevenLabs.
+        /// Run once from Dashboard/CreateElevenLabsCampaignAgents; safe to run again.
+        /// </summary>
+        Task<List<ElevenLabsAgentProvisionResult>> ProvisionElevenLabsAgentsAsync();
+
         /// <summary>Minutes after which a call still initiated / triggered no longer holds a line (PlivoCX:InFlightTimeoutMinutes).</summary>
         int InFlightTimeoutMinutes { get; }
 

@@ -55,6 +55,167 @@ namespace Risebird.CommonHelper
             _httpClient = _httpClientFactory.CreateClient();
             if (!string.IsNullOrEmpty(_apiKey))
                 _httpClient.DefaultRequestHeaders.Add("xi-api-key", _apiKey);
+
+            // Voice campaigns may run on another workspace (e.g. an India data-residency one, where
+            // the SIP-trunk caller number is imported). Blank values fall back to the main account.
+            var campaignKey = configuration["ElevenLabs:Campaigns:ApiKey"]?.Trim();
+            _campaignApiKey = string.IsNullOrWhiteSpace(campaignKey) ? _apiKey : campaignKey;
+            var campaignBase = configuration["ElevenLabs:Campaigns:BaseUrl"]?.Trim().TrimEnd('/');
+            _campaignBaseUrl = !string.IsNullOrWhiteSpace(campaignBase) ? campaignBase
+                             : ResidencyBaseUrl(_campaignApiKey) ?? _baseUrl;
+            var telephony = configuration["ElevenLabs:Campaigns:Telephony"]?.Trim();
+            _campaignTelephony = string.IsNullOrWhiteSpace(telephony) ? "PlivoSip" : telephony;
+            _campaignPhoneNumberId = configuration["ElevenLabs:Campaigns:PhoneNumberId"]?.Trim() ?? string.Empty;
+            _campaignWebhookSecret = configuration["ElevenLabs:Campaigns:WebhookSecret"]?.Trim() ?? string.Empty;
+        }
+
+        private readonly string _campaignApiKey;
+        private readonly string _campaignBaseUrl;
+        private readonly string _campaignTelephony;
+        private readonly string _campaignPhoneNumberId;
+        private readonly string _campaignWebhookSecret;
+
+        /// <summary>Outbound voice-call path per telephony line; the body is the same for all three.</summary>
+        private static readonly Dictionary<string, string> OutboundCallPaths = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+        {
+            ["Twilio"]   = "/v1/convai/twilio/outbound-call",
+            ["Exotel"]   = "/v1/convai/exotel/outbound-call",
+            // Plivo (or any SIP provider) through a SIP trunk imported in ElevenLabs.
+            ["PlivoSip"] = "/v1/convai/sip-trunk/outbound-call"
+        };
+
+        public string CampaignCallingProblem =>
+            string.IsNullOrWhiteSpace(_campaignApiKey) ? "ElevenLabs API key is not configured (ElevenLabs:Campaigns:ApiKey or ElevenLabs:ApiKey)."
+            : !OutboundCallPaths.ContainsKey(_campaignTelephony) ? $"ElevenLabs:Campaigns:Telephony \"{_campaignTelephony}\" is not supported - use PlivoSip, Twilio or Exotel."
+            : string.IsNullOrWhiteSpace(_campaignPhoneNumberId) ? "ElevenLabs caller number is not configured (ElevenLabs:Campaigns:PhoneNumberId - the phnum_... id from ElevenLabs > Agents > Phone Numbers)."
+            : null;
+
+        public async Task<ElevenLabsOutboundCallResponse> PlaceCampaignCallAsync(
+            string agentId, string toNumber, IDictionary<string, object> dynamicVariables)
+        {
+            var problem = CampaignCallingProblem;
+            if (problem != null) return new ElevenLabsOutboundCallResponse { Error = problem };
+            if (string.IsNullOrWhiteSpace(agentId))
+                return new ElevenLabsOutboundCallResponse { Error = "The campaign's agent has no ElevenLabs agent id." };
+            if (string.IsNullOrWhiteSpace(toNumber))
+                return new ElevenLabsOutboundCallResponse { Error = "Destination phone number is required." };
+
+            var request = new ElevenLabsOutboundCallRequest
+            {
+                AgentId = agentId.Trim(),
+                AgentPhoneNumberId = _campaignPhoneNumberId,
+                ToNumber = toNumber.Trim(),
+                ConversationInitiationClientData = new ElevenLabsConversationInitiationClientData
+                {
+                    DynamicVariables = dynamicVariables != null
+                        ? new Dictionary<string, object>(dynamicVariables)
+                        : new Dictionary<string, object>()
+                }
+            };
+
+            try
+            {
+                var (status, body) = await SendCampaignAsync(HttpMethod.Post, OutboundCallPaths[_campaignTelephony], request);
+                if (status < 200 || status > 299)
+                    return new ElevenLabsOutboundCallResponse { Error = $"HTTP {status}: {body}", HttpStatusCode = status, RawResponseBody = body };
+
+                var result = JsonConvert.DeserializeObject<ElevenLabsOutboundCallResponse>(body) ?? new ElevenLabsOutboundCallResponse();
+                result.CallSid ??= result.SipCallId;
+                result.HttpStatusCode = status;
+                result.RawResponseBody = body;
+                if (!result.Success && string.IsNullOrEmpty(result.Error))
+                    result.Error = result.Message ?? "ElevenLabs returned success=false";
+                return result;
+            }
+            catch (Exception ex)
+            {
+                return new ElevenLabsOutboundCallResponse { Error = ex.Message };
+            }
+        }
+
+        public Task<ElevenLabsCreateAgentResponse> CreateCampaignAgentAsync(ElevenLabsCreateAgentRequest request)
+            => SendCampaignAgentAsync(HttpMethod.Post, "/v1/convai/agents/create", request, null);
+
+        public async Task<string> FindCampaignAgentIdByNameAsync(string name)
+        {
+            if (string.IsNullOrWhiteSpace(name) || string.IsNullOrWhiteSpace(_campaignApiKey)) return null;
+            try
+            {
+                using var message = new HttpRequestMessage(HttpMethod.Get,
+                    $"{_campaignBaseUrl}/v1/convai/agents?page_size=100&search={Uri.EscapeDataString(name.Trim())}");
+                message.Headers.Add("xi-api-key", _campaignApiKey);
+                using var response = await _httpClientFactory.CreateClient().SendAsync(message);
+                if (!response.IsSuccessStatusCode) return null;
+
+                var agents = Newtonsoft.Json.Linq.JObject.Parse(await response.Content.ReadAsStringAsync())["agents"] as Newtonsoft.Json.Linq.JArray;
+                // Exact name only; the newest when there are several (an earlier run made duplicates).
+                return agents?
+                    .Where(a => string.Equals((string)a["name"], name.Trim(), StringComparison.OrdinalIgnoreCase))
+                    .OrderByDescending(a => (long?)a["created_at_unix_secs"] ?? 0)
+                    .Select(a => (string)a["agent_id"])
+                    .FirstOrDefault(id => !string.IsNullOrWhiteSpace(id));
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+
+        public Task<ElevenLabsCreateAgentResponse> UpdateCampaignAgentAsync(string agentId, ElevenLabsCreateAgentRequest request)
+            => string.IsNullOrWhiteSpace(agentId)
+                ? Task.FromResult(new ElevenLabsCreateAgentResponse { Error = "agent_id is required to update an agent." })
+                : SendCampaignAgentAsync(HttpMethod.Patch, "/v1/convai/agents/" + Uri.EscapeDataString(agentId.Trim()), request, agentId.Trim());
+
+        private async Task<ElevenLabsCreateAgentResponse> SendCampaignAgentAsync(
+            HttpMethod method, string path, ElevenLabsCreateAgentRequest request, string knownAgentId)
+        {
+            if (string.IsNullOrWhiteSpace(_campaignApiKey))
+                return new ElevenLabsCreateAgentResponse { Error = "ElevenLabs API key is not configured." };
+            try
+            {
+                var (status, body) = await SendCampaignAsync(method, path, request);
+                if (status < 200 || status > 299)
+                    return new ElevenLabsCreateAgentResponse { Error = $"HTTP {status}: {body}", HttpStatusCode = status, RawResponseBody = body };
+
+                var result = JsonConvert.DeserializeObject<ElevenLabsCreateAgentResponse>(body) ?? new ElevenLabsCreateAgentResponse();
+                // An update is addressed by id, so a 2xx confirms it even when the body omits agent_id.
+                if (string.IsNullOrWhiteSpace(result.AgentId)) result.AgentId = knownAgentId;
+                result.Success = !string.IsNullOrWhiteSpace(result.AgentId);
+                result.HttpStatusCode = status;
+                result.RawResponseBody = body;
+                if (!result.Success) result.Error = "ElevenLabs did not return an agent_id";
+                return result;
+            }
+            catch (Exception ex)
+            {
+                return new ElevenLabsCreateAgentResponse { Error = ex.Message };
+            }
+        }
+
+        /// <summary>A request to the campaign account; its key is set per request, not on the shared client.</summary>
+        private async Task<(int Status, string Body)> SendCampaignAsync(HttpMethod method, string path, object payload)
+        {
+            using var message = new HttpRequestMessage(method, _campaignBaseUrl + path);
+            message.Headers.Add("xi-api-key", _campaignApiKey);
+            message.Content = new StringContent(
+                JsonConvert.SerializeObject(payload, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore }),
+                Encoding.UTF8, "application/json");
+            var client = _httpClientFactory.CreateClient();
+            using var response = await client.SendAsync(message);
+            return ((int)response.StatusCode, await response.Content.ReadAsStringAsync());
+        }
+
+        /// <summary>
+        /// A data-residency key (sk_..._residency_in / _eu / _sg) only works against its own
+        /// regional API; null for a normal key.
+        /// </summary>
+        private static string ResidencyBaseUrl(string apiKey)
+        {
+            var key = apiKey?.Trim() ?? string.Empty;
+            if (key.EndsWith("_residency_in", StringComparison.OrdinalIgnoreCase)) return "https://api.in.residency.elevenlabs.io";
+            if (key.EndsWith("_residency_eu", StringComparison.OrdinalIgnoreCase)) return "https://api.eu.residency.elevenlabs.io";
+            if (key.EndsWith("_residency_sg", StringComparison.OrdinalIgnoreCase)) return "https://api.sg.residency.elevenlabs.io";
+            return null;
         }
 
         public async Task<ElevenLabsWhatsAppOutboundResponse> SendWhatsAppScreenAsync(
@@ -132,8 +293,12 @@ namespace Risebird.CommonHelper
 
         public bool VerifyWebhookSignature(string rawBody, string signatureHeader)
         {
+            // The main account and the campaign account (when separate) each sign with their own secret.
+            var secrets = new[] { _webhookSecret, _campaignWebhookSecret }
+                .Where(s => !string.IsNullOrWhiteSpace(s)).Distinct(StringComparer.Ordinal).ToList();
+
             // No secret configured yet -> accept (lets the feature run before setup).
-            if (string.IsNullOrWhiteSpace(_webhookSecret))
+            if (secrets.Count == 0)
                 return true;
 
             if (string.IsNullOrWhiteSpace(signatureHeader) || string.IsNullOrEmpty(rawBody))
@@ -162,13 +327,17 @@ namespace Risebird.CommonHelper
             }
 
             var signedPayload = $"{timestamp}.{rawBody}";
-            using (var hmac = new HMACSHA256(Encoding.UTF8.GetBytes(_webhookSecret)))
+            var expected = (provided.StartsWith("v0=") ? provided.Substring(3) : provided).ToLowerInvariant();
+            foreach (var secret in secrets)
             {
-                var hashBytes = hmac.ComputeHash(Encoding.UTF8.GetBytes(signedPayload));
-                var computed = BitConverter.ToString(hashBytes).Replace("-", string.Empty).ToLowerInvariant();
-                var expected = provided.StartsWith("v0=") ? provided.Substring(3) : provided;
-                return FixedTimeEquals(computed, expected.ToLowerInvariant());
+                using (var hmac = new HMACSHA256(Encoding.UTF8.GetBytes(secret)))
+                {
+                    var hashBytes = hmac.ComputeHash(Encoding.UTF8.GetBytes(signedPayload));
+                    var computed = BitConverter.ToString(hashBytes).Replace("-", string.Empty).ToLowerInvariant();
+                    if (FixedTimeEquals(computed, expected)) return true;
+                }
             }
+            return false;
         }
 
         /// <summary>Digits-only international WhatsApp id; assumes India (91) for bare 10-digit numbers.</summary>

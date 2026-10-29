@@ -114,7 +114,8 @@ namespace Risebird.Web.Controllers
         {
             if (CurrentUser() == null) return Denied(json: true);
             var agents = await _campaignService.GetAgentsAsync();
-            return Json(agents.Select(a => new { a.Id, a.Name, a.Description, a.Purpose, a.TargetType, a.CollectsSlot, a.Channel }));
+            return Json(agents.Select(a => new { a.Id, a.Name, a.Description, a.Purpose, a.TargetType, a.CollectsSlot, a.Channel,
+                Provider = PlivoCXCampaignProvider.Normalize(a.Provider) }));
         }
 
         /// <summary>By IRF: every candidate of the IRF, labelled by the agent's eligibility procedure.</summary>
@@ -343,10 +344,16 @@ namespace Risebird.Web.Controllers
                 if (string.IsNullOrWhiteSpace(req.Name)) return Json(new { ok = false, message = "Give the campaign a name." });
                 if (req.Name.Length > 200) req.Name = req.Name.Substring(0, 200);
 
+                var provider = PlivoCXCampaignProvider.Normalize(req.Provider);
+                if (provider == null || !PlivoCXCampaignProvider.IsEnabled(provider))
+                    return Json(new { ok = false, message = (provider ?? req.Provider) + " campaigns are not available yet. Pick Plivo or ElevenLabs." });
+
                 var agent = await _campaignRepository.GetAgentAsync(req.AgentId);
                 if (agent == null || !agent.IsActive) return Json(new { ok = false, message = "Pick an agent." });
                 if (!string.Equals(agent.TargetType, "Candidate", StringComparison.OrdinalIgnoreCase))
                     return Json(new { ok = false, message = "This agent calls interviewers; campaigns call candidates." });
+                if (PlivoCXCampaignProvider.Normalize(agent.Provider) != provider)
+                    return Json(new { ok = false, message = $"That agent runs on {PlivoCXCampaignProvider.Normalize(agent.Provider)}, not {provider}. Pick a {provider} agent." });
 
                 var picked = (req.Candidates ?? new List<PlivoCXCampaignPickerItem>())
                     .Where(c => c.CandidateId > 0)
@@ -358,6 +365,7 @@ namespace Risebird.Web.Controllers
                 {
                     Name        = req.Name,
                     SourceType  = source,
+                    Provider    = provider,
                     AgentId     = agent.Id,
                     CallPurpose = string.IsNullOrWhiteSpace(agent.Purpose) ? "schedule" : agent.Purpose,
                     Status      = PlivoCXCampaignStatus.Draft,
@@ -426,7 +434,7 @@ namespace Risebird.Web.Controllers
                 CallStats          = await _campaignRepository.GetCampaignCallStatsAsync(id, _campaignService.InFlightTimeoutMinutes),
                 WhatsAppConfigured = !string.IsNullOrWhiteSpace(_configuration["PlivoCX:WhatsAppAgentId"]),
                 TimeZone           = PlivoCXCampaignRules.ResolveTimeZone(campaign.TimeZone),
-                ConcurrencyBudget  = _campaignService.ConcurrencyBudget
+                ConcurrencyBudget  = _campaignService.ConcurrencyBudgetFor(campaign.Provider)
             };
             return View(vm);
         }

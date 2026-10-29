@@ -24,6 +24,46 @@ namespace Risebird.Entities.Data.PlivoCXModels
             state == Pending || state == Booked || state == NotBooked || state == Cold;
     }
 
+    /// <summary>
+    /// The voice platform a campaign calls through (PlivoCXCampaign.Provider, PlivoCXAgent.Provider).
+    /// Plivo and ElevenLabs are built; Vapi is listed on Create but not selectable yet.
+    /// </summary>
+    public static class PlivoCXCampaignProvider
+    {
+        public const string Plivo      = "Plivo";
+        public const string ElevenLabs = "ElevenLabs";
+        public const string Vapi       = "Vapi";
+
+        /// <summary>Every provider, in the order Create shows them.</summary>
+        public static readonly string[] All = { Plivo, ElevenLabs, Vapi };
+
+        /// <summary>Providers a campaign can be created on today.</summary>
+        public static bool IsEnabled(string provider) => provider == Plivo || provider == ElevenLabs;
+
+        /// <summary>The canonical spelling, Plivo for blank (rows created before providers existed), null when unknown.</summary>
+        public static string Normalize(string provider)
+        {
+            if (string.IsNullOrWhiteSpace(provider)) return Plivo;
+            foreach (var p in All)
+                if (string.Equals(p, provider.Trim(), StringComparison.OrdinalIgnoreCase)) return p;
+            return null;
+        }
+    }
+
+    /// <summary>One agent from Dashboard/CreateElevenLabsCampaignAgents.</summary>
+    public class ElevenLabsAgentProvisionResult
+    {
+        public string Purpose        { get; set; }
+        public string Name           { get; set; }
+        /// <summary>created | updated; null on failure.</summary>
+        public string Action         { get; set; }
+        /// <summary>The ElevenLabs agent_id.</summary>
+        public string AgentId        { get; set; }
+        /// <summary>The PlivoCXAgent row campaigns pick.</summary>
+        public int    PlivoCXAgentId { get; set; }
+        public string Error          { get; set; }
+    }
+
     /// <summary>Where a campaign's candidates came from (PlivoCXCampaign.SourceType).</summary>
     public static class PlivoCXCampaignSource
     {
@@ -60,6 +100,10 @@ namespace Risebird.Entities.Data.PlivoCXModels
         /// <summary>Voice | WhatsApp</summary>
         public string Channel      { get; set; } = "Voice";
         public bool   IsActive     { get; set; } = true;
+        /// <summary>Plivo | ElevenLabs | Vapi (PlivoCXCampaignProvider).</summary>
+        public string Provider     { get; set; } = PlivoCXCampaignProvider.Plivo;
+        /// <summary>The provider's id for the agent - the ElevenLabs agent_id. Plivo agents use TriggerUrl instead.</summary>
+        public string ProviderAgentId { get; set; }
 
         public string Label => string.IsNullOrWhiteSpace(Description) ? Name : Name + " — " + Description;
     }
@@ -73,6 +117,8 @@ namespace Risebird.Entities.Data.PlivoCXModels
         public string   IRFName         { get; set; }
         public string   ClientName      { get; set; }
         public string   SourceType      { get; set; } = PlivoCXCampaignSource.IRF;
+        /// <summary>Plivo | ElevenLabs | Vapi (PlivoCXCampaignProvider).</summary>
+        public string   Provider        { get; set; } = PlivoCXCampaignProvider.Plivo;
         public int      AgentId         { get; set; }
         public string   CallPurpose     { get; set; }
         public string   Status          { get; set; } = PlivoCXCampaignStatus.Draft;
@@ -132,6 +178,7 @@ namespace Risebird.Entities.Data.PlivoCXModels
         public string   IRFName     { get; set; }
         public string   ClientName  { get; set; }
         public string   SourceType  { get; set; }
+        public string   Provider    { get; set; }
         public int      AgentId     { get; set; }
         public string   AgentName   { get; set; }
         public string   CallPurpose { get; set; }
@@ -204,6 +251,8 @@ namespace Risebird.Entities.Data.PlivoCXModels
     public class PlivoCXCampaignCreateRequest
     {
         public string Name       { get; set; }
+        /// <summary>Plivo | ElevenLabs (PlivoCXCampaignProvider); the agent must be on the same provider.</summary>
+        public string Provider   { get; set; }
         public int    AgentId    { get; set; }
         public string SourceType { get; set; }
         public int?   IRFId      { get; set; }

@@ -315,6 +315,8 @@ builder.Services.AddScoped<IAWSRekognitionService, AWSRekognitionService>();
 builder.Services.AddScoped<IProctoringSessionEventRepository, ProctoringSessionEventRepository>();
 builder.Services.AddScoped<IOpenAIApiLogRepository, OpenAIApiLogRepository>();
 builder.Services.AddScoped<IOpenAIApiLogger, OpenAIApiLogger>();
+builder.Services.AddScoped<IInterviewProfitabilityRepository, InterviewProfitabilityRepository>();
+builder.Services.AddScoped<IInterviewProfitabilityService, InterviewProfitabilityService>();
 builder.Services.AddScoped<IResumeOptimizationHelper, ResumeOptimizationHelper>();
 builder.Services.AddScoped<ITranscriptOptimizationHelper, TranscriptOptimizationHelper>();
 builder.Services.AddScoped<IReportQCOptimizationHelper, ReportQCOptimizationHelper>();
@@ -343,6 +345,7 @@ builder.Services.AddScoped<IPlivoCXService, PlivoCXService>();
 builder.Services.AddScoped<IPlivoCXCallRepository, PlivoCXCallRepository>();
 builder.Services.AddScoped<IPlivoCXCampaignRepository, PlivoCXCampaignRepository>();
 builder.Services.AddScoped<IPlivoCXCampaignService, Risebird.Business.PlivoCX.PlivoCXCampaignService>();
+builder.Services.AddScoped<Risebird.Web.Services.PlivoCXCallOutcomeProcessor>();
 builder.Services.AddScoped<IPlivoWhatsAppService, PlivoWhatsAppService>();
 builder.Services.AddScoped<IPlivoWhatsAppRepository, PlivoWhatsAppRepository>();
 builder.Services.AddScoped<IElevenLabsAgentService, ElevenLabsAgentService>();
@@ -400,6 +403,11 @@ builder.Services.AddScoped<Risebird.Business.Interface.IKycPayoutLapseService>(s
 
 
 var app = builder.Build();
+
+// Lets cached OpenAI answers be shared across instances through Redis. Inert until
+// OpenAI:CostOptimization:ResponseCache:UseRedis is turned on.
+OpenAIResponseCache.UseSharedStore(new RedisOpenAIResponseSharedStore(
+    app.Services.GetRequiredService<Microsoft.Extensions.Caching.Distributed.IDistributedCache>()));
 
 if (app.Environment.IsDevelopment())
 {

@@ -739,6 +739,33 @@ namespace Risebird.Web.Controllers
             return (int)((double)matches / Math.Max(fWords.Count, jtWords.Count) * 90);
         }
 
+        // ─── ElevenLabs campaign agents (one-time setup) ─────────────────────────────
+
+        /// <summary>
+        /// Creates the ElevenLabs versions of the PlivoCX campaign agents - Schedule, Reschedule and
+        /// Confirm attendance (Business/PlivoCX/ElevenLabsCampaignAgents) - in the ElevenLabs campaign
+        /// account (ElevenLabs:Campaigns:ApiKey, else ElevenLabs:ApiKey), and records each as a
+        /// PlivoCXAgent row with Provider ElevenLabs so ElevenLabs campaigns can pick it on
+        /// /PlivoCXCampaign/Create. Run once: GET /Dashboard/CreateElevenLabsCampaignAgents.
+        /// Running it again updates the same three agents in place (after a prompt change, say)
+        /// instead of creating duplicates. Admin only; returns what was created / updated as JSON.
+        /// </summary>
+        [HttpGet]
+        public async Task<IActionResult> CreateElevenLabsCampaignAgents([FromServices] IPlivoCXCampaignService campaignService)
+        {
+            var profile = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "");
+            if (profile != "Admin")
+                return StatusCode(403, "Admin only.");
+
+            var results = await campaignService.ProvisionElevenLabsAgentsAsync();
+            return Json(new
+            {
+                ok = results.All(r => r.Error == null),
+                agents = results,
+                next = "Set ElevenLabs:Campaigns:PhoneNumberId (and Telephony) if not done, then pick provider ElevenLabs on /PlivoCXCampaign/Create."
+            });
+        }
+
         // ─── Plivo call trigger ───────────────────────────────────────────────────
 
         /// <summary>
@@ -10203,6 +10230,7 @@ NEVER:
 
         public async Task<IActionResult> GenerateTranscriptAiEvaluation(int interviewid)
         {
+            using var aiCostScope = OpenAIApiLogScope.Begin(meetingId: interviewid);
             try
             {
                 var item = await _meetingService.GetPendingQcInterviewAIMergeById(interviewid);

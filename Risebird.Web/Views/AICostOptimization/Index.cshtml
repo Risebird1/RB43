@@ -1,0 +1,334 @@
+@using System.Globalization
+@using Risebird.Entities.ViewModel
+@model List<OpenAICostOptimizationRow>
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "AI Cost Optimizer";
+
+    var inr = new CultureInfo("en-IN");
+    var fx = (decimal)ViewBag.UsdToInr;
+    // Per-call and per-operation amounts are often cents; keep them readable instead of "$0.00".
+    string Usd(decimal v) => v == 0 ? "$0"
+        : Math.Abs(v) < 1 ? "$" + v.ToString("0.0000", CultureInfo.InvariantCulture)
+        : "$" + v.ToString("N2", CultureInfo.InvariantCulture);
+    string Rs(decimal v) => "₹" + Math.Round(v * fx, 0).ToString("N0", inr);
+
+    var start = (DateTime)ViewBag.StartDate;
+    var end = (DateTime)ViewBag.EndDate;
+    var days = (decimal)((end - start).TotalDays + 1);
+    var totalCost = Model.Sum(r => r.CostUSD);
+    var duplicateCost = Model.Sum(r => r.DuplicateCostUSD);
+    var avoided = Model.Sum(r => r.AvoidedCostUSD);
+    var hits = Model.Sum(r => r.CacheHits);
+    var calls = Model.Sum(r => r.Calls);
+
+    // Smaller tiers first: "gpt-4.1-mini" also contains "gpt-4.1".
+    string Tier(string model)
+    {
+        var m = (model ?? "").ToLowerInvariant();
+        if (m.StartsWith("cache:")) return "cache";
+        if (m.Contains("mini") || m.Contains("nano")) return "economy";
+        if (m.Contains("realtime")) return "realtime";
+        if (m.Contains("gpt-4.1") || m.Contains("gpt-4o") || m.Contains("gpt-5")) return "premium";
+        if (m.Contains("gpt-4") || m.Contains("gpt-3.5")) return "legacy";
+        return "other";
+    }
+
+    // Recorded dollars per 1,000 tokens. Every premium or legacy model costs at least about $0.002
+    // per 1K tokens, so far less than that means the calls were logged without their cost.
+    bool LooksUnpriced(OpenAICostOptimizationRow r, string tier)
+    {
+        if (tier != "premium" && tier != "legacy") return false;
+        var tokensK = r.Calls * (decimal)((r.AvgPromptTokens ?? 0) + (r.AvgCompletionTokens ?? 0)) / 1000m;
+        return tokensK >= 100 && r.CostUSD / tokensK < 0.0005m;
+    }
+
+    // Everything the grid and the details row say about each operation, worked out once.
+    var rows = Model.Select((r, i) =>
+    {
+        var tier = Tier(r.Model);
+        var failRate = r.Calls > 0 ? r.FailedCalls * 100 / r.Calls : 0;
+        var unpriced = LooksUnpriced(r, tier);
+        var cacheCandidate = r.ViaResponsesApi && r.DuplicateCalls > 0 && !r.ConfiguredCacheTtlMinutes.HasValue;
+        var tryMini = tier == "premium" && r.ViaResponsesApi && r.ConfiguredModelOverride == null && r.CostUSD > 0;
+
+        var notes = new List<string>();
+        if (unpriced) notes.Add("Calls have tokens but almost no recorded cost: run the repricing script before judging this row.");
+        if (failRate >= 10) notes.Add($"{failRate}% of calls fail. Failures are still billed for their input; find out why before optimising.");
+        if (tier == "legacy") notes.Add("Legacy model: costs more than gpt-4.1 for weaker output. Move to a current model.");
+        if (cacheCandidate) notes.Add($"{r.DuplicateCalls:N0} repeated requests cost {Usd(r.DuplicateCostUSD)}. Cache this operation if the same input should always give the same answer.");
+        if (tryMini) notes.Add("Premium model: trial a mini model on a sample and compare the output before switching.");
+
+        // One short label for the grid, most urgent first; the details row lists every note.
+        var (action, actionClass) =
+            unpriced ? ("Cost not recorded", "b-act-red")
+            : failRate >= 10 ? ("Fix failures", "b-act-red")
+            : tier == "legacy" ? ("Upgrade model", "b-act-amber")
+            : cacheCandidate ? ("Cache candidate", "b-act-blue")
+            : tryMini ? ("Try a mini model", "b-act-grey")
+            : ((string)null, (string)null);
+
+        return new { Index = i, R = r, Tier = tier, FailRate = failRate, Unpriced = unpriced, Notes = notes, Action = action, ActionClass = actionClass };
+    }).ToList();
+
+    var unpricedOps = rows.Where(x => x.Unpriced).Select(x => x.R.OperationType).Distinct().ToList();
+
+    var cacheCandidates = Model
+        .Where(r => r.ViaResponsesApi && r.DuplicateCalls > 0 && !r.ConfiguredCacheTtlMinutes.HasValue)
+        .GroupBy(r => r.OperationType)
+        .Select(g => new { Op = g.Key, Dup = g.Sum(r => r.DuplicateCalls), Cost = g.Sum(r => r.DuplicateCostUSD) })
+        .OrderByDescending(x => x.Cost)
+        .ToList();
+}
+
+<style>
+    .ac-wrap { padding: 20px; }
+    .ac-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px; margin-bottom: 16px; }
+    .ac-card { background: #fff; border: 1px solid #e3e6ec; border-radius: 8px; padding: 12px 14px; }
+    .ac-card .k { font-size: 12px; color: #5f6b7a; }
+    .ac-card .v { font-size: 22px; font-weight: 600; color: #1f2937; }
+    .ac-card .s { font-size: 12px; color: #6b7280; }
+    .ac-panel { background: #fff; border: 1px solid #e3e6ec; border-radius: 8px; padding: 14px 16px; margin-bottom: 16px; }
+    .ac-panel h5 { font-size: 15px; font-weight: 600; margin: 0 0 10px; }
+    .ac-badge { display: inline-block; font-size: 11px; padding: 1px 7px; border-radius: 10px; margin: 1px 2px 1px 0; white-space: nowrap; }
+    .b-on { background: #ecfdf3; color: #067647; } .b-off { background: #f2f4f7; color: #667085; }
+    .b-premium { background: #fff4ed; color: #b93815; } .b-economy { background: #ecfdf3; color: #067647; }
+    .b-legacy { background: #fef3f2; color: #b42318; } .b-cache { background: #eef2ff; color: #3538cd; }
+    .b-realtime, .b-other { background: #f2f4f7; color: #475467; }
+    .b-act-red { background: #fef3f2; color: #b42318; } .b-act-amber { background: #fffaeb; color: #b54708; }
+    .b-act-blue { background: #eef2ff; color: #3538cd; } .b-act-grey { background: #f2f4f7; color: #475467; }
+    .ac-hint { font-size: 12px; color: #475467; }
+    .ac-warn { background: #fffaeb; border: 1px solid #fedf89; color: #93370d; border-radius: 6px; padding: 8px 12px; font-size: 13px; margin-bottom: 12px; }
+    pre.ac-json { background: #0f172a; color: #e2e8f0; padding: 12px; border-radius: 6px; font-size: 12px; margin: 8px 0 0; }
+    details.ac-more { margin-top: 8px; }
+    details.ac-more summary { cursor: pointer; font-size: 13px; color: #2a78d6; }
+
+    /* Grid. Classes are ac-* only: the site theme styles generic names such as .num (a 26px circle). */
+    .ac-grid-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; margin-bottom: 8px; }
+    .ac-grid-head .text-muted { font-size: 12px; }
+    .ac-grid-scroll { overflow-x: auto; }
+    table.ac-table { font-size: 13px; border-collapse: collapse !important; }
+    table.ac-table thead th { background: #f8f9fb !important; color: #475467; font-weight: 600; font-size: 12px; text-transform: none !important; letter-spacing: normal !important; padding: 8px 8px !important; border-bottom: 1px solid #e4e7ec !important; white-space: nowrap; height: auto !important; }
+    table.ac-table tbody td { padding: 6px 8px !important; border-bottom: 1px solid #f2f4f7; vertical-align: middle; background: #fff; height: auto !important; }
+    table.ac-table tbody tr.ac-row { cursor: pointer; }
+    table.ac-table tbody tr.ac-row:hover td { background: #f9fafb; }
+    table.ac-table tbody tr.ac-open td { background: #f5f8ff; }
+    table.ac-table .ac-n { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
+    table.ac-table .ac-sub { display: block; font-size: 11px; color: #667085; }
+    table.ac-table .ac-toggle-col { width: 26px; padding-right: 0 !important; text-align: center; }
+    .ac-toggle { display: inline-block; width: 18px; height: 18px; line-height: 16px; border: 1px solid #d0d5dd; border-radius: 4px; color: #475467; font-weight: 600; font-size: 13px; text-align: center; }
+    tr.ac-open .ac-toggle { background: #2a78d6; border-color: #2a78d6; color: #fff; }
+    .ac-detail { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 8px 28px; padding: 8px 6px 10px 32px; font-size: 12.5px; box-sizing: border-box;
+        /* width 0 + min-width 100%: fill the expanded row without making the table wider than the page. */
+        width: 0; min-width: 100%; }
+    .ac-detail h6 { font-size: 12px; font-weight: 600; color: #475467; text-transform: uppercase; letter-spacing: .03em; margin: 0 0 6px; }
+    .ac-detail dl { display: grid; grid-template-columns: max-content 1fr; gap: 3px 14px; margin: 0; }
+    .ac-detail dt { font-weight: 400; color: #667085; }
+    .ac-detail dd { margin: 0; color: #1f2937; }
+    .ac-detail ul { margin: 0; padding-left: 16px; }
+    /* The theme sets nowrap on every table cell; the details text must wrap. */
+    .ac-detail, .ac-detail * { white-space: normal !important; }
+</style>
+
+<div class="main-panel" id="main-panel">
+    <div class="ac-wrap">
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2" style="margin-bottom:12px;">
+            <h3 style="margin:0;">AI cost optimizer</h3>
+            <form method="get" class="d-flex gap-2 align-items-end flex-wrap">
+                <div><label for="startDate" style="font-size:12px;">From</label><input type="date" class="form-control form-control-sm" id="startDate" name="startDate" value="@start.ToString("yyyy-MM-dd")" /></div>
+                <div><label for="endDate" style="font-size:12px;">To</label><input type="date" class="form-control form-control-sm" id="endDate" name="endDate" value="@end.ToString("yyyy-MM-dd")" /></div>
+                <button type="submit" class="mdc-button mdc-button--raised">Apply</button>
+                <a href="/InterviewProfitability/Index" class="mdc-button mdc-button--outlined">Interview profitability</a>
+            </form>
+        </div>
+
+        @if (ViewBag.Warning != null) { <div class="alert alert-warning py-2">@ViewBag.Warning</div> }
+        @if (ViewBag.Error != null) { <div class="alert alert-danger py-2">@ViewBag.Error</div> }
+        @if (unpricedOps.Any())
+        {
+            <div class="ac-warn">
+                <b>Spend is under-recorded</b> for @unpricedOps.Count operation@(unpricedOps.Count == 1 ? "" : "s") (@string.Join(", ", unpricedOps.Take(5))@(unpricedOps.Count > 5 ? ", …" : "")):
+                their calls have tokens but almost no cost, which happens when calls were logged before the cost fix.
+                Run the latest <code>Risebird.DB/Fix_OpenAI_Cost_Recalculation_ResponsesApi.sql</code> to price them.
+            </div>
+        }
+
+        <div class="ac-cards">
+            <div class="ac-card"><div class="k">AI spend</div><div class="v">@Usd(totalCost)</div><div class="s">@Rs(totalCost) · @Usd(days > 0 ? totalCost / days : 0) a day</div></div>
+            <div class="ac-card"><div class="k">Spent repeating identical requests</div><div class="v">@Usd(duplicateCost)</div><div class="s">@(totalCost > 0 ? (duplicateCost / totalCost * 100).ToString("0.0") : "0")% of spend — what caching could save</div></div>
+            <div class="ac-card"><div class="k">Saved by the response cache</div><div class="v">@Usd(avoided)</div><div class="s">@hits.ToString("N0") answers reused · @Rs(avoided)</div></div>
+            <div class="ac-card"><div class="k">Calls to OpenAI</div><div class="v">@calls.ToString("N0")</div><div class="s">@start.ToString("dd MMM") – @end.ToString("dd MMM yyyy")</div></div>
+        </div>
+
+        <div class="ac-panel">
+            <h5>What is switched on</h5>
+            <span class="ac-badge @(ViewBag.OptimizationEnabled ? "b-on" : "b-off")">Cost optimisation @(ViewBag.OptimizationEnabled ? "on" : "off")</span>
+            <span class="ac-badge @(ViewBag.ResponseCacheEnabled ? "b-on" : "b-off")">Response cache @(ViewBag.ResponseCacheEnabled ? "on" : "off")</span>
+            <span class="ac-badge @(ViewBag.PromptCacheKey ? "b-on" : "b-off")">Prompt cache key @(ViewBag.PromptCacheKey ? "on" : "off")</span>
+            <span class="ac-badge @(ViewBag.Fallback ? "b-on" : "b-off")">Fallback to default model @(ViewBag.Fallback ? "on" : "off")</span>
+            <span class="ac-badge b-other">Default model: @ViewBag.DefaultModel</span>
+            <div class="ac-hint" style="margin-top:8px;">
+                Set under <code>OpenAI:CostOptimization</code> in configuration; changes take effect without a deploy. Overrides and caching apply only to operations marked
+                <span class="ac-badge b-on">configurable</span>. An override that fails or returns invalid JSON is repeated on the default model.
+            </div>
+        </div>
+
+        <div class="ac-panel">
+            <div class="ac-grid-head">
+                <h5 style="margin:0;">By operation and model</h5>
+                <span class="text-muted">Click a row for failures, tokens, cache use and the full suggestion.</span>
+            </div>
+            <div class="ac-grid-scroll">
+                <table id="acGrid" class="ac-table" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th class="ac-toggle-col"></th>
+                            <th>Operation</th>
+                            <th>Model</th>
+                            <th class="ac-n">Calls</th>
+                            <th class="ac-n">Spend</th>
+                            <th class="ac-n">Per call</th>
+                            <th class="ac-n" title="Byte-identical requests sent again in the period, and what they cost">Repeats</th>
+                            <th class="ac-n" title="Answers reused from the response cache, and the spend they avoided">Saved by cache</th>
+                            <th>Next step</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var x in rows)
+                        {
+                            var r = x.R;
+                            <tr class="ac-row" data-detail="acd-@x.Index">
+                                <td class="ac-toggle-col"><span class="ac-toggle" aria-label="Show details">+</span></td>
+                                <td>
+                                    @r.OperationType
+                                    @if (r.ViaResponsesApi) { <span class="ac-badge b-on" title="Can be re-routed or cached by configuration">configurable</span> }
+                                    @if (r.ConfiguredModelOverride != null) { <span class="ac-badge b-economy">→ @r.ConfiguredModelOverride</span> }
+                                    @if (r.ConfiguredCacheTtlMinutes.HasValue) { <span class="ac-badge b-cache">cached @r.ConfiguredCacheTtlMinutes min</span> }
+                                </td>
+                                <td style="white-space:nowrap;"><span class="ac-badge b-@x.Tier">@x.Tier</span> @r.Model</td>
+                                <td class="ac-n" data-order="@r.Calls">
+                                    @r.Calls.ToString("N0")
+                                    @if (r.FailedCalls > 0) { <span class="ac-sub" style="color:#b42318;">@r.FailedCalls.ToString("N0") failed</span> }
+                                </td>
+                                <td class="ac-n" data-order="@r.CostUSD">@Usd(r.CostUSD)</td>
+                                <td class="ac-n" data-order="@(r.Calls > 0 ? r.CostUSD / r.Calls : 0)">@(r.Calls > 0 ? Usd(r.CostUSD / r.Calls) : "–")</td>
+                                <td class="ac-n" data-order="@r.DuplicateCostUSD">
+                                    @(r.DuplicateCalls > 0 ? Usd(r.DuplicateCostUSD) : "–")
+                                    @if (r.DuplicateCalls > 0) { <span class="ac-sub">@r.DuplicateCalls.ToString("N0") calls</span> }
+                                </td>
+                                <td class="ac-n" data-order="@r.AvoidedCostUSD">
+                                    @(r.CacheHits > 0 ? Usd(r.AvoidedCostUSD) : "–")
+                                    @if (r.CacheHits > 0) { <span class="ac-sub">@r.CacheHits.ToString("N0") hits</span> }
+                                </td>
+                                <td>@if (x.Action != null) { <span class="ac-badge @x.ActionClass">@x.Action</span> }</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            @* Row details, moved into an expanded row when its row is clicked. *@
+            <div style="display:none;">
+                @foreach (var x in rows)
+                {
+                    var r = x.R;
+                    <div id="acd-@x.Index">
+                        <div class="ac-detail">
+                            <div>
+                                <h6>Usage</h6>
+                                <dl>
+                                    <dt>Calls</dt><dd>@r.Calls.ToString("N0")@(r.FailedCalls > 0 ? $" ({r.FailedCalls:N0} failed, {x.FailRate}%)" : "")</dd>
+                                    <dt>Avg tokens</dt><dd>@((r.AvgPromptTokens ?? 0).ToString("N0")) in · @((r.AvgCompletionTokens ?? 0).ToString("N0")) out</dd>
+                                    <dt>Spend</dt><dd>@Usd(r.CostUSD) · @Rs(r.CostUSD)</dd>
+                                    <dt>Per call</dt><dd>@(r.Calls > 0 ? Usd(r.CostUSD / r.Calls) : "–")</dd>
+                                </dl>
+                            </div>
+                            <div>
+                                <h6>Repeats and cache</h6>
+                                <dl>
+                                    <dt>Repeated requests</dt><dd>@r.DuplicateCalls.ToString("N0") · @Usd(r.DuplicateCostUSD)</dd>
+                                    <dt>Cache hits</dt><dd>@r.CacheHits.ToString("N0") · saved @Usd(r.AvoidedCostUSD)</dd>
+                                    <dt>Configured</dt>
+                                    <dd>
+                                        @if (!r.ViaResponsesApi) { <span>Not configurable (not on the Responses API)</span> }
+                                        else if (r.ConfiguredModelOverride == null && !r.ConfiguredCacheTtlMinutes.HasValue) { <span>Default model, not cached</span> }
+                                        else
+                                        {
+                                            @if (r.ConfiguredModelOverride != null) { <span>Runs on @r.ConfiguredModelOverride. </span> }
+                                            @if (r.ConfiguredCacheTtlMinutes.HasValue) { <span>Cached @r.ConfiguredCacheTtlMinutes min.</span> }
+                                        }
+                                    </dd>
+                                </dl>
+                            </div>
+                            <div>
+                                <h6>Suggestions</h6>
+                                @if (x.Notes.Any())
+                                {
+                                    <ul>@foreach (var n in x.Notes) { <li>@n</li> }</ul>
+                                }
+                                else
+                                {
+                                    <span class="text-muted">Nothing to change.</span>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+
+        @if (cacheCandidates.Any())
+        {
+            <div class="ac-panel">
+                <h5>Starting point for the response cache</h5>
+                <div class="ac-hint">
+                    These operations sent byte-identical requests more than once in the period. Cache an operation only if the same input should always produce the same answer
+                    (re-analysing an unchanged transcript or resume, say), never one where a fresh answer is the point (generating new questions).
+                </div>
+                <details class="ac-more">
+                    <summary>Show the configuration for @cacheCandidates.Count operation@(cacheCandidates.Count == 1 ? "" : "s")</summary>
+<pre class="ac-json">"OpenAI": {
+  "CostOptimization": {
+    "Enabled": true,
+    "ResponseCache": {
+      "Enabled": true,
+      "MemoryLimitMegabytes": 64,
+      "Operations": {
+@for (var i = 0; i < cacheCandidates.Count; i++)
+{
+@:        "@cacheCandidates[i].Op": 1440@(i < cacheCandidates.Count - 1 ? "," : "")   // @cacheCandidates[i].Dup repeats, @Usd(cacheCandidates[i].Cost)
+}
+      }
+    }
+  }
+}</pre>
+                </details>
+            </div>
+        }
+    </div>
+</div>
+
+<script>
+    $(function () {
+        if (!$.fn.DataTable) return;
+
+        var acTable = $('#acGrid').DataTable({
+            pageLength: 50,
+            autoWidth: false,
+            order: [[4, 'desc']],
+            columnDefs: [{ targets: 0, orderable: false, searchable: false }]
+        });
+
+        // A click anywhere on a row opens its details underneath.
+        $('#acGrid tbody').on('click', 'tr.ac-row', function () {
+            var tr = $(this), row = acTable.row(tr);
+            if (row.child.isShown()) {
+                row.child.hide();
+                tr.removeClass('ac-open');
+            } else {
+                row.child($('#' + tr.data('detail')).html()).show();
+                tr.addClass('ac-open');
+            }
+        });
+    });
+</script>

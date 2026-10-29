@@ -18,7 +18,11 @@
     int total = Model.Candidates.Count;
     Func<int, string> pct = n => total == 0 ? "0" : (n * 100.0 / total).ToString("0.##", System.Globalization.CultureInfo.InvariantCulture);
 
-    bool voiceConfigured = Model.Agent != null && !string.IsNullOrWhiteSpace(Model.Agent.TriggerUrl);
+    // Each provider addresses its agents differently: Plivo by trigger URL, ElevenLabs by agent id.
+    string provider = PlivoCXCampaignProvider.Normalize(c.Provider);
+    bool voiceConfigured = Model.Agent != null && (provider == PlivoCXCampaignProvider.ElevenLabs
+        ? !string.IsNullOrWhiteSpace(Model.Agent.ProviderAgentId)
+        : !string.IsNullOrWhiteSpace(Model.Agent.TriggerUrl));
     bool isRunning = c.Status == PlivoCXCampaignStatus.Running;
     bool isPaused = c.Status == PlivoCXCampaignStatus.Paused;
     string agentLabel = Model.Agent?.Label ?? "(agent missing)";
@@ -51,7 +55,7 @@
                 <h3 style="margin:0;font-size:22px;font-weight:700;">@c.Name</h3>
                 <span class="pcx-chip @c.Status" id="pcxStatus">@c.Status</span>
             </div>
-            <p class="pcx-sub">Agent: <b>@agentLabel</b> · @sourceLine · Voice: @(voiceConfigured ? "configured" : "not configured") · @created</p>
+            <p class="pcx-sub">Provider: <b>@provider</b> · Agent: <b>@agentLabel</b> · @sourceLine · Voice: @(voiceConfigured ? "configured" : "not configured") · @created</p>
             <p class="pcx-sub">@policyLine</p>
 
             <div class="pcx-actions" style="margin-top:12px;">

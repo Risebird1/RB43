@@ -22,14 +22,22 @@
             @Html.AntiForgeryToken()
             <div id="pcxError" class="pcx-alert err" style="display:none;"></div>
 
-            @if (agents.Count == 0)
-            {
-                <div class="pcx-alert warn">No candidate agent is configured. Set <code>PlivoCX:TriggerEndpointUrl</code> (and the reschedule / confirm URLs) in appsettings; the agents are created from them on first use.</div>
-            }
-
             <div class="pcx-field">
                 <label class="pcx-label" for="pcxName">Campaign name</label>
                 <input class="pcx-input" id="pcxName" maxlength="200" value="@defaultName" />
+            </div>
+
+            <div class="pcx-field">
+                <span class="pcx-label">Provider — the voice platform that places the calls</span>
+                <div class="pcx-seg" id="pcxProvider" role="radiogroup" aria-label="Provider">
+                    @foreach (var p in PlivoCXCampaignProvider.All)
+                    {
+                        var enabled = PlivoCXCampaignProvider.IsEnabled(p);
+                        <button type="button" role="radio" data-provider="@p" class="@(p == PlivoCXCampaignProvider.Plivo ? "on" : "")"
+                                aria-checked="@(p == PlivoCXCampaignProvider.Plivo ? "true" : "false")" @(enabled ? "" : "disabled") title="@(enabled ? "" : "Coming soon")">@(enabled ? p : p + " · soon")</button>
+                    }
+                </div>
+                <div class="pcx-alert warn" id="pcxNoAgents" style="display:none;margin:8px 0 0;"></div>
             </div>
 
             <div class="pcx-field">
@@ -37,7 +45,7 @@
                 <select class="pcx-select" id="pcxAgent">
                     @foreach (var a in agents)
                     {
-                        <option value="@a.Id" data-purpose="@a.Purpose" data-slot="@(a.CollectsSlot ? "1" : "0")">@a.Label</option>
+                        <option value="@a.Id" data-provider="@(PlivoCXCampaignProvider.Normalize(a.Provider))" data-purpose="@a.Purpose" data-slot="@(a.CollectsSlot ? "1" : "0")">@a.Label</option>
                     }
                 </select>
             </div>
@@ -122,7 +130,24 @@
     };
     var LABELS = { 'eligible': 'eligible', 'has-meeting': 'has meeting', 'no-number': 'no number → Cold', 'not-eligible': 'not eligible', 'cold': 'cold' };
 
-    var source = 'IRF', rows = [], loadSeq = 0, loaded = false;
+    var source = 'IRF', rows = [], loadSeq = 0, loaded = false, provider = 'Plivo';
+
+    // Only the chosen provider's agents can run its calls.
+    function filterAgents() {
+        var sel = $('#pcxAgent'), first = null;
+        sel.find('option').each(function () {
+            var ok = $(this).data('provider') === provider;
+            $(this).prop('hidden', !ok).prop('disabled', !ok);
+            if (ok && first === null) first = this.value;
+        });
+        if (first !== null && (sel.find('option:selected').prop('disabled') || !sel.val())) sel.val(first);
+        var none = first === null;
+        $('#pcxNoAgents').toggle(none).html(!none ? '' : provider === 'ElevenLabs'
+            ? 'No ElevenLabs agents yet. An admin creates them once by opening <code>/Dashboard/CreateElevenLabsCampaignAgents</code>.'
+            : 'No Plivo agent is configured. Set <code>PlivoCX:TriggerEndpointUrl</code> (and the reschedule / confirm URLs) in appsettings; the agents are created from them on first use.');
+        $('#pcxCreate').prop('disabled', none);
+        syncSources();
+    }
 
     function esc(s) { return $('<div>').text(s == null ? '' : String(s)).html(); }
     function purpose() { return ($('#pcxAgent option:selected').data('purpose') || 'schedule').toString().toLowerCase(); }
@@ -235,6 +260,13 @@
     }
 
     $('#pcxAgent').on('change', syncSources);
+    $('#pcxProvider').on('click', 'button', function () {
+        if (this.disabled) return;
+        provider = $(this).data('provider');
+        $('#pcxProvider button').removeClass('on').attr('aria-checked', 'false');
+        $(this).addClass('on').attr('aria-checked', 'true');
+        filterAgents();
+    });
     $('#pcxSource').on('click', 'button', function () { if (!this.disabled) setSource($(this).data('source')); });
     $('#pcxIrf').on('change', function () { load(false); });
     $('#pcxReload').on('click', function () { load(false); });
@@ -261,6 +293,7 @@
         var btn = $(this).prop('disabled', true).html('<i class="fa fa-spinner fa-spin"></i> Creating…');
         var payload = {
             Name: name,
+            Provider: provider,
             AgentId: parseInt($('#pcxAgent').val(), 10),
             SourceType: source,
             IRFId: source === 'IRF' ? parseInt($('#pcxIrf').val(), 10) : null,
@@ -279,6 +312,6 @@
         });
     });
 
-    syncSources();
+    filterAgents();
 })();
 </script>
