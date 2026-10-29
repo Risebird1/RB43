@@ -1791,7 +1791,7 @@ namespace Risebird.Web.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> SendInvitationEmail(int id)
+        public async Task<IActionResult> SendInvitationEmail(int id, [FromServices] IWhatsAppHelper whatsAppHelper)
         {
             if (HttpContext.Session.GetString("email") == null)
                 return Json(new { success = false, error = "Not signed in." });
@@ -1836,10 +1836,28 @@ namespace Risebird.Web.Controllers
                 await _repository.InsertHistoryAsync(id, "InvitationEmailSent", "\u2014",
                     $"Sent to: {email}, MAG: {magName} (AG: {agId}), Link: {appLink}", user);
 
+                // I1: the same next step over WhatsApp. Applicants are not in UserList, so the phone comes from the prospect.
+                string whatsAppResult = null;
+                if (!string.IsNullOrWhiteSpace(record.ParsedPhone))
+                {
+                    whatsAppResult = await whatsAppHelper.WhatsAppSendNaukriInvitation(new WhatsAppVM
+                    {
+                        Emailid = email,
+                        Phone = record.ParsedPhone,
+                        UserName = record.CandidateName,
+                        MessageValue = magName,
+                        buttonlink = appLink,
+                        ProspectId = id,
+                        SentBy = user
+                    });
+                    await _repository.InsertHistoryAsync(id, "InvitationWhatsAppSent", "\u2014",
+                        $"WhatsApp to {record.ParsedPhone}: {whatsAppResult}", user);
+                }
+
                 // Invitation sent → 'Interest Collection' (awaiting email reply or AI Plivo call).
                 await _repository.AdvanceFunnelStageAsync(id, "InterestCollection", "InProgress");
 
-                return Json(new { success = true, message = "Invitation email sent to " + email + ".", applicationLink = appLink });
+                return Json(new { success = true, message = "Invitation email sent to " + email + "." + (whatsAppResult != null ? " WhatsApp: " + whatsAppResult : ""), applicationLink = appLink });
             }
             catch (Exception ex)
             {
@@ -1895,7 +1913,7 @@ namespace Risebird.Web.Controllers
         [HttpPost]
         [ActionName("ProspectResponseAction")]
         [IgnoreAntiforgeryToken]
-        public async Task<IActionResult> ProspectResponseActionConfirm(int id, string response)
+        public async Task<IActionResult> ProspectResponseActionConfirm(int id, string response, [FromServices] IWhatsappRepository whatsappRepository)
         {
             try
             {
@@ -1907,6 +1925,9 @@ namespace Risebird.Web.Controllers
                     return Content("Invalid response type.");
 
                 await _repository.UpdateProspectResponseAsync(id, response);
+                // 'Not Interested' is also the Unsubscribe button of the I1 WhatsApp invitation.
+                if (response == "NotInterested")
+                    await whatsappRepository.SaveOptOutAsync(WhatsAppHelper.AudienceApplicant, null, null, id, "UnsubscribeButton");
                 await _repository.InsertHistoryAsync(id, "ProspectResponse", "\u2014",
                     $"Prospect chose: {response}", "Prospect");
 

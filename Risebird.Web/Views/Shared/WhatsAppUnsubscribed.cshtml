@@ -1,0 +1,28 @@
+@{
+    // Public confirmation page for the WhatsApp unsubscribe buttons (candidate and interviewer). No login, no menus.
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ViewBag.Title - Risebird</title>
+    <link rel="icon" type="image/png" href="~/Newassets/img/favicon.png">
+    <style>
+        body { margin: 0; font-family: Montserrat, "Segoe UI", Arial, sans-serif; background: #f4f6f9; color: #2c2c2c; }
+        .card { max-width: 480px; margin: 12vh auto 0; padding: 32px 28px; background: #fff; border-radius: 10px; box-shadow: 0 2px 12px rgba(0, 0, 0, .08); text-align: center; }
+        .card h1 { font-size: 20px; margin: 0 0 12px; }
+        .card p { font-size: 15px; line-height: 1.5; margin: 0; }
+        .brand { margin-top: 24px; font-size: 13px; color: #888; }
+        @@media (max-width: 520px) { .card { margin: 8vh 16px 0; } }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>WhatsApp messages</h1>
+        <p>@ViewBag.Message</p>
+        <div class="brand">Risebird</div>
+    </div>
+</body>
+</html>

@@ -12,6 +12,7 @@ using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -646,11 +647,13 @@ namespace Risebird.Web.Controllers
                 };
                 var emailsend = await _notificationHelper.RBFNPaymentConfirmationNotification(_mail, amount, sb);
                 //End:Send email to Interviewer
+                // I7a: amount and period; the breakdown stays in the email.
                 WhatsAppVM _whatsApp = new WhatsAppVM();
                 _whatsApp.Emailid = email;
-                _whatsApp.InterviewDate = amount;
+                _whatsApp.Amount = amount;
+                _whatsApp.Period = st.ToString("dd MMM yyyy", CultureInfo.InvariantCulture) + " to " + se.ToString("dd MMM yyyy", CultureInfo.InvariantCulture);
                 _whatsApp.Event = "Payment Notification";
-                var result = _whatsAppHelper.WhatsAppSendOnAssignation(_whatsApp);
+                _ = await _whatsAppHelper.WhatsAppSendPaymentNotification(_whatsApp);
                 if (emailsend == "Mail sent successfully.")
                 {
 
@@ -1141,11 +1144,12 @@ namespace Risebird.Web.Controllers
                     Subject = "RiseBird: Finance Team done advance payment"
                 };
                 var emailsend = await _notificationHelper.RBFNPaymentConfirmationNotification(_mail, Amount.ToString(), sb);
+                // I7b: advance payment, amount only.
                 WhatsAppVM _whatsApp = new WhatsAppVM();
                 _whatsApp.Emailid = Interviewer;
-                _whatsApp.InterviewDate = Amount.ToString();
-                _whatsApp.Event = "Payment Notification";
-                await _whatsAppHelper.WhatsAppSendOnAssignation(_whatsApp);
+                _whatsApp.Amount = Amount.ToString();
+                _whatsApp.Event = "Advance Payment Notification";
+                await _whatsAppHelper.WhatsAppSendPaymentNotification(_whatsApp);
             }
             else if (model == "Failed")
             {

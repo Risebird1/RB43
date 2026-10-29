@@ -1331,7 +1331,7 @@ namespace Risebird.Business
             }
         }
 
-        public async Task<bool> SendInvite(int irfId, string email, string loggedUserEmailId, string linkurl, int? communicationMedium = null)
+        public async Task<bool> SendInvite(int irfId, string email, string loggedUserEmailId, string linkurl, int? communicationMedium = null, string whatsAppEvent = null)
         {
             try
             {
@@ -1365,6 +1365,7 @@ namespace Risebird.Business
                     {
                         oneTimeSchedulingLink = await _interviewSchedulerRepository.GenerateOneTimeEvent(olduniqueid, email);
                     }
+                    var oneTimeEventId = oneTimeSchedulingLink;
                     oneTimeSchedulingLink = linkurl + "/InterviewScheduler/CandidateScheduleEvent?id=" + oneTimeSchedulingLink + "&CandidateEmail=" + email;
                     //oneTimeSchedulingLink1 = linkurl + "/InterviewScheduler/ScheduleEvent?id=" + oneTimeSchedulingLink;
 
@@ -1386,18 +1387,17 @@ namespace Risebird.Business
 
                     if (!communicationMedium.HasValue || (communicationMedium.HasValue && communicationMedium.Value == (int)CommunicationMedium.Whatsapp))
                     {
-                        var UnsubscribeLink = linkurl + "/Candidate/Unsubscribe?emailid=" + email + "&irfid=" + irfId;
                         WhatsAppVM _whatsapp = new WhatsAppVM();
                         _whatsapp.Emailid = email;
-                        _whatsapp.InterviewDate = primarySkill;
                         _whatsapp.Header = client.Name;
-                        //_whatsapp.Event = "Interview Schedule";
-                        _whatsapp.Event = "Schedule Interview";
+                        // C1 by default; the Reschedule page passes "Reschedule Interview" (C2). Each counts toward its own 3-per-IRF limit.
+                        _whatsapp.Event = string.IsNullOrWhiteSpace(whatsAppEvent) ? "Schedule Interview" : whatsAppEvent;
                         _whatsapp.MessageValue = ((JobLevels)(irf.JobLevel)).GetDescription();
-                        oneTimeSchedulingLink = oneTimeSchedulingLink.Replace(linkurl + "/", "");
-                        _whatsapp.buttonlink = oneTimeSchedulingLink.Replace("https://portal.risebird.io/", "");
-                        _whatsapp.UnsubscribeLink = UnsubscribeLink;
+                        _whatsapp.ClientName = client.Name;
+                        _whatsapp.PrimarySkill = primarySkill;
+                        _whatsapp.buttonlink = "InterviewScheduler/CandidateScheduleEvent?id=" + oneTimeEventId + "&CandidateEmail=" + Uri.EscapeDataString(email);
                         _whatsapp.irfId = irfId;
+                        _whatsapp.SentBy = loggedUserEmailId;
                         _ = await _whatsAppHelper.WhatsAppSendScheduling(_whatsapp);
                     }
                     if (candidate.TotalInvites == 0)

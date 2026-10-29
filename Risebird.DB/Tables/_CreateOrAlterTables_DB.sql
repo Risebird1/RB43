@@ -9,6 +9,10 @@ PRINT 'Table InterviewMeetings...'
 :r $(path)\Tables\InterviewMeetings.sql
 PRINT 'Table UserList...'
 :r $(path)\Tables\UserList.sql
+PRINT 'Table SentWhatsAppMessageDetails...'
+:r $(path)\Tables\SentWhatsAppMessageDetails.sql
+PRINT 'Table WhatsAppOptOut...'
+:r $(path)\Tables\WhatsAppOptOut.sql
 
 PRINT 'End: Updating tables...'
 GO
