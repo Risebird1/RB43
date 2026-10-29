@@ -21,8 +21,9 @@ CREATE PROCEDURE [dbo].[usp_SaveSentWhatsappMessageDetails]
 @InterviewDate varchar(100) = null,
 @Header varchar(500) = null,
 @CreatedAt datetime,
-@SentBy varchar(100) =null
-AS    
+@SentBy varchar(100) =null,
+@Status varchar(10) = 'Sent'   -- 'Sent' | 'Failed' | 'Skipped'; only 'Sent' counts toward the WhatsApp send limit
+AS
 Begin  
 begin try
 	begin tran
@@ -53,11 +54,11 @@ begin try
 
 		end
 
-		Insert into SentWhatsAppMessageDetails(Recipient, CountryCode, WhatsappNumber,	[Message], ButtonLink, [Event],	IRFId, InterviewId,	InterviewDate, Header, CreatedAt, SentBy)  
-		values(@Recipient, @CountryCode, @WhatsappNumber, @Message, @ButtonLink, @Event, @irfIntId, @interviewIdComputed, @computedInterviewDate, @Header, @CreatedAt, @SentBy)  
+		Insert into SentWhatsAppMessageDetails(Recipient, CountryCode, WhatsappNumber,	[Message], ButtonLink, [Event],	IRFId, InterviewId,	InterviewDate, Header, CreatedAt, SentBy, [Status])
+		values(@Recipient, @CountryCode, @WhatsappNumber, @Message, @ButtonLink, @Event, @irfIntId, @interviewIdComputed, @computedInterviewDate, @Header, @CreatedAt, @SentBy, ISNULL(@Status, 'Sent'))
 
-		
-		if(@recipientProfile = 'Candidate' and @InterviewDate is not null)
+
+		if(@recipientProfile = 'Candidate' and @InterviewDate is not null and ISNULL(@Status, 'Sent') = 'Sent')
 		begin
 			--declare @interviewIdComputed int, @irfIntId int = @IRFId
 			--set @interviewIdComputed= (select top 1 id from InterviewMeetings where interviewDate = @InterviewDate and candidateEmail = @Recipient)

@@ -829,7 +829,7 @@
         else {
 
             var Rating = $("#Rating").val();
-            if (Rating == 4) {
+            if (Number(Rating) >= 4) {
                 $("#redoWrap").hide();
             }
             else {

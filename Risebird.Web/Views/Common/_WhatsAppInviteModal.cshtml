@@ -204,7 +204,7 @@
                             success: function (data) {
                                  swal.fire({
                                     title: 'Invites Sent!',
-                                    html: '<p>WhatsApp invites have been sent to candidate(s).</p>',
+                                    html: $('<p>').text(data || 'WhatsApp invites have been sent to candidate(s).').prop('outerHTML'),
                                     type: 'success',
                                     confirmButtonText: 'OK',
                                     allowOutsideClick: false

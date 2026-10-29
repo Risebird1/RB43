@@ -83,31 +83,7 @@ namespace Risebird.MicroService
                             Subject = item.ClientName + ": For Skill :" + primaryskill + ": Interview Reminder Confirm Your Availability"
                         };
                         var emailresult = await _notificationHelper.SendInterviewRemindersecond(_mail, item.FirstName, item.interviewDate, item.ClientName, dashboardLink, yesbutton, nobutton, rescheulebutton, needcleritybutton, timeZoneValue, dashboardLink,item.Irfid, item.Interviewid, item.CompanyLink, item.LogoLink);
-                        if (candidateDashboard == "1")
-                        {
-                            WhatsAppVM _whatsAppVM = new WhatsAppVM();
-                            _whatsAppVM.Emailid = item.CandidateEmail;
-                            _whatsAppVM.InterviewDate = item.interviewDate.ToString() + "(" + item.TimeZonesValue + ")";
-                            _whatsAppVM.buttonlink = !string.IsNullOrEmpty(dashboardLink) ? dashboardLink.Replace("https://portal.risebird.io/Candidate/InterviewDetails", "") : "";
-                            _whatsAppVM.Event = "Candidate Dashboard Reminder";
-                            _whatsAppVM.irfId = item.Irfid;
-                            _whatsAppVM.InterviewId = item.Interviewid;
-                            await _whatsAppHelper.WhatsAppSendCandidateDashboardReminder(_whatsAppVM);
-                        }
-                        else
-                        {
-                            WhatsAppVM _whatsAppVM = new WhatsAppVM();
-                            _whatsAppVM.Emailid = item.CandidateEmail;
-                            _whatsAppVM.InterviewDate = item.interviewDate.ToString() + "(" + item.TimeZonesValue + ")";
-                            _whatsAppVM.buttonlink = !string.IsNullOrEmpty(yesbutton) ? yesbutton.Replace("https://portal.risebird.io/Interview/CandidateMeetingsStatus", "") : "";
-                            _whatsAppVM.Event = "Interview Reminder Second";
-                            _whatsAppVM.PrimarySkill = item.PrimarySkillInvite;
-                            _whatsAppVM.MessageValue = item.ClientName;
-                            _whatsAppVM.timezone = timeZoneValue;
-                            _whatsAppVM.irfId = item.Irfid;
-                            _whatsAppVM.InterviewId = item.Interviewid;
-                            await _whatsAppHelper.WhatsAppSendInterviewReminder(_whatsAppVM);
-                        }
+                        await SendReminderWhatsApp(item, yesbutton, timeZoneValue);
                         //Send Call, WhatsApp and mail
 
                         //With Yes/No Button - COMMENTED OUT: Twilio IVR call disabled
@@ -122,33 +98,7 @@ namespace Risebird.MicroService
                             Subject = item.ClientName + ": For Skill :" + primaryskill + ": Interview Reminder Confirm Your Availability"
                         };
                         var emailresult = await _notificationHelper.SendInterviewReminder(_mail, item.FirstName, item.interviewDate, item.ClientName, dashboardLink, yesbutton, nobutton, rescheulebutton, needcleritybutton, timeZoneValue, dashboardLink, item.Irfid, item.Interviewid, item.CompanyLink, item.LogoLink);
-                        if (candidateDashboard == "1")
-                        {
-                            WhatsAppVM _whatsAppVM = new WhatsAppVM();
-                            _whatsAppVM.Emailid = item.CandidateEmail;
-                            _whatsAppVM.InterviewDate = item.interviewDate.ToString() + "(" + item.TimeZonesValue + ")";
-                            _whatsAppVM.buttonlink = !string.IsNullOrEmpty(dashboardLink) ? dashboardLink.Replace("https://portal.risebird.io/Candidate/InterviewDetails", "") : "";
-                            _whatsAppVM.Event = "Candidate Dashboard Reminder";
-                            _whatsAppVM.irfId = item.Irfid;
-                            _whatsAppVM.InterviewId = item.Interviewid;
-                            await _whatsAppHelper.WhatsAppSendCandidateDashboardReminder(_whatsAppVM);
-                        }
-                        else
-                        {
-                            //Send  WhatsApp and mail
-                            WhatsAppVM _whatsAppVM = new WhatsAppVM();
-                            _whatsAppVM.Emailid = item.CandidateEmail;
-                            _whatsAppVM.InterviewDate = item.interviewDate.ToString();
-                            _whatsAppVM.buttonlink = !string.IsNullOrEmpty(yesbutton) ? yesbutton.Replace("https://portal.risebird.io/Interview/CandidateMeetingsStatus", "") : "";
-                            _whatsAppVM.Event = "Interview Reminder";
-                            _whatsAppVM.PrimarySkill = item.PrimarySkillInvite;
-                            _whatsAppVM.MessageValue = item.ClientName;
-                            _whatsAppVM.timezone = timeZoneValue;
-                            _whatsAppVM.irfId = item.Irfid;
-                            _whatsAppVM.InterviewId = item.Interviewid;
-                            await _whatsAppHelper.WhatsAppSendInterviewReminder(_whatsAppVM);
-                            //With Yes/No Button
-                        }
+                        await SendReminderWhatsApp(item, yesbutton, timeZoneValue);
                     }
                     else if (item.Typefunction == 24)
                     {
@@ -159,33 +109,7 @@ namespace Risebird.MicroService
                             Subject = item.ClientName + ": For Skill :" + primaryskill + ": Interview Reminder Confirm Your Availability"
                         };
                         var emailresult = await _notificationHelper.SendInterviewReminder(_mail, item.FirstName, item.interviewDate, item.ClientName, dashboardLink, yesbutton, nobutton, rescheulebutton, needcleritybutton, timeZoneValue, dashboardLink, item.Irfid, item.Interviewid, item.CompanyLink, item.LogoLink);
-                        if (candidateDashboard == "1")
-                        {
-                            WhatsAppVM _whatsAppVM = new WhatsAppVM();
-                            _whatsAppVM.Emailid = item.CandidateEmail;
-                            _whatsAppVM.InterviewDate = item.interviewDate.ToString() + "(" + item.TimeZonesValue + ")";
-                            _whatsAppVM.buttonlink = !string.IsNullOrEmpty(dashboardLink) ? dashboardLink.Replace("https://portal.risebird.io/Candidate/InterviewDetails", "") : "";
-                            _whatsAppVM.Event = "Candidate Dashboard Reminder";
-                            _whatsAppVM.irfId = item.Irfid;
-                            _whatsAppVM.InterviewId = item.Interviewid;
-                            await _whatsAppHelper.WhatsAppSendCandidateDashboardReminder(_whatsAppVM);
-                        }
-                        else
-                        {
-                            //Send Call, WhatsApp and mail
-                            WhatsAppVM _whatsAppVM = new WhatsAppVM();
-                            _whatsAppVM.Emailid = item.CandidateEmail;
-                            _whatsAppVM.InterviewDate = item.interviewDate.ToString();
-                            _whatsAppVM.buttonlink = !string.IsNullOrEmpty(yesbutton) ? yesbutton.Replace("https://portal.risebird.io/Interview/CandidateMeetingsStatus", "") : "";
-                            _whatsAppVM.Event = "Interview Reminder";
-                            _whatsAppVM.PrimarySkill = item.PrimarySkillInvite;
-                            _whatsAppVM.MessageValue = item.ClientName;
-                            _whatsAppVM.timezone = timeZoneValue;
-                            _whatsAppVM.irfId = item.Irfid;
-                            _whatsAppVM.InterviewId = item.Interviewid;
-                            await _whatsAppHelper.WhatsAppSendInterviewReminder(_whatsAppVM);
-                            //With Yes/No Button
-                        }
+                        await SendReminderWhatsApp(item, yesbutton, timeZoneValue);
                     }
                     else if (item.Typefunction == 1)
                     {
@@ -230,6 +154,24 @@ namespace Risebird.MicroService
                     await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 }
             }
+        }
+
+        // C3 Interview Reminder: "Yes! Available" confirms directly; "Reschedule / Others" opens the candidate's
+        // interview page, which carries Reschedule, Not Available and Need Clarity.
+        private async Task SendReminderWhatsApp(UnassignedInterviewVM item, string yesbutton, string timeZoneValue)
+        {
+            WhatsAppVM _whatsAppVM = new WhatsAppVM();
+            _whatsAppVM.Emailid = item.CandidateEmail;
+            _whatsAppVM.InterviewDate = item.interviewDate.ToString();
+            _whatsAppVM.buttonlink = yesbutton;
+            _whatsAppVM.DashboardLink = "Candidate/VerifiedInterviewDetails/" + item.uniqueid + "?emailid=" + Uri.EscapeDataString(item.CandidateEmail ?? "") + "&IRFId=" + item.Irfid;
+            _whatsAppVM.Event = "Interview Reminder";
+            _whatsAppVM.PrimarySkill = item.PrimarySkillInvite;
+            _whatsAppVM.ClientName = item.ClientName;
+            _whatsAppVM.timezone = timeZoneValue;
+            _whatsAppVM.irfId = item.Irfid;
+            _whatsAppVM.InterviewId = item.Interviewid;
+            await _whatsAppHelper.WhatsAppSendInterviewReminder(_whatsAppVM);
         }
     }
 }
