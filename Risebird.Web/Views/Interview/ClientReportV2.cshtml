@@ -760,7 +760,15 @@
                                                                     }
                                                                 }
                                                                 @Html.HiddenFor(m => m.TechSkillReportCollection[i].RequiredLevelId)
-                                                                <span class="rqlevel">Evaluated at <b>@Model.TechSkillReportCollection[i].RequiredLevel</b></span>
+                                                                @if (Risebird.Entities.ViewModel.LevelDisplayModes.IsEnhanced(Model.LevelDisplayMode))
+                                                                {
+                                                                    bool levelScoreVisible = (Model.ReportAccepted && ViewBag.profile == "Client") || (Model.Reportsnippet == 2 || Model.Reportsnippet == 0) || ViewBag.profile != "Client";
+                                                                    @await Html.PartialAsync("_TechSkillLevelDisplay", Risebird.Entities.ViewModel.TechSkillLevelDisplay.Create(Model.LevelDisplayMode, Model.TechSkillReportCollection[i], TechSkill_Score, levelScoreVisible))
+                                                                }
+                                                                else
+                                                                {
+                                                                    <span class="rqlevel">Evaluated at <b>@Model.TechSkillReportCollection[i].RequiredLevel</b></span>
+                                                                }
                                                                 @Html.HiddenFor(m => m.TechSkillReportCollection[i].ActualLevelId)
                                                                 @Html.HiddenFor(m => m.TechSkillReportCollection[i].WeightageRequired)
                                                                 @Html.HiddenFor(m => m.TechSkillReportCollection[i].WeightageActual)
@@ -826,6 +834,11 @@
                                                                 </div>
                                                             </div>
                                                         }
+                                                    }
+                                                    @* Competency scale: once per report, outside both skill blocks, only for LevelDisplayMode 1 or 2. *@
+                                                    @if (Risebird.Entities.ViewModel.LevelDisplayModes.IsEnhanced(Model.LevelDisplayMode))
+                                                    {
+                                                        @await Html.PartialAsync("_CompetencyScale")
                                                     }
                                                 </div>
 
@@ -1002,13 +1015,17 @@
                                                             </div>
                                                         }
 
+                                                        @* Header only with pairs to show, so an interview with no transcript gets no empty header. *@
+                                                        @if (Model.HasTranscriptQaPairs)
+                                                        {
                                                         <h3 style="margin-top: 30px;">
                                                             <img style="width:33px;position: relative;left: -4px;top:0px;" src="/img/question-asked.png">
                                                             AI Interview Questions & Answers
                                                         </h3>
+                                                        }
                                                         <div class="question ai-ques" style="font-size:16px;">
                                                             <ul>
-                                                                @if (Model.TranscriptSummaryObject.IntervieweeAnalysis != null)
+                                                                @if (Model.HasTranscriptQaPairs)
                                                                 {
                                                                     int answerIndex = 0;
                                                                     int commentIndex = 0;
@@ -1060,7 +1077,7 @@
 
                                                                                         <p class="moretext_@(answerId) moretext"
                                                                                            style="margin: 5px 0; color: #555; font-size: 16px;font-weight:400; display: none;">
-                                                                                            @qaPair.Answer.Substring(150, qaPair.Answer.Length - 150)
+                                                                                            @qaPair.Answer.Substring(300, qaPair.Answer.Length - 300)
                                                                                         </p>
                                                                                     </div>
 
@@ -1271,7 +1288,15 @@
                                                                             }
                                                                         }
                                                                         @Html.HiddenFor(m => m.TechSkillTwoReportCollection[i].RequiredLevelId)
-                                                                        <span class="rqlevel">Evaluated at <b>@Model.TechSkillTwoReportCollection[i].RequiredLevel</b></span>
+                                                                        @if (Risebird.Entities.ViewModel.LevelDisplayModes.IsEnhanced(Model.LevelDisplayMode))
+                                                                        {
+                                                                            bool levelScoreVisible = (Model.ReportAccepted && ViewBag.profile == "Client") || (Model.Reportsnippet == 2 || Model.Reportsnippet == 0) || ViewBag.profile != "Client";
+                                                                            @await Html.PartialAsync("_TechSkillLevelDisplay", Risebird.Entities.ViewModel.TechSkillLevelDisplay.Create(Model.LevelDisplayMode, Model.TechSkillTwoReportCollection[i], TechSkill_Score, levelScoreVisible))
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <span class="rqlevel">Evaluated at <b>@Model.TechSkillTwoReportCollection[i].RequiredLevel</b></span>
+                                                                        }
                                                                         @Html.HiddenFor(m => m.TechSkillTwoReportCollection[i].ActualLevelId)
                                                                         @Html.HiddenFor(m => m.TechSkillTwoReportCollection[i].WeightageRequired)
                                                                         @Html.HiddenFor(m => m.TechSkillTwoReportCollection[i].WeightageActual)

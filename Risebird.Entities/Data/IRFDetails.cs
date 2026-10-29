@@ -30,6 +30,7 @@
         public int? Heuristicsscore { get; set; }
         public string TechRubricType { get; set; }
         public bool IsAIInterview { get; set; }
+        public int? LevelDisplayMode { get; set; }
     }
     public class IRFDetailsList
     {

@@ -786,7 +786,15 @@
                                                                 var TechSkill_Score = Model.TechSkillReportCollection[i].WeightageActual * 100 / Model.TechSkillReportCollection[i].WeightageRequired;
                                                             }
                                                             @Html.HiddenFor(m => m.TechSkillReportCollection[i].RequiredLevelId)
-                                                                                                                                                             <span class="rqlevel">Evaluated at <b>@Model.TechSkillReportCollection[i].RequiredLevel</b></span>
+                                                                                                                                                             @if (Risebird.Entities.ViewModel.LevelDisplayModes.IsEnhanced(Model.LevelDisplayMode))
+                                                                                                                                                             {
+                                                                                                                                                                 bool levelScoreVisible = true;
+                                                                                                                                                                 @await Html.PartialAsync("_TechSkillLevelDisplay", Risebird.Entities.ViewModel.TechSkillLevelDisplay.Create(Model.LevelDisplayMode, Model.TechSkillReportCollection[i], TechSkill_Score, levelScoreVisible))
+                                                                                                                                                             }
+                                                                                                                                                             else
+                                                                                                                                                             {
+                                                                                                                                                                 <span class="rqlevel">Evaluated at <b>@Model.TechSkillReportCollection[i].RequiredLevel</b></span>
+                                                                                                                                                             }
                                                                                                                                                              <br/>  <span class="rqlevel">Actual level: <b>@(string.IsNullOrEmpty(Model.TechSkillReportCollection[i].ActualLevel) ? "Not Evaluated" : Model.TechSkillReportCollection[i].ActualLevel)</b></span>
                                                             @Html.HiddenFor(m => m.TechSkillReportCollection[i].ActualLevelId)
                                                             @Html.HiddenFor(m => m.TechSkillReportCollection[i].WeightageRequired)
@@ -810,6 +818,11 @@
                                                                                                                     </div>
                                                                                                                   </div>
                                                     }
+                                                }
+                                                @* Competency scale: once per report, outside both skill blocks, only for LevelDisplayMode 1 or 2. *@
+                                                @if (Risebird.Entities.ViewModel.LevelDisplayModes.IsEnhanced(Model.LevelDisplayMode))
+                                                {
+                                                    @await Html.PartialAsync("_CompetencyScale")
                                                 }
                                              </div>
                                          </div>
@@ -858,6 +871,11 @@
                                          </div>
                                         @* Code sessions no discussed question matched, each with its question. *@
                                         @await Html.PartialAsync("~/Views/Shared/_UnmatchedCandidateCode.cshtml", codeMatcher)
+                                        @* AI question & answer log - in the PDF as well as the browser report. *@
+                                        @if (Model.HasTranscriptQaPairs)
+                                        {
+                                            @await Html.PartialAsync("_AIQuestionAnswerLogPdf", Model)
+                                        }
 
                                         @if (Model.SkillSetsevaluate > 1)
                                         {
@@ -961,7 +979,15 @@
                                                                     var TechSkill_Score = Model.TechSkillTwoReportCollection[i].WeightageActual * 100 / Model.TechSkillTwoReportCollection[i].WeightageRequired;
                                                                 }
                                                                 @Html.HiddenFor(m => m.TechSkillTwoReportCollection[i].RequiredLevelId)
-                                    <span class="rqlevel">Evaluated at <b>@Model.TechSkillTwoReportCollection[i].RequiredLevel</b></span>
+                                    @if (Risebird.Entities.ViewModel.LevelDisplayModes.IsEnhanced(Model.LevelDisplayMode))
+                                    {
+                                        bool levelScoreVisible = true;
+                                        @await Html.PartialAsync("_TechSkillLevelDisplay", Risebird.Entities.ViewModel.TechSkillLevelDisplay.Create(Model.LevelDisplayMode, Model.TechSkillTwoReportCollection[i], TechSkill_Score, levelScoreVisible))
+                                    }
+                                    else
+                                    {
+                                        <span class="rqlevel">Evaluated at <b>@Model.TechSkillTwoReportCollection[i].RequiredLevel</b></span>
+                                    }
                                                                 @Html.HiddenFor(m => m.TechSkillTwoReportCollection[i].ActualLevelId)
                                                                 @Html.HiddenFor(m => m.TechSkillTwoReportCollection[i].WeightageRequired)
                                                                 @Html.HiddenFor(m => m.TechSkillTwoReportCollection[i].WeightageActual)

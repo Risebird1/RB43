@@ -53,6 +53,12 @@ Create PROCEDURE [dbo].[usp_CreateSkillChannelFromTemplateV1]
 @ClientUserBulkData AS [dbo].[TransClientUser_TableType] READONLY  ,
 @IsAIInterview bit = null,
 @AIInterviewType int = null,
+-- Carried onto the new channel so a configured template does not silently come out with them off.
+-- All default to NULL, which is exactly what a cloned channel got before these were added.
+@generateTranscriptSummary bit = null,
+@LevelDisplayMode int = null,
+@MaxCandidateReschedules int = null,
+@InterviewCompleteByDays int = null,
 @flatRate int output
            
 AS              
@@ -84,9 +90,20 @@ begin try
   and PlanTypeEnumValue = @planType
   and CompanyType = (select ClientType from Client where id = @ClientId) )
 
+  -- The template keeps no copy of these flags; they live on the channel it was made from
+  -- (ClonableSkillChannel.CreatedFromIRFId). A value the caller did not send is taken from there, so a
+  -- channel cloned from a configured template keeps them instead of silently coming out with them off.
+  -- Where the source channel has them NULL too, the clone gets NULL - today's behaviour.
+  select
+    @generateTranscriptSummary = ISNULL(@generateTranscriptSummary, src.generateTranscriptSummary),
+    @LevelDisplayMode = ISNULL(NULLIF(@LevelDisplayMode, 0), src.LevelDisplayMode),
+    @MaxCandidateReschedules = ISNULL(@MaxCandidateReschedules, src.MaxCandidateReschedules),
+    @InterviewCompleteByDays = ISNULL(NULLIF(@InterviewCompleteByDays, 0), src.InterviewCompleteByDays)
+  from ClonableSkillChannel csc
+  join IRF src on src.id = csc.CreatedFromIRFId
+  where csc.id = @CreatedFromTemplateId
 
-
-  if not exists (select 1 from IRF where [IRFId] = @IRFId)       
+  if not exists (select 1 from IRF where [IRFId] = @IRFId)
   Begin     
   
   INSERT INTO [dbo].[IRF]              
@@ -130,7 +147,11 @@ begin try
   ,[TechRubricType]
   ,[RequestId]
   ,[IsAIInterview]
-  ,[AIInterviewType])
+  ,[AIInterviewType]
+  ,[generateTranscriptSummary]
+  ,[LevelDisplayMode]
+  ,[MaxCandidateReschedules]
+  ,[InterviewCompleteByDays])
   VALUES              
   (@IRFId,              
   @clientName,              
@@ -175,7 +196,11 @@ begin try
   @TechRubricType,
   @RequestId,
   @IsAIInterview,
-  @AIInterviewType)                                                                           
+  @AIInterviewType,
+  @generateTranscriptSummary,
+  NULLIF(@LevelDisplayMode, 0),
+  @MaxCandidateReschedules,
+  NULLIF(@InterviewCompleteByDays, 0))                                                                           
          
       
   select @irfIntId = SCOPE_IDENTITY()      

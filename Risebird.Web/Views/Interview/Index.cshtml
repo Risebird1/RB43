@@ -6,6 +6,7 @@
 @using Risebird.Entities.Data
 @using Risebird.CommonHelper
 @inject IHttpContextAccessor HttpContextAccessor
+@inject Microsoft.Extensions.Configuration.IConfiguration Configuration
 
 @{
     ViewData["Title"] = "Interviews";
@@ -218,6 +219,10 @@
                         <div class="feedback-tab" onclick="Changeurldetails('Interviews')"><strong>Interviews</strong></div>
                         <div class="feedback-tab feedback-tab-ac" onclick="Changeurldetails('RedoInterviews')"><strong>Redo Interviews</strong></div>
                         <div class="feedback-tab" onclick="Changeurldetails('CancelInterviews')"><strong>Cancelled Interviews</strong></div>
+                    }
+                    @if (Risebird.Web.Controllers.InterviewProfitabilityController.IsAllowed(ViewBag.profile as string, Configuration))
+                    {
+                        <div class="feedback-tab" onclick="location.href='/InterviewProfitability/Index'"><strong>Profitability</strong></div>
                     }
                 </div>
                 <div class="interview-header-right client-ms">

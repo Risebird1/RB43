@@ -166,6 +166,7 @@ namespace Risebird.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Index(Guid sid)
         {
+            using var aiCostScope = OpenAIApiLogScope.Begin(sessionId: sid);
             try
             {
                 //get all the data relevant interview data for that sid
@@ -1013,6 +1014,7 @@ namespace Risebird.Web.Controllers
         [DisableRequestSizeLimit]
         public async Task<IActionResult> Index([FromForm] ChatMessageViewModel model)
         {
+            using var aiCostScope = OpenAIApiLogScope.Begin(meetingId: model?.InterviewId, sessionId: model?.SessionId);
             try
             {
                 if (model == null || model.SessionId == Guid.Empty)

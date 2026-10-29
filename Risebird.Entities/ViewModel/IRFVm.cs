@@ -333,6 +333,27 @@ namespace Risebird.Entities.ViewModel
         [Display(Name = "MCQ Duration (minutes)")]
         public int? McqAssessmentMinutes { get; set; }
 
+        /// <summary>
+        /// How the client report shows each technical skill's level. Null or 0 keeps today's single
+        /// "Evaluated at" line; see <see cref="Risebird.Entities.ViewModel.LevelDisplayModes"/>.
+        /// </summary>
+        [Display(Name = "Skill level display")]
+        public int? LevelDisplayMode { get; set; }
+
+        /// <summary>
+        /// How many times the candidate may reschedule. Null = unlimited. Never applies to Risebird
+        /// internal or client users.
+        /// </summary>
+        [Display(Name = "Max candidate reschedules")]
+        public int? MaxCandidateReschedules { get; set; }
+
+        /// <summary>
+        /// The candidate may not pick a slot more than this many days after the first scheduled date.
+        /// Null = no deadline.
+        /// </summary>
+        [Display(Name = "Complete interview within (days)")]
+        public int? InterviewCompleteByDays { get; set; }
+
         [DisplayName("AssistantId")]
         public string OpenAIAssistantId { get; set; }
 
