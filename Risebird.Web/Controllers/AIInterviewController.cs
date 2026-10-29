@@ -2980,10 +2980,12 @@ namespace Risebird.Web.Controllers
                 // Passing null tells the stored proc to always INSERT a new row, creating one entry per answered question.
                 int? deliveryHeadQuestionId = model.CurrentQuestionId > 0 ? model.CurrentQuestionId : (int?)null;
                 // The MCQ assessment section records nothing - the candidate answered inside the
-                // embedded test - so it is the one question type allowed to save without a video.
+                // embedded test - and neither does a code project question, whose answer is the work
+                // graded on the candidate's machine. They are the question types allowed to save
+                // without a video; requiring one failed every code project answer.
                 // What speech-to-text heard is stored beside what the candidate confirmed, so a
                 // dispute can be read back against the recording rather than argued from memory.
-                var result = await _aiinterviewerService.UpdateBotInterviewVideoDetails(VideoLink, question, model.SessionId.ToString(), model.SynthesizedVideoUrl, candidateResponse, model.TimeLeftInSeconds, model.InterviewId, model.AIInterviewerAudioLink, deliveryHeadQuestionId, model.IsTypingSpeedQuestion, model.IsListeningComprehensionQuestion, candidateAnswerAudioLink, model.IsMcqAssessmentQuestion, BuildTranscriptReview(model, meeting), model.TranscriptTakeCount);
+                var result = await _aiinterviewerService.UpdateBotInterviewVideoDetails(VideoLink, question, model.SessionId.ToString(), model.SynthesizedVideoUrl, candidateResponse, model.TimeLeftInSeconds, model.InterviewId, model.AIInterviewerAudioLink, deliveryHeadQuestionId, model.IsTypingSpeedQuestion, model.IsListeningComprehensionQuestion, candidateAnswerAudioLink, model.IsMcqAssessmentQuestion || model.IsCodeProjectQuestion, BuildTranscriptReview(model, meeting), model.TranscriptTakeCount);
 
                 // This question is answered, so the next one starts its own count. Without this the
                 // posted value rides along on the model and every later question inherits the takes

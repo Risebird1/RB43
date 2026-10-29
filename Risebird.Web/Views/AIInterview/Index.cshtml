@@ -6738,6 +6738,21 @@ git commit -m "implement the requirements"</div>
             function renderEnv(env) {
                 if (!env) return;
                 var state = env.state;
+                // Already submitted (e.g. the page was reloaded after submitting): there is nothing left
+                // to do on this question, so carry on with the interview instead of offering a launch.
+                if (state === 'submitted') {
+                    stopPolling();
+                    submitted = true;
+                    if (clockTimer) clearInterval(clockTimer);
+                    show('cpIdle', true); show('cpConnecting', false); show('cpIde', false); show('cpDone', false);
+                    badge('Submitted', 'ok');
+                    $('cpIdleText').textContent = 'Your project has been submitted. Continuing the interview…';
+                    show('cpIdleErr', false);
+                    var launch = $('cpLaunchBtn');
+                    if (launch) launch.style.display = 'none';
+                    setTimeout(advanceInterview, 1200);
+                    return;
+                }
                 if (state === 'handedover') {
                     stopPolling();
                     show('cpIdle', false); show('cpConnecting', false); show('cpIde', true); show('cpDone', true);
@@ -6833,14 +6848,19 @@ git commit -m "implement the requirements"</div>
 
                 // Grade first (reads the last commit off the machine), then advance the interview.
                 // If grading is slow or fails, the answer post grades again server-side.
-                var finish = function () {
-                    var form = $('chatForm');
-                    if (!form) { window.location.reload(); return; }
-                    ['audioInput', 'videoInput'].forEach(function (id) { var el = $(id); if (el) el.value = ''; });
-                    if (typeof answerSubmitInFlight !== 'undefined') answerSubmitInFlight = true;
-                    form.submit();
-                };
-                post(submitUrl).then(finish, finish);
+                post(submitUrl).then(advanceInterview, advanceInterview);
+            }
+
+            // Posts the interview's answer form, which records the graded result and moves to the next question.
+            var advanced = false;
+            function advanceInterview() {
+                if (advanced) return;
+                advanced = true;
+                var form = $('chatForm');
+                if (!form) { window.location.reload(); return; }
+                ['audioInput', 'videoInput'].forEach(function (id) { var el = $(id); if (el) el.value = ''; });
+                if (typeof answerSubmitInFlight !== 'undefined') answerSubmitInFlight = true;
+                form.submit();
             }
 
             $('cpSubmitBtn').addEventListener('click', function () {
