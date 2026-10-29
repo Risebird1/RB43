@@ -35,3 +35,21 @@ CREATE TABLE [dbo].[PlivoCXAgent](
 ) ON [PRIMARY]
 END
 GO
+
+-- Which voice platform runs the agent: Plivo (AgentFlow, dialled through TriggerUrl) | ElevenLabs
+-- (Agents Platform, dialled by ProviderAgentId; TriggerUrl is empty) | Vapi (not built yet).
+-- Existing rows are Plivo.
+IF COL_LENGTH('dbo.PlivoCXAgent', 'Provider') IS NULL
+BEGIN
+	ALTER TABLE [dbo].[PlivoCXAgent] ADD [Provider] [varchar](20) NOT NULL
+		CONSTRAINT [DF_PlivoCXAgent_Provider] DEFAULT ('Plivo');
+END
+GO
+
+-- The provider's own id for the agent, e.g. an ElevenLabs agent_id. Written by
+-- Dashboard/CreateElevenLabsCampaignAgents, which creates (or updates) the ElevenLabs agents.
+IF COL_LENGTH('dbo.PlivoCXAgent', 'ProviderAgentId') IS NULL
+BEGIN
+	ALTER TABLE [dbo].[PlivoCXAgent] ADD [ProviderAgentId] [varchar](100) NULL;
+END
+GO

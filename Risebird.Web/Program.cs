@@ -345,6 +345,7 @@ builder.Services.AddScoped<IPlivoCXService, PlivoCXService>();
 builder.Services.AddScoped<IPlivoCXCallRepository, PlivoCXCallRepository>();
 builder.Services.AddScoped<IPlivoCXCampaignRepository, PlivoCXCampaignRepository>();
 builder.Services.AddScoped<IPlivoCXCampaignService, Risebird.Business.PlivoCX.PlivoCXCampaignService>();
+builder.Services.AddScoped<Risebird.Web.Services.PlivoCXCallOutcomeProcessor>();
 builder.Services.AddScoped<IPlivoWhatsAppService, PlivoWhatsAppService>();
 builder.Services.AddScoped<IPlivoWhatsAppRepository, PlivoWhatsAppRepository>();
 builder.Services.AddScoped<IElevenLabsAgentService, ElevenLabsAgentService>();

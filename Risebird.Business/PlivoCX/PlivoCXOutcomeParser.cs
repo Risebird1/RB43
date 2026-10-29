@@ -49,7 +49,9 @@ namespace Risebird.Business.PlivoCX
             if (string.IsNullOrWhiteSpace(hangupCause)) return false;
             var v = hangupCause.ToLowerInvariant();
             return v.Contains("5030") || v.Contains("5190") || v.Contains("5180")
-                || v.Contains("concurrency limit") || v.Contains("cps_limit") || v.Contains("cps limit");
+                || v.Contains("concurrency limit") || v.Contains("cps_limit") || v.Contains("cps limit")
+                // ElevenLabs answers an outbound call over its plan's concurrency with HTTP 429.
+                || v.Contains("http 429") || v.Contains("too many concurrent") || v.Contains("concurrency_limit");
         }
 
         /// <summary>Lower-cases and strips whitespace, quotes and trailing punctuation.</summary>

@@ -54,3 +54,12 @@ BEGIN
 CREATE NONCLUSTERED INDEX [IX_PlivoCXCampaign_Status] ON [dbo].[PlivoCXCampaign] ([Status])
 END
 GO
+
+-- Which voice platform the campaign calls through: Plivo | ElevenLabs | Vapi. Chosen on Create;
+-- the campaign's agent must belong to the same provider. Existing campaigns are Plivo.
+IF COL_LENGTH('dbo.PlivoCXCampaign', 'Provider') IS NULL
+BEGIN
+	ALTER TABLE [dbo].[PlivoCXCampaign] ADD [Provider] [varchar](20) NOT NULL
+		CONSTRAINT [DF_PlivoCXCampaign_Provider] DEFAULT ('Plivo');
+END
+GO

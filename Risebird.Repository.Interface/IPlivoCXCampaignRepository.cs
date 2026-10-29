@@ -68,7 +68,14 @@ namespace Risebird.Repository.Interface
         /// triggered within <paramref name="inFlightMinutes"/> - the lines in use on the account, whose
         /// concurrency limit is account-wide.
         /// </summary>
-        Task<int> CountAllInFlightAsync(int inFlightMinutes);
+        /// <remarks>
+        /// <paramref name="provider"/> narrows it to calls on one provider (each has its own
+        /// concurrency limit): Plivo also counts calls with no campaign (timer jobs, one-off calls).
+        /// </remarks>
+        Task<int> CountAllInFlightAsync(int inFlightMinutes, string provider = "Plivo");
+
+        /// <summary>Saves an agent's name, description, provider, provider agent id, purpose and flags.</summary>
+        Task UpdateAgentAsync(PlivoCXAgent agent);
 
         /// <summary>
         /// Plivo rejected the call for capacity: give the attempt back (Attempts - 1, not below 0) and
