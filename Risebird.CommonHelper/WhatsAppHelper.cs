@@ -9,13 +9,35 @@ using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Text.RegularExpressions;
 
 namespace Risebird.CommonHelper
 {
+    /// <summary>
+    /// Sends WhatsApp messages through Interakt. Every message is an Interakt event; an Ongoing campaign in
+    /// Interakt listens for the event name and sends one approved template, filling {{n}} from the traits.
+    /// Code never names a template. See the WhatsApp (Interakt) developer hand-off for the event/template map.
+    /// </summary>
     public class WhatsAppHelper : IWhatsAppHelper
     {
+        private const string TrackUsersUrl = "https://api.interakt.ai/v1/public/track/users/";
+        private const string TrackEventsUrl = "https://api.interakt.ai/v1/public/track/events/";
+        private const string DateFormat = "dd MMM yyyy, hh:mm tt";
+
+        // Audiences for the WhatsApp-only opt-out (dbo.WhatsAppOptOut.Audience).
+        public const string AudienceCandidate = "Candidate";
+        public const string AudienceInterviewer = "Interviewer";
+        public const string AudienceApplicant = "Applicant";
+
+        public const string SkippedOptedOut = "Skipped: opted out";
+        public const string SkippedLimitReached = "Skipped: limit reached";
+        public const string SkippedNoNumber = "Skipped: no WhatsApp number";
+        private const string SentMessage = "Message sent successfully.";
+        private const string FailedMessage = "Failed to send message. Please check all fields and try again.";
+
         private readonly IApplicationErrorLogger _errorLogger;
         private readonly IAzureStorageHelper _azureStorageHelper;
         private readonly IConfiguration _configuration;
@@ -39,10 +61,19 @@ namespace Risebird.CommonHelper
         "964","965","966","967","968","970","971","972","973","974","975","976","977","992","993","994",
         "995","996","998"
     };
+
+        // Events that go to a candidate: opt-out is per IRF and the unsubscribe link is the candidate page.
+        private static readonly HashSet<string> CandidateEvents = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+        {
+            "Schedule Interview", "Reschedule Interview", "Interview Reminder", "Interview Reminder Second",
+            "Interviewer Waiting", "Risebird: Interview Feedback", "Feedback Remainder",
+            "Candidate Dashboard Reminder", "Apology Notification", "Interview Reschedule Risebird",
+            "Interview Reschedule Send Risebird"
+        };
+
         public WhatsAppHelper(IAzureStorageHelper azureStorageHelper, IConfiguration configuration, IApplicationErrorLogger errorLogger,
             IUserService userService, IWhatsappRepository whatsappRepository, IHttpRequestHelper httpRequestHelper)
         {
-            //_errorLogger = errorLogger;
             _configuration = configuration;
             _azureStorageHelper = azureStorageHelper;
             _errorLogger = errorLogger;
@@ -52,39 +83,246 @@ namespace Risebird.CommonHelper
             _httpRequestHelper = httpRequestHelper;
         }
 
+        #region Shared send path
+
+        private Dictionary<string, string> Headers()
+        {
+            return new Dictionary<string, string>
+            {
+                { "Authorization", "Basic " + accesskey },
+                { "Content-Type", "application/json" }
+            };
+        }
+
+        // Send limit per candidate per IRF for the stage this event belongs to; null = no limit.
+        private int? SendLimitFor(string eventName)
+        {
+            if (string.Equals(eventName, "Schedule Interview", StringComparison.OrdinalIgnoreCase))
+                return ConfigInt("WhatsApp:MaxNotScheduledSendsPerIrf", 3);
+            if (string.Equals(eventName, "Reschedule Interview", StringComparison.OrdinalIgnoreCase))
+                return ConfigInt("WhatsApp:MaxRescheduleSendsPerIrf", 3);
+            return null;
+        }
+
+        private int ConfigInt(string key, int fallback)
+        {
+            return int.TryParse(_configuration[key], out var value) && value > 0 ? value : fallback;
+        }
+
+        public static string AudienceFor(string eventName)
+        {
+            return CandidateEvents.Contains(eventName ?? "") ? AudienceCandidate : AudienceInterviewer;
+        }
+
+        /// <summary>Button URLs are https://portal.risebird.io/{{1}}: send the path only (no domain, no leading slash).</summary>
+        public static string ToPath(string link)
+        {
+            if (string.IsNullOrWhiteSpace(link))
+                return "";
+            link = link.Trim();
+            if (Uri.TryCreate(link, UriKind.Absolute, out var uri) && (uri.Scheme == Uri.UriSchemeHttp || uri.Scheme == Uri.UriSchemeHttps))
+                return uri.PathAndQuery.TrimStart('/');
+            return link.TrimStart('/');
+        }
+
+        public static string FormatDate(string value)
+        {
+            if (string.IsNullOrWhiteSpace(value))
+                return "";
+            return DateTime.TryParse(value, out var date) ? FormatDate(date) : value;
+        }
+
+        public static string FormatDate(DateTime value)
+        {
+            return value.ToString(DateFormat, CultureInfo.InvariantCulture);
+        }
+
+        public static string CandidateUnsubscribeLink(string email, int irfId)
+        {
+            return "Candidate/Unsubscribe?emailid=" + Uri.EscapeDataString(email ?? "") + "&irfid=" + irfId;
+        }
+
+        public static string FirstName(string name)
+        {
+            return string.IsNullOrWhiteSpace(name) ? "there" : name.Trim();
+        }
+
+        private (string CountryCode, string Number) SplitPhone(string raw)
+        {
+            var phone = ExtractCountryCode(raw);
+            return (string.IsNullOrWhiteSpace(phone.CountryCode) ? "+91" : phone.CountryCode, phone.MobileNumber);
+        }
+
+        private async Task TrackUser(string phoneNumber, string countryCode, string name, string email)
+        {
+            try
+            {
+                var bodyData = new
+                {
+                    userId = "",
+                    phoneNumber,
+                    countryCode,
+                    traits = new Dictionary<string, object> { ["name"] = name ?? "", ["email"] = email ?? "" }
+                };
+                var response = await _httpRequestHelper.MakeHttpRequest(TrackUsersUrl, Method.Post, bodyData, Headers());
+                if (!IsSuccess(response))
+                {
+                    await _errorLogger.LogMessage(LogLevelInfo.Error, "Interakt track/users failed for " + email + ": " + (response?.Content ?? "no response"));
+                }
+            }
+            catch (Exception ex)
+            {
+                await _errorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+        }
+
+        private static bool IsSuccess(RestResponse response)
+        {
+            if (response == null || string.IsNullOrEmpty(response.Content))
+                return false;
+            try
+            {
+                var obj = JsonConvert.DeserializeObject<WhatsAppVMResponse>(response.Content);
+                return obj != null && string.Equals(obj.result, "true", StringComparison.OrdinalIgnoreCase);
+            }
+            catch (JsonException)
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Sends one event to every address in vm.Emailid (';'-separated). For each recipient: look up the number,
+        /// skip opted-out recipients and candidates at the send limit, track the user, post the event, log a failed
+        /// response, and record the attempt with its Status.
+        /// </summary>
+        /// <param name="audience">Candidate / Interviewer for opt-out and the default unsubscribe link; null = neither.</param>
+        /// <param name="buildTraits">Builds the event traits from the recipient's name (from UserList).</param>
+        private async Task<string> SendToRecipients(WhatsAppVM vm, string audience, Func<string, Dictionary<string, object>> buildTraits)
+        {
+            try
+            {
+                if (vm == null)
+                    return "User details missing!";
+                if (string.IsNullOrWhiteSpace(vm.Emailid))
+                    return "User EmailId missing!";
+
+                var results = new List<string>();
+                var recipients = vm.Emailid.Split(';').Select(x => x.Trim()).Where(x => x.Length > 0).Distinct(StringComparer.OrdinalIgnoreCase).ToList();
+                foreach (var email in recipients)
+                {
+                    var dataResult = await _userService.FetchWhatsAppNumberByEmail(email);
+                    if (string.IsNullOrWhiteSpace(dataResult.Item1))
+                    {
+                        results.Add(SkippedNoNumber);
+                        continue;
+                    }
+                    results.Add(await SendOne(vm, email, dataResult.Item1, dataResult.Item2?.Trim(), audience, buildTraits));
+                }
+                return Summarise(results);
+            }
+            catch (Exception ex)
+            {
+                await _errorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return FailedMessage;
+            }
+        }
+
+        private static string Summarise(List<string> results)
+        {
+            if (results.Count == 0 || results.Any(x => x == SentMessage))
+                return results.Count == 0 ? SkippedNoNumber : SentMessage;
+            if (results.Any(x => x == FailedMessage))
+                return FailedMessage;
+            return results.First();
+        }
+
+        private async Task<string> SendOne(WhatsAppVM vm, string email, string rawPhone, string recipientName, string audience,
+            Func<string, Dictionary<string, object>> buildTraits, int? prospectId = null)
+        {
+            var phone = SplitPhone(rawPhone);
+            vm.Emailid = email;
+            vm.CountryCode = phone.CountryCode;
+            vm.WhatsAppNumber = phone.Number;
+
+            if (audience == AudienceCandidate && vm.irfId <= 0 && vm.InterviewId > 0)
+            {
+                vm.irfId = await _whatsappRepository.FetchIrfIdByInterviewIdAsync(vm.InterviewId);
+            }
+
+            if (audience != null)
+            {
+                var optedOut = audience == AudienceApplicant
+                    ? await _whatsappRepository.IsOptedOutAsync(audience, email, null, prospectId)
+                    : await _whatsappRepository.IsOptedOutAsync(audience, email, audience == AudienceCandidate ? vm.irfId : (int?)null);
+                if (optedOut)
+                {
+                    await SaveAttempt(vm, "Skipped");
+                    return SkippedOptedOut;
+                }
+            }
+
+            var limit = audience == AudienceCandidate ? SendLimitFor(vm.Event) : null;
+            if (limit.HasValue && vm.irfId > 0 && await _whatsappRepository.CountSentAsync(email, vm.irfId, vm.Event) >= limit.Value)
+            {
+                await SaveAttempt(vm, "Skipped");
+                return SkippedLimitReached;
+            }
+
+            var traits = buildTraits(recipientName) ?? new Dictionary<string, object>();
+            if (!traits.ContainsKey("UnsubscribeLink"))
+            {
+                if (audience == AudienceCandidate && vm.irfId > 0)
+                {
+                    traits["UnsubscribeLink"] = CandidateUnsubscribeLink(email, vm.irfId);
+                }
+                else if (audience == AudienceInterviewer)
+                {
+                    var uniqueId = await _whatsappRepository.FetchUniqueIdByEmailAsync(email);
+                    if (!string.IsNullOrEmpty(uniqueId))
+                        traits["UnsubscribeLink"] = "Interviewer/Unsubscribe?id=" + uniqueId;
+                }
+            }
+
+            await TrackUser(phone.Number, phone.CountryCode, recipientName, email);
+
+            var bodyData = new
+            {
+                userId = "",
+                phoneNumber = phone.Number,
+                countryCode = phone.CountryCode,
+                @event = vm.Event,
+                traits
+            };
+            var response = await _httpRequestHelper.MakeHttpRequest(TrackEventsUrl, Method.Post, bodyData, Headers());
+            if (IsSuccess(response))
+            {
+                await SaveAttempt(vm, "Sent");
+                return SentMessage;
+            }
+
+            await _errorLogger.LogMessage(LogLevelInfo.Error, "Interakt event '" + vm.Event + "' failed for " + email + ": " + (response?.Content ?? response?.ErrorMessage ?? "no response"));
+            await SaveAttempt(vm, "Failed");
+            return FailedMessage;
+        }
+
+        private async Task SaveAttempt(WhatsAppVM vm, string status)
+        {
+            var saved = await BridgeFuncSaveSentWhatsappMessage(vm, status);
+            if (!saved)
+            {
+                await _errorLogger.LogMessage(LogLevelInfo.Error, "Could not record WhatsApp '" + vm.Event + "' (" + status + ") for " + vm.Emailid);
+            }
+        }
+
+        #endregion
+
         public async Task<string> WhatsAppTrackUser(WhatsAppVM _whatsAppVM)
         {
             try
             {
-                _whatsAppVM.Userid = "";
-                Dictionary<string, string> headers = new Dictionary<string, string>();
-                headers.Add("Authorization", "Basic " + accesskey);
-                headers.Add("Content-Type", "application/json");
-
-                List<HttpParameters> parameters = new List<HttpParameters>
-                {
-                    new HttpParameters() { name = "application/json", value = "{\r\n    \"userId\": \"\",\r\n    \"phoneNumber\": \"" + _whatsAppVM.WhatsAppNumber + "\",\r\n    \"countryCode\": \"" + _whatsAppVM.CountryCode + "\",\r\n    \"traits\": {\r\n        \"name\": \"" + _whatsAppVM.UserName + "\",\r\n        \"email\": \"" + _whatsAppVM.Emailid + "\"\r\n    }\r\n}", parameterType = ParameterType.RequestBody }
-                };
-
-                var response = await _httpRequestHelper.MakeHttpRequest("https://api.interakt.ai/v1/public/track/users/", Method.Post, null, headers, parameters);
-
-                if (response != null)
-                {
-                    var obj = JsonConvert.DeserializeObject<WhatsAppVMResponse>(response.Content);
-                    if (obj.result == "true")
-                    {
-                        return "User Added successfully.";
-                    }
-                    else
-                    {
-                        return "Failed to Add User. Please check all fields and try again.";
-                    }
-                }
-                else
-                {
-                    return "Failed to Add User. Please check all fields and try again.";
-                }
-
+                await TrackUser(_whatsAppVM.WhatsAppNumber, _whatsAppVM.CountryCode, _whatsAppVM.UserName, _whatsAppVM.Emailid);
+                return "User Added successfully.";
             }
             catch (Exception ex)
             {
@@ -92,672 +330,209 @@ namespace Risebird.CommonHelper
                 return "Failed to Add User. Please check all fields and try again.";
             }
         }
+
         public async Task<string> WhatsAppSendEventNotification(WhatsAppVM _whatsAppVM)
         {
-            try
+            _whatsAppVM.MessageValue = "same time";
+            _whatsAppVM.Event = "Interview Notification";
+            return await SendToRecipients(_whatsAppVM, null, name => new Dictionary<string, object>
             {
-                _whatsAppVM.WhatsAppNumber = "8077988602";
-                _whatsAppVM.CountryCode = "+91";
-                _whatsAppVM.MessageValue = "same time";
-                _whatsAppVM.Userid = "";
-                _whatsAppVM.Event = "Interview Notification";
-                //Fetch WhatsAPpNumber
-                var dataResult = await _userService.FetchWhatsAppNumberByEmail(_whatsAppVM.Emailid);
-                _whatsAppVM.WhatsAppNumber = dataResult.Item1;
-
-                Dictionary<string, string> headers = new Dictionary<string, string>
-                {
-                    { "Authorization", "Basic " + accesskey },
-                    { "Content-Type", "application/json" }
-                };
-
-                List<HttpParameters> parameters = new List<HttpParameters>
-                {
-                    new HttpParameters() { name = "application/json", value = "{\r\n    \"userId\": \"" + _whatsAppVM.Userid + "\",\r\n    \"phoneNumber\": \"" + _whatsAppVM.WhatsAppNumber + "\",\r\n    \"countryCode\": \"" + _whatsAppVM.CountryCode + "\",\r\n    \"event\": \"Interview Notification\",\r\n    \"traits\": {\r\n        \"productName\": \"" + _whatsAppVM.MessageValue + "\"\r\n    }\r\n}", parameterType = ParameterType.RequestBody }
-                };
-
-                var response = await _httpRequestHelper.MakeHttpRequest("https://api.interakt.ai/v1/public/track/events/", Method.Post, null, headers, parameters);
-
-
-                var obj = JsonConvert.DeserializeObject<WhatsAppVMResponse>(response.Content);
-                if (obj != null)
-                {
-                    _ = await BridgeFuncSaveSentWhatsappMessage(_whatsAppVM);
-                }
-                if (obj.result == "true")
-                {
-                    return "Message sent successfully.";
-                }
-                else
-                {
-                    return "Failed to send message. Please check all fields and try again.";
-                }
-            }
-            catch (Exception ex)
-            {
-                await _errorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return "Failed to send message. Please check all fields and try again.";
-            }
+                ["productName"] = _whatsAppVM.MessageValue
+            });
         }
 
         public async Task<string> WhatsAppSendOnAssignation(WhatsAppVM _whatsAppVM)
         {
-            try
+            return await SendToRecipients(_whatsAppVM, null, name => new Dictionary<string, object>
             {
-                var Emailid = _whatsAppVM.Emailid.Split(";");
-                foreach (var item in Emailid)
-                {
-                    var dataResult = await _userService.FetchWhatsAppNumberByEmail(item);
-
-                    if (!string.IsNullOrEmpty(dataResult.Item1))
-                    {
-                        _whatsAppVM.CountryCode = "+91";
-                        _whatsAppVM.WhatsAppNumber = dataResult.Item1;
-                        _whatsAppVM.UserName = dataResult.Item2;
-                        _whatsAppVM.Emailid = item;
-                        await WhatsAppTrackUser(_whatsAppVM);
-
-                        Dictionary<string, string> headers = new Dictionary<string, string>
-                        {
-                            { "Authorization", "Basic " + accesskey },
-                            { "Content-Type", "application/json" }
-                        };
-                        List<HttpParameters> parameters = new List<HttpParameters>
-                        {
-                            new HttpParameters() { name = "application/json", value = "{\r\n    \"userId\": \"\",\r\n    \"phoneNumber\": \"" + _whatsAppVM.WhatsAppNumber + "\",\r\n    \"countryCode\": \"" + _whatsAppVM.CountryCode + "\",\r\n    \"event\": \"" + _whatsAppVM.Event + "\",\r\n    \"traits\": {\r\n        \"InterviewDate\": \"" + _whatsAppVM.InterviewDate + "\"\r\n    }\r\n}", parameterType = ParameterType.RequestBody }
-                        };
-                        var response = await _httpRequestHelper.MakeHttpRequest("https://api.interakt.ai/v1/public/track/events/", Method.Post, null, headers, parameters);
-
-                        var obj = JsonConvert.DeserializeObject<WhatsAppVMResponse>(response.Content);
-                        if (obj != null)
-                        {
-                            _ = await BridgeFuncSaveSentWhatsappMessage(_whatsAppVM);
-                        }
-                    }
-                }
-                return "Message sent successfully.";
-            }
-            catch (Exception ex)
-            {
-                await _errorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return "Failed to send message. Please check all fields and try again.";
-            }
+                ["InterviewDate"] = _whatsAppVM.InterviewDate ?? ""
+            });
         }
+
+        /// <summary>
+        /// C1 Schedule Interview / C2 Reschedule Interview. Counts toward the 3-per-IRF limit for its stage.
+        /// </summary>
         public async Task<string> WhatsAppSendScheduling(WhatsAppVM _whatsAppVM)
         {
-            try
+            if (string.IsNullOrWhiteSpace(_whatsAppVM?.buttonlink))
+                return "Skipped: no scheduling link";
+            var scheduleLink = ToPath(_whatsAppVM.buttonlink);
+            return await SendToRecipients(_whatsAppVM, AudienceCandidate, name => new Dictionary<string, object>
             {
-                var Emailid = _whatsAppVM.Emailid.Split(";");
-                foreach (var item in Emailid)
-                {
-                    var dataResult = await _userService.FetchWhatsAppNumberByEmail(item);
-                    if (!string.IsNullOrEmpty(dataResult.Item1))
-                    {
-                        var phonenumber = ExtractCountryCode(dataResult.Item1);
-                        if (string.IsNullOrWhiteSpace(phonenumber.Item1))
-                        {
-                            _whatsAppVM.CountryCode = "+91";
-                        }
-                        else
-                        {
-                            _whatsAppVM.CountryCode = phonenumber.Item1;
-                        }
-                        _whatsAppVM.WhatsAppNumber = phonenumber.Item2;
-                        _whatsAppVM.UserName = dataResult.Item2;
-                        _whatsAppVM.Emailid = item;
-                        await WhatsAppTrackUser(_whatsAppVM);
-
-                        Dictionary<string, string> headers = new Dictionary<string, string>
-                        {
-                            { "Authorization", "Basic " + accesskey },
-                            { "Content-Type", "application/json" }
-                        };
-                        var traits = new Dictionary<string, object>();
-                        traits["Client"] = _whatsAppVM.ClientName;
-                        traits["JdTitle"] = _whatsAppVM.PrimarySkill;
-                        traits["ScheduleLink"] = _whatsAppVM.buttonlink;
-                        traits["UnsubscribeLink"] = _whatsAppVM.UnsubscribeLink;
-
-                        var bodyData = new
-                        {
-                            phoneNumber = _whatsAppVM.WhatsAppNumber,
-                            countryCode = _whatsAppVM.CountryCode,
-                            @event = _whatsAppVM.Event,
-                            traits = traits
-                        };
-                        var response = await _httpRequestHelper.MakeHttpRequest("https://api.interakt.ai/v1/public/track/events/", Method.Post, bodyData, headers);
-                        var obj = JsonConvert.DeserializeObject<WhatsAppVMResponse>(response.Content);
-                        if (obj != null)
-                        {
-                            _ = await BridgeFuncSaveSentWhatsappMessage(_whatsAppVM);
-                        }
-                    }
-                }
-                return "Message sent successfully.";
-            }
-            catch (Exception ex)
-            {
-                await _errorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return "Failed to send message. Please check all fields and try again.";
-            }
+                ["Client"] = _whatsAppVM.ClientName ?? "",
+                ["JdTitle"] = _whatsAppVM.PrimarySkill ?? "",
+                ["ScheduleLink"] = scheduleLink
+            });
         }
 
+        /// <summary>I5 Emergency Notification, to the emergency interviewer(s).</summary>
         public async Task<string> WhatsAppSendEInterviewer(WhatsAppVM _whatsAppVM)
         {
-            try
+            var buttonLink = ToPath(_whatsAppVM?.buttonlink);
+            if (string.IsNullOrEmpty(buttonLink))
+                return "Skipped: no link";
+            return await SendToRecipients(_whatsAppVM, AudienceInterviewer, name => new Dictionary<string, object>
             {
-                var Emailid = _whatsAppVM.Emailid.Split(";");
-                foreach (var item in Emailid)
-                {
-                    var dataResult = await _userService.FetchWhatsAppNumberByEmail(item);
-                    if (!string.IsNullOrEmpty(dataResult.Item1))
-                    {
-                        _whatsAppVM.CountryCode = "+91";
-                        _whatsAppVM.WhatsAppNumber = dataResult.Item1;
-                        var username = _whatsAppVM.UserName;
-                        _whatsAppVM.UserName = dataResult.Item2;
-                        _whatsAppVM.Emailid = item;
-                        await WhatsAppTrackUser(_whatsAppVM);
-                        _whatsAppVM.UserName = username;
-
-                        Dictionary<string, string> headers = new Dictionary<string, string>
-                        {
-                            { "Authorization", "Basic " + accesskey },
-                            { "Content-Type", "application/json" }
-                        };
-
-                        List<HttpParameters> parameters = new List<HttpParameters>
-                        {
-                            new HttpParameters() { name = "application/json", value = "{\r\n    \"userId\": \"\",\r\n    \"phoneNumber\": \"" + _whatsAppVM.WhatsAppNumber + "\",\r\n    \"countryCode\": \"" + _whatsAppVM.CountryCode + "\",\r\n    \"event\": \"" + _whatsAppVM.Event + "\",\r\n    \"traits\": {\r\n        \"ButtonLink\":\"" + _whatsAppVM.buttonlink + "\",\r\n        \"CandidateName\":\"" + _whatsAppVM.UserName + "\",\r\n        \"InterviewerName\":\"" + dataResult.Item2 + "\"\r\n\r\n    }\r\n}", parameterType = ParameterType.RequestBody }
-                        };
-
-                        var response = await _httpRequestHelper.MakeHttpRequest("https://api.interakt.ai/v1/public/track/events/", Method.Post, null, headers, parameters);
-
-
-
-                        var obj = JsonConvert.DeserializeObject<WhatsAppVMResponse>(response.Content);
-                        if (obj != null)
-                        {
-                            _ = await BridgeFuncSaveSentWhatsappMessage(_whatsAppVM);
-                        }
-                    }
-                }
-                return "Message sent successfully.";
-            }
-            catch (Exception ex)
-            {
-                await _errorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return "Failed to send message. Please check all fields and try again.";
-            }
+                ["InterviewerName"] = FirstName(name),
+                ["InterviewId"] = _whatsAppVM.InterviewId.ToString(),
+                ["JdTitle"] = _whatsAppVM.PrimarySkill ?? "",
+                ["CandidateName"] = _whatsAppVM.CandidateName ?? _whatsAppVM.UserName ?? "",
+                ["ButtonLink"] = buttonLink
+            });
         }
+
         public async Task<string> WhatsAppSendApology(WhatsAppVM _whatsAppVM)
         {
-            try
+            return await SendToRecipients(_whatsAppVM, AudienceCandidate, name => new Dictionary<string, object>
             {
-                var Emailid = _whatsAppVM.Emailid.Split(";");
-                foreach (var item in Emailid)
-                {
-                    var dataResult = await _userService.FetchWhatsAppNumberByEmail(item);
-                    if (!string.IsNullOrEmpty(dataResult.Item1))
-                    {
-                        _whatsAppVM.CountryCode = "+91";
-                        _whatsAppVM.WhatsAppNumber = dataResult.Item1;
-                        _whatsAppVM.UserName = dataResult.Item2;
-                        _whatsAppVM.Emailid = item;
-                        await WhatsAppTrackUser(_whatsAppVM);
-
-                        Dictionary<string, string> headers = new Dictionary<string, string>
-                        {
-                            { "Authorization", "Basic " + accesskey },
-                            { "Content-Type", "application/json" }
-                        };
-
-                        List<HttpParameters> parameters = new List<HttpParameters>
-                        {
-                            new HttpParameters() { name = "application/json", value = "{\r\n    \"userId\": \"\",\r\n    \"phoneNumber\": \"" + _whatsAppVM.WhatsAppNumber + "\",\r\n    \"countryCode\": \"" + _whatsAppVM.CountryCode + "\",\r\n    \"event\": \"" + _whatsAppVM.Event + "\",\r\n    \"traits\": {\r\n        \"CandidateName\":\"" + dataResult.Item2 + "\"\r\n    }\r\n}", parameterType = ParameterType.RequestBody }
-                        };
-
-                        var response = await _httpRequestHelper.MakeHttpRequest("https://api.interakt.ai/v1/public/track/events/", Method.Post, null, headers, parameters);
-
-
-                        var obj = JsonConvert.DeserializeObject<WhatsAppVMResponse>(response.Content);
-                        if (obj != null)
-                        {
-                            _ = await BridgeFuncSaveSentWhatsappMessage(_whatsAppVM);
-                        }
-                    }
-                }
-                return "Message sent successfully.";
-            }
-            catch (Exception ex)
-            {
-                await _errorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return "Failed to send message. Please check all fields and try again.";
-            }
+                ["CandidateName"] = FirstName(name)
+            });
         }
+
+        /// <summary>
+        /// C4 Interviewer Waiting (to the candidate) and I4 Candidate Waiting (to the interviewer). Same helper,
+        /// different traits per event. Sent at 2 minutes and again at 5 minutes after start.
+        /// </summary>
         public async Task<string> WhatsAppSendInterviewWaiting(WhatsAppVM _whatsAppVM)
         {
-            try
+            var isCandidateWaiting = string.Equals(_whatsAppVM?.Event, "Candidate Waiting", StringComparison.OrdinalIgnoreCase);
+            if (isCandidateWaiting)
             {
-                var Emailid = _whatsAppVM.Emailid.Split(";");
-                var Username = _whatsAppVM.UserName;
-                foreach (var item in Emailid)
+                var buttonLink = ToPath(_whatsAppVM.buttonlink);
+                if (string.IsNullOrEmpty(buttonLink))
+                    return "Skipped: no link";
+                return await SendToRecipients(_whatsAppVM, AudienceInterviewer, name => new Dictionary<string, object>
                 {
-                    var dataResult = await _userService.FetchWhatsAppNumberByEmail(item);
-                    if (!string.IsNullOrEmpty(dataResult.Item1))
-                    {
-                        _whatsAppVM.UserName = dataResult.Item2;
-                        _whatsAppVM.Emailid = item;
-                        _whatsAppVM.CountryCode = "+91";
-                        _whatsAppVM.WhatsAppNumber = dataResult.Item1;
-                        await WhatsAppTrackUser(_whatsAppVM);
-                        Dictionary<string, string> headers = new Dictionary<string, string>
-                        {
-                            { "Authorization", "Basic " + accesskey },
-                            { "Content-Type", "application/json" }
-                        };
-
-                        List<HttpParameters> parameters = new List<HttpParameters>
-                        {
-                            new HttpParameters() { name = "application/json", value = "{\r\n    \"userId\": \"\",\r\n    \"phoneNumber\": \"" + _whatsAppVM.WhatsAppNumber + "\",\r\n    \"countryCode\": \"" + _whatsAppVM.CountryCode + "\",\r\n    \"event\": \"" + _whatsAppVM.Event + "\",\r\n    \"traits\": {\r\n        \"InterviewDate\":\"" + _whatsAppVM.InterviewDate + "\",\r\n        \"CandidateName\":\"" + dataResult.Item2 + "\",\r\n        \"Buttonlink\":\"" + _whatsAppVM.buttonlink + "\"\r\n    }\r\n}", parameterType = ParameterType.RequestBody }
-                        };
-
-                        var response = await _httpRequestHelper.MakeHttpRequest("https://api.interakt.ai/v1/public/track/events/", Method.Post, null, headers, parameters);
-
-                        var obj = JsonConvert.DeserializeObject<WhatsAppVMResponse>(response.Content);
-                        if (obj != null)
-                        {
-                            _ = await BridgeFuncSaveSentWhatsappMessage(_whatsAppVM);
-                        }
-                    }
-                }
-                return "Message sent successfully.";
+                    ["InterviewerName"] = FirstName(name),
+                    ["InterviewId"] = _whatsAppVM.InterviewId.ToString(),
+                    // The waiting candidate, not the recipient.
+                    ["CandidateName"] = _whatsAppVM.CandidateName ?? "",
+                    ["InterviewDate"] = FormatDate(_whatsAppVM.InterviewDate),
+                    ["Buttonlink"] = buttonLink
+                });
             }
-            catch (Exception ex)
+
+            if (string.IsNullOrWhiteSpace(_whatsAppVM?.MeetingLink))
+                return "Skipped: no meeting link";
+            return await SendToRecipients(_whatsAppVM, AudienceCandidate, name => new Dictionary<string, object>
             {
-                await _errorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return "Failed to send message. Please check all fields and try again.";
-            }
+                ["CandidateName"] = FirstName(name),
+                ["InterviewDate"] = FormatDate(_whatsAppVM.InterviewDate),
+                // Opened through https://api.interakt.ai/cta?redirect={{1}}: the full meeting URL.
+                ["MeetingLink"] = _whatsAppVM.MeetingLink.Trim(),
+                ["Buttonlink"] = ToPath(_whatsAppVM.buttonlink)
+            });
         }
+
         public async Task<string> WhatsAppSendReScheduling(WhatsAppVM _whatsAppVM)
         {
-            try
+            return await SendToRecipients(_whatsAppVM, AudienceCandidate, name => new Dictionary<string, object>
             {
-                var Emailid = _whatsAppVM.Emailid.Split(";");
-                foreach (var item in Emailid)
-                {
-                    var dataResult = await _userService.FetchWhatsAppNumberByEmail(item);
-                    if (!string.IsNullOrEmpty(dataResult.Item1))
-                    {
-                        _whatsAppVM.CountryCode = "+91";
-                        _whatsAppVM.WhatsAppNumber = dataResult.Item1;
-                        _whatsAppVM.UserName = dataResult.Item2;
-                        _whatsAppVM.Emailid = item;
-                        await WhatsAppTrackUser(_whatsAppVM);
-
-                        Dictionary<string, string> headers = new Dictionary<string, string>
-                        {
-                            { "Authorization", "Basic " + accesskey },
-                            { "Content-Type", "application/json" }
-                        };
-
-                        List<HttpParameters> parameters = new List<HttpParameters>
-                        {
-                            new HttpParameters() { name = "application/json", value = "{\r\n    \"userId\": \"\",\r\n    \"phoneNumber\": \"" + _whatsAppVM.WhatsAppNumber + "\",\r\n    \"countryCode\": \"" + _whatsAppVM.CountryCode + "\",\r\n    \"event\": \"" + _whatsAppVM.Event + "\",\r\n    \"traits\": {\r\n        \"Buttonlink\":\"" + _whatsAppVM.buttonlink + "\",\r\n        \"CandidateName\":\"" + dataResult.Item2 + "\"\r\n\r\n    }\r\n}", parameterType = ParameterType.RequestBody }
-                        };
-
-                        var response = await _httpRequestHelper.MakeHttpRequest("https://api.interakt.ai/v1/public/track/events/", Method.Post, null, headers, parameters);
-
-
-                        var obj = JsonConvert.DeserializeObject<WhatsAppVMResponse>(response.Content);
-                        if (obj != null)
-                        {
-                            _ = await BridgeFuncSaveSentWhatsappMessage(_whatsAppVM);
-                        }
-                    }
-                }
-                return "Message sent successfully.";
-            }
-            catch (Exception ex)
-            {
-                await _errorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return "Failed to send message. Please check all fields and try again.";
-            }
+                ["Buttonlink"] = ToPath(_whatsAppVM.buttonlink),
+                ["CandidateName"] = FirstName(name)
+            });
         }
-
 
         public async Task<string> WhatsAppSendCancleReScheduling(WhatsAppVM _whatsAppVM)
         {
-            try
+            return await SendToRecipients(_whatsAppVM, AudienceCandidate, name => new Dictionary<string, object>
             {
-                var Emailid = _whatsAppVM.Emailid.Split(";");
-                foreach (var item in Emailid)
-                {
-                    var dataResult = await _userService.FetchWhatsAppNumberByEmail(item);
-                    if (!string.IsNullOrEmpty(dataResult.Item1))
-                    {
-                        _whatsAppVM.UserName = dataResult.Item2;
-                        _whatsAppVM.Emailid = item;
-                        _whatsAppVM.CountryCode = "+91";
-                        _whatsAppVM.WhatsAppNumber = dataResult.Item1;
-                        await WhatsAppTrackUser(_whatsAppVM);
-
-                        Dictionary<string, string> headers = new Dictionary<string, string>
-                        {
-                            { "Authorization", "Basic " + accesskey },
-                            { "Content-Type", "application/json" }
-                        };
-
-                        List<HttpParameters> parameters = new List<HttpParameters>
-                        {
-                            new HttpParameters() { name = "application/json", value = "{\r\n\n    \"userId\": \"\",\r\n\n    \"phoneNumber\": \"" + _whatsAppVM.WhatsAppNumber + "\",\r\n\n    \"countryCode\": \"" + _whatsAppVM.CountryCode + "\",\r\n\n    \"event\": \"" + _whatsAppVM.Event + "\",\r\n\n    \"traits\": {\r\n\n        \"CandidateName\":\"" + _whatsAppVM.UserName + "\",\r\n\n        \"ClientName\":\"" + _whatsAppVM.Header + "\",\r\n\n        \"ButtonLink\":\"" + _whatsAppVM.buttonlink + "\",\r\n\n        \"Role\":\"" + _whatsAppVM.InterviewDate + "\"\r\n\n    }\r\n\n}", parameterType = ParameterType.RequestBody }
-                        };
-
-                        var response = await _httpRequestHelper.MakeHttpRequest("https://api.interakt.ai/v1/public/track/events/", Method.Post, null, headers, parameters);
-
-
-                        var obj = JsonConvert.DeserializeObject<WhatsAppVMResponse>(response.Content);
-                        if (obj != null)
-                        {
-                            _ = await BridgeFuncSaveSentWhatsappMessage(_whatsAppVM);
-                        }
-                    }
-                }
-                return "Message sent successfully.";
-            }
-            catch (Exception ex)
-            {
-                await _errorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return "Failed to send message. Please check all fields and try again.";
-            }
+                ["CandidateName"] = FirstName(name),
+                ["ClientName"] = _whatsAppVM.Header ?? "",
+                ["ButtonLink"] = ToPath(_whatsAppVM.buttonlink),
+                ["Role"] = _whatsAppVM.InterviewDate ?? ""
+            });
         }
+
         public async Task<string> WhatsAppSendRatingNotification(WhatsAppVM _whatsAppVM)
         {
-            try
+            var candidateName = _whatsAppVM?.UserName;
+            return await SendToRecipients(_whatsAppVM, null, name => new Dictionary<string, object>
             {
-                var Emailid = _whatsAppVM.Emailid.Split(";");
-                var Username = _whatsAppVM.UserName;
-                foreach (var item in Emailid)
-                {
-                    var dataResult = await _userService.FetchWhatsAppNumberByEmail(item);
-                    if (!string.IsNullOrEmpty(dataResult.Item1))
-                    {
-                        _whatsAppVM.UserName = dataResult.Item2;
-                        _whatsAppVM.Emailid = item;
-                        _whatsAppVM.CountryCode = "+91";
-                        _whatsAppVM.WhatsAppNumber = dataResult.Item1;
-                        await WhatsAppTrackUser(_whatsAppVM);
-                        _whatsAppVM.UserName = Username;
-
-                        Dictionary<string, string> headers = new Dictionary<string, string>
-                        {
-                            { "Authorization", "Basic " + accesskey },
-                            { "Content-Type", "application/json" }
-                        };
-
-                        List<HttpParameters> parameters = new List<HttpParameters>
-                        {
-                            new HttpParameters() { name = "application/json", value = "{\r\n\n    \"userId\": \"\",\r\n\n    \"phoneNumber\": \"" + _whatsAppVM.WhatsAppNumber + "\",\r\n\n    \"countryCode\": \"" + _whatsAppVM.CountryCode + "\",\r\n\n    \"event\": \"" + _whatsAppVM.Event + "\",\r\n\n    \"traits\": {\r\n\n        \"MessageValue\":\"" + _whatsAppVM.MessageValue + "\",\r\n\n        \"CandidateName\": \"" + _whatsAppVM.UserName + "\",\r\n\n        \"InterviewDate\":\"" + _whatsAppVM.InterviewDate + "\",\r\n\n        \"Name\":\"" + dataResult.Item2 + "\"\r\n\n    }\r\n\n}", parameterType = ParameterType.RequestBody }
-                        };
-
-                        var response = await _httpRequestHelper.MakeHttpRequest("https://api.interakt.ai/v1/public/track/events/", Method.Post, null, headers, parameters);
-
-
-                        var obj = JsonConvert.DeserializeObject<WhatsAppVMResponse>(response.Content);
-                        if (obj != null)
-                        {
-                            _ = await BridgeFuncSaveSentWhatsappMessage(_whatsAppVM);
-                        }
-                    }
-                }
-                return "Message sent successfully.";
-            }
-            catch (Exception ex)
-            {
-                await _errorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return "Failed to send message. Please check all fields and try again.";
-            }
+                ["MessageValue"] = _whatsAppVM.MessageValue ?? "",
+                ["CandidateName"] = candidateName ?? "",
+                ["InterviewDate"] = _whatsAppVM.InterviewDate ?? "",
+                ["Name"] = name ?? ""
+            });
         }
+
+        /// <summary>C5 Risebird: Interview Feedback and C6 Feedback Remainder, to the candidate.</summary>
         public async Task<string> WhatsAppSendFeedbackRemainder(WhatsAppVM _whatsAppVM)
         {
-            try
+            var buttonLink = ToPath(_whatsAppVM?.buttonlink);
+            if (string.IsNullOrEmpty(buttonLink))
+                return "Skipped: no link";
+            return await SendToRecipients(_whatsAppVM, AudienceCandidate, name => new Dictionary<string, object>
             {
-                var Emailid = _whatsAppVM.Emailid.Split(";");
-                foreach (var item in Emailid)
-                {
-                    var dataResult = await _userService.FetchWhatsAppNumberByEmail(item);
-                    if (!string.IsNullOrEmpty(dataResult.Item1))
-                    {
-                        _whatsAppVM.UserName = dataResult.Item2;
-                        _whatsAppVM.Emailid = item;
-                        _whatsAppVM.CountryCode = "+91";
-                        _whatsAppVM.WhatsAppNumber = dataResult.Item1;
-                        await WhatsAppTrackUser(_whatsAppVM);
-
-                        Dictionary<string, string> headers = new Dictionary<string, string>
-                        {
-                            { "Authorization", "Basic " + accesskey },
-                            { "Content-Type", "application/json" }
-                        };
-
-                        List<HttpParameters> parameters = new List<HttpParameters>
-                        {
-                            new HttpParameters() { name = "application/json", value = "{\r\n    \"userId\": \"\",\r\n    \"phoneNumber\": \"" + _whatsAppVM.WhatsAppNumber + "\",\r\n    \"countryCode\": \"" + _whatsAppVM.CountryCode + "\",\r\n    \"event\": \"" + _whatsAppVM.Event + "\",\r\n    \"traits\": {\r\n        \"CandidateName\":\"" + dataResult.Item2 + "\",\r\n        \"buttonlink\":\"" + _whatsAppVM.buttonlink + "\"\r\n    }\r\n}", parameterType = ParameterType.RequestBody }
-                        };
-
-                        var response = await _httpRequestHelper.MakeHttpRequest("https://api.interakt.ai/v1/public/track/events/", Method.Post, null, headers, parameters);
-
-
-                        var obj = JsonConvert.DeserializeObject<WhatsAppVMResponse>(response.Content);
-                        if (obj != null)
-                        {
-                            _ = await BridgeFuncSaveSentWhatsappMessage(_whatsAppVM);
-                        }
-                    }
-                }
-                return "Message sent successfully.";
-            }
-            catch (Exception ex)
-            {
-                await _errorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return "Failed to send message. Please check all fields and try again.";
-            }
+                ["CandidateName"] = FirstName(name),
+                ["buttonlink"] = buttonLink
+            });
         }
 
+        /// <summary>I6 Interviewer Feedback Remainder: report not completed.</summary>
         public async Task<string> WhatsAppSendInterviewerFeedbackRemainder(WhatsAppVM _whatsAppVM)
         {
-            try
+            var reportLink = ToPath(_whatsAppVM?.ReportLink);
+            if (string.IsNullOrEmpty(reportLink))
+                return "Skipped: no report link";
+            return await SendToRecipients(_whatsAppVM, AudienceInterviewer, name => new Dictionary<string, object>
             {
-                if (_whatsAppVM != null)
-                {
-                    var Emailid = _whatsAppVM.Emailid?.Split(";");
-                    if (Emailid != null)
-                    {
-                        foreach (var item in Emailid)
-                        {
-                            var dataResult = await _userService.FetchWhatsAppNumberByEmail(item);
-                            if (!string.IsNullOrEmpty(dataResult.Item1))
-                            {
-                                _whatsAppVM.UserName = dataResult.Item2;
-                                _whatsAppVM.Emailid = item;
-                                _whatsAppVM.CountryCode = "+91";
-                                _whatsAppVM.WhatsAppNumber = dataResult.Item1;
-                                await WhatsAppTrackUser(_whatsAppVM);
-
-                                Dictionary<string, string> headers = new Dictionary<string, string>
-                                {
-                                    { "Authorization", "Basic " + accesskey },
-                                    { "Content-Type", "application/json" }
-                                };
-
-                                List<HttpParameters> parameters = new List<HttpParameters>
-                                {
-                                    new HttpParameters() { name = "application/json", value = "{\r\n    \"userId\": \"\",\r\n    \"phoneNumber\": \"" + _whatsAppVM.WhatsAppNumber + "\",\r\n    \"countryCode\": \"" + _whatsAppVM.CountryCode + "\",\r\n    \"event\": \"" + _whatsAppVM.Event + "\",\r\n    \"traits\": {\r\n        \"CandidateName\":\"" + _whatsAppVM.MessageValue + "\",\r\n        \"InterviewDate\":\"" + _whatsAppVM.InterviewDate + "\",\r\n        \"InterviewerName\":\"" + dataResult.Item2 + "\",\r\n    }\r\n}", parameterType = ParameterType.RequestBody }
-                                };
-
-                                var response = await _httpRequestHelper.MakeHttpRequest("https://api.interakt.ai/v1/public/track/events/", Method.Post, null, headers, parameters);
-
-
-                                var obj = JsonConvert.DeserializeObject<WhatsAppVMResponse>(response.Content);
-                                if (obj != null)
-                                {
-                                    _ = await BridgeFuncSaveSentWhatsappMessage(_whatsAppVM);
-                                }
-                            }
-                        }
-                        return "Message sent successfully.";
-
-                    }
-                    else
-                    {
-                        return "User EmailId missing!";
-                    }
-                }
-                else
-                {
-                    return "User details missing!";
-                }
-            }
-            catch (Exception ex)
-            {
-                await _errorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return "Failed to send message. Please check all fields and try again.";
-            }
+                ["InterviewerName"] = FirstName(name),
+                ["InterviewId"] = _whatsAppVM.InterviewId.ToString(),
+                ["InterviewDate"] = FormatDate(_whatsAppVM.InterviewDate),
+                ["CandidateName"] = _whatsAppVM.CandidateName ?? _whatsAppVM.MessageValue ?? "",
+                ["ReportLink"] = reportLink
+            });
         }
 
+        /// <summary>I2 Interviewer Common Interview: open interviews in the skill channel. Nothing is sent for a count of 0.</summary>
         public async Task<string> WhatsAppSendInterviewerCommonInterviewDetails(WhatsAppVM _whatsAppVM)
         {
-            try
+            if (!int.TryParse(_whatsAppVM?.MessageValue, out var totalCount) || totalCount <= 0)
+                return "Skipped: no open interviews";
+            var buttonLink = ToPath(_whatsAppVM.buttonlink);
+            if (string.IsNullOrEmpty(buttonLink))
+                return "Skipped: no link";
+            return await SendToRecipients(_whatsAppVM, AudienceInterviewer, name => new Dictionary<string, object>
             {
-                var Emailid = _whatsAppVM.Emailid.Split(";");
-                foreach (var item in Emailid)
-                {
-                    var dataResult = await _userService.FetchWhatsAppNumberByEmail(item);
-                    if (!string.IsNullOrEmpty(dataResult.Item1))
-                    {
-                        _whatsAppVM.UserName = dataResult.Item2;
-                        _whatsAppVM.Emailid = item;
-                        _whatsAppVM.CountryCode = "+91";
-                        _whatsAppVM.WhatsAppNumber = dataResult.Item1;
-                        await WhatsAppTrackUser(_whatsAppVM);
-
-                        Dictionary<string, string> headers = new Dictionary<string, string>
-                                {
-                                    { "Authorization", "Basic " + accesskey },
-                                    { "Content-Type", "application/json" }
-                                };
-
-                        List<HttpParameters> parameters = new List<HttpParameters>
-                        {
-                            new HttpParameters() { name = "application/json", value = "{\r\n    \"userId\": \"\",\r\n    \"phoneNumber\": \"" + _whatsAppVM.WhatsAppNumber + "\",\r\n    \"countryCode\": \"" + _whatsAppVM.CountryCode + "\",\r\n    \"event\": \"" + _whatsAppVM.Event + "\",\r\n    \"traits\": {\r\n        \"TotalCount\":\"" + _whatsAppVM.MessageValue + "\",\r\n        \"buttonlink\":\"" + _whatsAppVM.buttonlink + "\",\r\n        \"InterviewerName\":\"" + dataResult.Item2 + "\"\r\n    }\r\n}", parameterType = ParameterType.RequestBody }
-                        };
-
-                        var response = await _httpRequestHelper.MakeHttpRequest("https://api.interakt.ai/v1/public/track/events/", Method.Post, null, headers, parameters);
-
-                        var obj = JsonConvert.DeserializeObject<WhatsAppVMResponse>(response.Content);
-                        if (obj != null)
-                        {
-                            _ = await BridgeFuncSaveSentWhatsappMessage(_whatsAppVM);
-                        }
-                    }
-                }
-                return "Message sent successfully.";
-            }
-            catch (Exception ex)
-            {
-                await _errorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return "Failed to send message. Please check all fields and try again.";
-            }
+                ["InterviewerName"] = FirstName(name),
+                ["TotalCount"] = totalCount.ToString(),
+                ["buttonlink"] = buttonLink
+            });
         }
+
+        /// <summary>C3 Interview Reminder: confirm availability (button 1) or reschedule / others (button 2).</summary>
         public async Task<string> WhatsAppSendInterviewReminder(WhatsAppVM _whatsAppVM)
         {
-            try
+            if (string.IsNullOrWhiteSpace(_whatsAppVM?.buttonlink))
+                return "Skipped: no link";
+            // Button 1 is https://portal.risebird.io/Interview/CandidateMeetingsStatus{{1}}: the query string only.
+            var yesLink = _whatsAppVM.buttonlink.Trim();
+            var queryStart = yesLink.IndexOf('?');
+            if (queryStart >= 0)
+                yesLink = yesLink.Substring(queryStart);
+            return await SendToRecipients(_whatsAppVM, AudienceCandidate, name => new Dictionary<string, object>
             {
-                var Emailid = _whatsAppVM.Emailid.Split(";");
-                foreach (var item in Emailid)
-                {
-                    var dataResult = await _userService.FetchWhatsAppNumberByEmail(item);
-                    if (!string.IsNullOrEmpty(dataResult.Item1))
-                    {
-                        _whatsAppVM.UserName = dataResult.Item2;
-                        _whatsAppVM.Emailid = item;
-                        _whatsAppVM.CountryCode = "+91";
-                        _whatsAppVM.WhatsAppNumber = dataResult.Item1;
-                        await WhatsAppTrackUser(_whatsAppVM);
-
-                        Dictionary<string, string> headers = new Dictionary<string, string>
-                                {
-                                    { "Authorization", "Basic " + accesskey },
-                                    { "Content-Type", "application/json" }
-                                };
-
-                        List<HttpParameters> parameters = new List<HttpParameters>
-                        {
-                            new HttpParameters() { name = "application/json", value = "{\r\n    \"userId\": \"\",\r\n    \"phoneNumber\": \"" + _whatsAppVM.WhatsAppNumber + "\",\r\n    \"countryCode\": \"" + _whatsAppVM.CountryCode + "\",\r\n    \"event\": \"" + _whatsAppVM.Event + "\",\r\n    \"traits\": {\r\n        \"CandidateName\":\"" + dataResult.Item2 + "\",\r\n        \"InterviewDate\":\"" + _whatsAppVM.InterviewDate + "\",\r\n        \"PrimarySkill\":\"" + _whatsAppVM.PrimarySkill + "\",\r\n        \"TimeZone\":\"" + _whatsAppVM.timezone + "\",\r\n        \"ClientName\":\"" + _whatsAppVM.MessageValue + "\",\r\n        \"buttonlink\":\"" + _whatsAppVM.buttonlink + "\"\r\n    }\r\n}", parameterType = ParameterType.RequestBody }
-                        };
-                        var response = await _httpRequestHelper.MakeHttpRequest("https://api.interakt.ai/v1/public/track/events/", Method.Post, null, headers, parameters);
-
-                        var obj = JsonConvert.DeserializeObject<WhatsAppVMResponse>(response.Content);
-                        if (obj != null)
-                        {
-                            _ = await BridgeFuncSaveSentWhatsappMessage(_whatsAppVM);
-                        }
-                    }
-                }
-                return "Message sent successfully.";
-            }
-            catch (Exception ex)
-            {
-                await _errorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return "Failed to send message. Please check all fields and try again.";
-            }
+                ["CandidateName"] = FirstName(name),
+                ["Client"] = _whatsAppVM.ClientName ?? _whatsAppVM.MessageValue ?? "",
+                ["JdTitle"] = _whatsAppVM.PrimarySkill ?? "",
+                ["InterviewDate"] = FormatDate(_whatsAppVM.InterviewDate),
+                ["TimeZone"] = string.IsNullOrWhiteSpace(_whatsAppVM.timezone) ? "IST" : _whatsAppVM.timezone.Trim(),
+                ["buttonlink"] = yesLink,
+                ["DashboardLink"] = ToPath(_whatsAppVM.DashboardLink)
+            });
         }
+
         public async Task<string> WhatsAppSendClientCompleteInterview(WhatsAppVM _whatsAppVM)
         {
-            try
+            return await SendToRecipients(_whatsAppVM, null, name => new Dictionary<string, object>
             {
-                var Emailid = _whatsAppVM.Emailid.Split(";");
-                foreach (var item in Emailid)
-                {
-                    var dataResult = await _userService.FetchWhatsAppNumberByEmail(item);
-                    if (!string.IsNullOrEmpty(dataResult.Item1))
-                    {
-                        _whatsAppVM.CountryCode = "+91";
-                        _whatsAppVM.WhatsAppNumber = dataResult.Item1.Replace("+91", "");
-                        _whatsAppVM.UserName = dataResult.Item2;
-                        _whatsAppVM.Emailid = item;
-                        await WhatsAppTrackUser(_whatsAppVM);
-
-                        Dictionary<string, string> headers = new Dictionary<string, string>
-                                {
-                                    { "Authorization", "Basic " + accesskey },
-                                    { "Content-Type", "application/json" }
-                                };
-
-                        List<HttpParameters> parameters = new List<HttpParameters>
-                        {
-                            new HttpParameters() { name = "application/json", value = "{\r\n    \"userId\": \"\",\r\n    \"phoneNumber\": \"" + _whatsAppVM.WhatsAppNumber + "\",\r\n    \"countryCode\": \"" + _whatsAppVM.CountryCode + "\",\r\n    \"event\": \"" + _whatsAppVM.Event + "\",\r\n    \"traits\": {\r\n        \"UserName\": \"" + _whatsAppVM.UserName + "\",\r\n        \"ButtonLink\":\"" + _whatsAppVM.buttonlink + "\"\r\n    }\r\n}", parameterType = ParameterType.RequestBody }
-                        };
-                        var response = await _httpRequestHelper.MakeHttpRequest("https://api.interakt.ai/v1/public/track/events/", Method.Post, null, headers, parameters);
-
-
-                        var obj = JsonConvert.DeserializeObject<WhatsAppVMResponse>(response.Content);
-                        if (obj != null)
-                        {
-                            _ = await BridgeFuncSaveSentWhatsappMessage(_whatsAppVM);
-                        }
-                    }
-                }
-                return "Message sent successfully.";
-            }
-            catch (Exception ex)
-            {
-                await _errorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return "Failed to send message. Please check all fields and try again.";
-            }
+                ["UserName"] = name ?? "",
+                ["ButtonLink"] = ToPath(_whatsAppVM.buttonlink)
+            });
         }
 
-        private async Task<bool> BridgeFuncSaveSentWhatsappMessage(WhatsAppVM _whatsAppVM)
+        private async Task<bool> BridgeFuncSaveSentWhatsappMessage(WhatsAppVM _whatsAppVM, string status = "Sent")
         {
             try
             {
@@ -775,6 +550,7 @@ namespace Risebird.CommonHelper
                     obj.InterviewId = _whatsAppVM.InterviewId != 0 ? _whatsAppVM.InterviewId : null;
                     obj.IRFId = _whatsAppVM.irfId != 0 ? _whatsAppVM.irfId : null;
                     obj.SentBy = _whatsAppVM.SentBy;
+                    obj.Status = status;
                     if (_whatsappRepository != null)
                     {
                         return await _whatsappRepository.SaveSentWhatsappMessageDetails(obj);
@@ -794,94 +570,112 @@ namespace Risebird.CommonHelper
                 return false;
             }
         }
+
         public async Task<string> WhatsAppSendCandidateDashboardReminder(WhatsAppVM _whatsAppVM)
         {
-            try
+            return await SendToRecipients(_whatsAppVM, AudienceCandidate, name => new Dictionary<string, object>
             {
-                var Emailid = _whatsAppVM.Emailid.Split(";");
-                foreach (var item in Emailid)
-                {
-                    var dataResult = await _userService.FetchWhatsAppNumberByEmail(item);
-                    if (!string.IsNullOrEmpty(dataResult.Item1))
-                    {
-                        _whatsAppVM.UserName = dataResult.Item2;
-                        _whatsAppVM.Emailid = item;
-                        _whatsAppVM.CountryCode = "+91";
-                        _whatsAppVM.WhatsAppNumber = dataResult.Item1;
-                        await WhatsAppTrackUser(_whatsAppVM);
-
-                        Dictionary<string, string> headers = new Dictionary<string, string>
-                                {
-                                    { "Authorization", "Basic " + accesskey },
-                                    { "Content-Type", "application/json" }
-                                };
-
-                        List<HttpParameters> parameters = new List<HttpParameters>
-                        {
-                            new HttpParameters() { name = "application/json", value = "{\r\n    \"userId\": \"\",\r\n    \"phoneNumber\": \"" + _whatsAppVM.WhatsAppNumber + "\",\r\n    \"countryCode\": \"" + _whatsAppVM.CountryCode + "\",\r\n    \"event\": \"" + _whatsAppVM.Event + "\",\r\n    \"traits\": {\r\n        \"CandidateName\":\"" + dataResult.Item2 + "\",\r\n        \"InterviewDate\":\"" + _whatsAppVM.InterviewDate + "\",\r\n        \"buttonlink\":\"" + _whatsAppVM.buttonlink + "\"\r\n    }\r\n}", parameterType = ParameterType.RequestBody }
-                        };
-                        var response = await _httpRequestHelper.MakeHttpRequest("https://api.interakt.ai/v1/public/track/events/", Method.Post, null, headers, parameters);
-
-                        var obj = JsonConvert.DeserializeObject<WhatsAppVMResponse>(response.Content);
-                        if (obj != null)
-                        {
-                            _ = await BridgeFuncSaveSentWhatsappMessage(_whatsAppVM);
-                        }
-                    }
-                }
-                return "Message sent successfully.";
-            }
-            catch (Exception ex)
-            {
-                await _errorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return "Failed to send message. Please check all fields and try again.";
-            }
+                ["CandidateName"] = FirstName(name),
+                ["InterviewDate"] = _whatsAppVM.InterviewDate ?? "",
+                ["buttonlink"] = _whatsAppVM.buttonlink ?? ""
+            });
         }
+
         public async Task<string> WhatsAppSkillChannelInterviewerAvailbility(WhatsAppVM _whatsAppVM)
+        {
+            return await SendToRecipients(_whatsAppVM, AudienceInterviewer, name => new Dictionary<string, object>
+            {
+                ["Name"] = name ?? "",
+                ["IRFName"] = _whatsAppVM.MessageValue ?? "",
+                ["JDTitle"] = _whatsAppVM.PrimarySkill ?? "",
+                ["PerSuccessRate"] = _whatsAppVM.PerSuccessRate ?? "",
+                ["Interviewduration"] = _whatsAppVM.Interviewduration ?? "",
+                ["buttonlink"] = ToPath(_whatsAppVM.buttonlink)
+            });
+        }
+
+        /// <summary>
+        /// I1 Naukri Interviewer Invitation. Applicants are not in UserList: the phone (vm.Phone), name (vm.UserName)
+        /// and prospect id (vm.ProspectId) come from the prospect record.
+        /// </summary>
+        public async Task<string> WhatsAppSendNaukriInvitation(WhatsAppVM _whatsAppVM)
         {
             try
             {
-                var Emailid = _whatsAppVM.Emailid.Split(";");
-                foreach (var item in Emailid)
+                if (_whatsAppVM == null || string.IsNullOrWhiteSpace(_whatsAppVM.Phone))
+                    return SkippedNoNumber;
+                var registerLink = ToPath(_whatsAppVM.buttonlink);
+                if (string.IsNullOrEmpty(registerLink))
+                    return "Skipped: no registration link";
+                _whatsAppVM.Event = "Naukri Interviewer Invitation";
+                return await SendOne(_whatsAppVM, _whatsAppVM.Emailid, _whatsAppVM.Phone, _whatsAppVM.UserName, AudienceApplicant, name => new Dictionary<string, object>
                 {
-                    var dataResult = await _userService.FetchWhatsAppNumberByEmail(item);
-                    if (!string.IsNullOrEmpty(dataResult.Item1))
-                    {
-                        _whatsAppVM.UserName = dataResult.Item2;
-                        _whatsAppVM.Emailid = item;
-                        _whatsAppVM.CountryCode = "+91";
-                        _whatsAppVM.WhatsAppNumber = dataResult.Item1;
-                        await WhatsAppTrackUser(_whatsAppVM);
-
-                        Dictionary<string, string> headers = new Dictionary<string, string>
-                                {
-                                    { "Authorization", "Basic " + accesskey },
-                                    { "Content-Type", "application/json" }
-                                };
-
-                        List<HttpParameters> parameters = new List<HttpParameters>
-                        {
-                            new HttpParameters() { name = "application/json", value = "{\r\n    \"userId\": \"\",\r\n    \"phoneNumber\": \"" + _whatsAppVM.WhatsAppNumber + "\",\r\n    \"countryCode\": \"" + _whatsAppVM.CountryCode + "\",\r\n    \"event\": \"" + _whatsAppVM.Event + "\",\r\n    \"traits\": {\r\n        \"Name\":\"" + dataResult.Item2 + "\",\r\n        \"IRFName\":\"" + _whatsAppVM.MessageValue + "\",\r\n        \"JDTitle\":\"" + _whatsAppVM.PrimarySkill + "\",\r\n        \"PerSuccessRate\":\"" + _whatsAppVM.PerSuccessRate + "\",\r\n        \"Interviewduration\":\"" + _whatsAppVM.Interviewduration + "\",\r\n        \"buttonlink\":\"" + _whatsAppVM.buttonlink + "\"\r\n    }\r\n}", parameterType = ParameterType.RequestBody }
-                        };
-                        var response = await _httpRequestHelper.MakeHttpRequest("https://api.interakt.ai/v1/public/track/events/", Method.Post, null, headers, parameters);
-
-                        var obj = JsonConvert.DeserializeObject<WhatsAppVMResponse>(response.Content);
-                        if (obj != null)
-                        {
-                            _ = await BridgeFuncSaveSentWhatsappMessage(_whatsAppVM);
-                        }
-                    }
-                }
-                return "Message sent successfully.";
+                    ["Name"] = FirstName(name),
+                    ["MagName"] = _whatsAppVM.MessageValue ?? "",
+                    ["RegisterLink"] = registerLink,
+                    ["UnsubscribeLink"] = "NaukriOnboarding/ProspectResponseAction?id=" + _whatsAppVM.ProspectId + "&response=NotInterested"
+                }, _whatsAppVM.ProspectId);
             }
             catch (Exception ex)
             {
                 await _errorLogger.LogMessage(LogLevelInfo.Exception, ex);
-                return "Failed to send message. Please check all fields and try again.";
+                return FailedMessage;
             }
         }
 
+        /// <summary>I3 Interviewer Confirmation: confirm presence or unassign, for today's interviews.</summary>
+        public async Task<string> WhatsAppSendInterviewerConfirmation(WhatsAppVM _whatsAppVM)
+        {
+            var buttonLink = ToPath(_whatsAppVM?.buttonlink);
+            if (string.IsNullOrEmpty(buttonLink))
+                return "Skipped: no link";
+            _whatsAppVM.Event = "Interviewer Confirmation";
+            return await SendToRecipients(_whatsAppVM, AudienceInterviewer, name => new Dictionary<string, object>
+            {
+                ["InterviewerName"] = FirstName(name),
+                ["buttonlink"] = buttonLink
+            });
+        }
 
+        /// <summary>
+        /// I7a Payment Notification (Amount + Period) and I7b Advance Payment Notification (Amount only).
+        /// vm.Event picks the template; amounts are formatted N0 (12,500).
+        /// </summary>
+        public async Task<string> WhatsAppSendPaymentNotification(WhatsAppVM _whatsAppVM)
+        {
+            if (_whatsAppVM == null)
+                return "User details missing!";
+            if (string.IsNullOrWhiteSpace(_whatsAppVM.Event))
+                _whatsAppVM.Event = "Payment Notification";
+            var amount = decimal.TryParse(_whatsAppVM.Amount, NumberStyles.Any, CultureInfo.InvariantCulture, out var value)
+                ? value.ToString("N0", CultureInfo.GetCultureInfo("en-IN"))
+                : _whatsAppVM.Amount ?? "";
+            var isAdvance = string.Equals(_whatsAppVM.Event, "Advance Payment Notification", StringComparison.OrdinalIgnoreCase);
+            return await SendToRecipients(_whatsAppVM, AudienceInterviewer, name =>
+            {
+                var traits = new Dictionary<string, object>
+                {
+                    ["InterviewerName"] = FirstName(name),
+                    ["Amount"] = amount
+                };
+                if (!isAdvance)
+                    traits["Period"] = _whatsAppVM.Period ?? "";
+                return traits;
+            });
+        }
+
+        /// <summary>I8 Interviewer QC Report: flagged reports, links to My Quality. Nothing is sent for a count of 0.</summary>
+        public async Task<string> WhatsAppSendInterviewerQCReport(WhatsAppVM _whatsAppVM)
+        {
+            if (_whatsAppVM == null || _whatsAppVM.FlaggedCount <= 0)
+                return "Skipped: nothing flagged";
+            _whatsAppVM.Event = "Interviewer QC Report";
+            return await SendToRecipients(_whatsAppVM, AudienceInterviewer, name => new Dictionary<string, object>
+            {
+                ["InterviewerName"] = FirstName(name),
+                ["FlaggedCount"] = _whatsAppVM.FlaggedCount.ToString()
+            });
+        }
 
         /// <summary>
         /// Extracts the country code (if any) and returns the clean mobile number.

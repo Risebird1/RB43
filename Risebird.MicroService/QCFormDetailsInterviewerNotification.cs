@@ -17,17 +17,19 @@ namespace Risebird.MicroService
         private readonly IApplicationErrorLogger _applicationErrorLogger;
         private readonly IMeetingRespository _meetingRespository;
         private readonly INotificationHelper _notificationHelper;
+        private readonly IWhatsAppHelper _whatsAppHelper;
         private readonly ILogger log;
 
-        public QCFormDetailsInterviewerNotification(ILoggerFactory loggerFactory, IApplicationErrorLogger applicationErrorLogger, IMeetingRespository meetingRespository, INotificationHelper notificationHelper)
+        public QCFormDetailsInterviewerNotification(ILoggerFactory loggerFactory, IApplicationErrorLogger applicationErrorLogger, IMeetingRespository meetingRespository, INotificationHelper notificationHelper, IWhatsAppHelper whatsAppHelper)
         {
             _applicationErrorLogger = applicationErrorLogger;
             _meetingRespository = meetingRespository;
             _notificationHelper = notificationHelper;
+            _whatsAppHelper = whatsAppHelper;
             log = loggerFactory.CreateLogger<QCFormDetailsInterviewerNotification>();
         }
         [Function("QCFormDetailsInterviewerNotification")]
-        public async Task Run([TimerTrigger("0 59 23 * * *")] TimerInfo myTimer)
+        public async Task Run([TimerTrigger("0 0 9 * * *")] TimerInfo myTimer)
         {
             try
             {
@@ -63,6 +65,11 @@ namespace Risebird.MicroService
                             dt.Rows.Add(_redflag.interviewDate, _redflag.candidateName, _redflag.ClientName, _redflag.Redflags);
                         }
                         var emailresult = await _notificationHelper.SendQCFormDetails(_mail, dt);
+                        // I8: one WhatsApp per flagged interviewer, pointing to My Quality.
+                        WhatsAppVM _whatsAppVM = new WhatsAppVM();
+                        _whatsAppVM.Emailid = item;
+                        _whatsAppVM.FlaggedCount = _redflagdetails.Count;
+                        _ = await _whatsAppHelper.WhatsAppSendInterviewerQCReport(_whatsAppVM);
                     }
                     catch (Exception ex)
                     {

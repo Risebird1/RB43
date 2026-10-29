@@ -17,16 +17,18 @@ namespace Risebird.MicroService
         private readonly IConfiguration _configuration;
         private readonly IApplicationErrorLogger _applicationErrorLogger;
         private readonly INotificationHelper _notificationHelper;
+        private readonly IWhatsAppHelper _whatsAppHelper;
         private readonly ILogger log;
 
         private readonly string connectionString;
         //private readonly string SASConnectionString;
 
-        public EmailtoInterviewer(ILoggerFactory loggerFactory, IConfiguration configuration, IApplicationErrorLogger applicationErrorLogger, INotificationHelper notificationHelper)
+        public EmailtoInterviewer(ILoggerFactory loggerFactory, IConfiguration configuration, IApplicationErrorLogger applicationErrorLogger, INotificationHelper notificationHelper, IWhatsAppHelper whatsAppHelper)
         {
             _configuration = configuration;
             _applicationErrorLogger = applicationErrorLogger;
             _notificationHelper = notificationHelper;
+            _whatsAppHelper = whatsAppHelper;
             connectionString = _configuration["ConnectionString:DBConnectionString"];
             log = loggerFactory.CreateLogger<EmailtoInterviewer>();
         }
@@ -49,6 +51,8 @@ namespace Risebird.MicroService
                     mails = con.Query<Meeting>(query, dynamicParameters).ToList();
                 }
 
+                // I3 goes once per interviewer per run, however many interviews they have today.
+                var whatsAppSent = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
                 if (mails != null && mails.Count() > 0)
                 {
                     foreach (var mail in mails)
@@ -64,6 +68,15 @@ namespace Risebird.MicroService
                                 };
                                 var InterviewerUrl = "https://portal.risebird.io/Interview/PublicMyInterviewInvite?id=" + mail.uniqueid;
                                 var emailsend = await _notificationHelper.SendInerviewerMeetingReminder(_mail, InterviewerUrl, mail.uniqueid);
+                                if (whatsAppSent.Add(mail.interviewer))
+                                {
+                                    // I3: confirm presence (green) or unassign (red cross); the page needs no login.
+                                    WhatsAppVM _whatsAppVM = new WhatsAppVM();
+                                    _whatsAppVM.Emailid = mail.interviewer;
+                                    _whatsAppVM.buttonlink = "Interview/PublicMyInterviewInvite?id=" + mail.uniqueid;
+                                    _whatsAppVM.Event = "Interviewer Confirmation";
+                                    _ = await _whatsAppHelper.WhatsAppSendInterviewerConfirmation(_whatsAppVM);
+                                }
                             }
                             catch (Exception ex)
                             {

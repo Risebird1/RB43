@@ -23,6 +23,16 @@ namespace Risebird.Entities.ViewModel
         public string SentBy { get; set; }
         public string ClientName { get; set; }
         public string UnsubscribeLink { get; set; }
+        public string CandidateName { get; set; }
+        public string MeetingLink { get; set; }
+        public string DashboardLink { get; set; }
+        public string ReportLink { get; set; }
+        public string Amount { get; set; }
+        public string Period { get; set; }
+        public int FlaggedCount { get; set; }
+        // Naukri applicants are not in UserList: the phone and prospect id come from the prospect record.
+        public string Phone { get; set; }
+        public int ProspectId { get; set; }
     }
     public class WhatsAppVMResponse
     {

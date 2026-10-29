@@ -18,5 +18,6 @@ namespace Risebird.Entities.Data
         public string Header { get; set; }
         public DateTime CreatedAt { get; set; }
         public string SentBy { get; set; }
+        public string Status { get; set; }
     }
 }
