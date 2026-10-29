@@ -42,6 +42,47 @@ namespace Risebird.Entities.ViewModel
         public LlmDetection LlmDetection { get; set; }
 
         /// <summary>
+        /// Technical score as a 0-100 percentage for display. The evaluator rates each question 1-5
+        /// and its overall_technical_score has no fixed scale (often 0 or missing), so the percentage
+        /// is computed from the per-question ratings, then the rubric, and only then the overall field.
+        /// </summary>
+        [JsonIgnore]
+        public float? TechnicalScorePercent =>
+            RatingsPercent(QuestionRatings?.Select(q => q.Score))
+            ?? RubricPercent(RubricScoreSummary)
+            ?? OverallPercent(OverallTechnicalScore);
+
+        /// <summary>Communication score as a 0-100 percentage; see <see cref="TechnicalScorePercent"/>.</summary>
+        [JsonIgnore]
+        public float? CommunicationScorePercent =>
+            RatingsPercent(QuestionRatings?.Select(q => q.CommunicationScore))
+            ?? OverallPercent(OverallCommunicationScore);
+
+        private static float? RatingsPercent(IEnumerable<float> ratings)
+        {
+            // 0 means the question was not rated (the mapper defaults a missing score to 0).
+            var rated = ratings?.Where(r => r > 0).ToList();
+            if (rated == null || rated.Count == 0) return null;
+            var scale = ScaleOf(rated.Max());
+            return Clamp(rated.Average() / scale * 100);
+        }
+
+        private static float? RubricPercent(List<RubricScoreSummary> rubric)
+        {
+            var rated = rubric?.Where(r => r.Score > 0).ToList();
+            if (rated == null || rated.Count == 0) return null;
+            var max = rated.Sum(r => r.MaxScore > 0 ? r.MaxScore.Value : ScaleOf(r.Score));
+            return Clamp(rated.Sum(r => r.Score) / max * 100);
+        }
+
+        private static float? OverallPercent(float overall) =>
+            overall > 0 ? Clamp(overall / ScaleOf(overall) * 100) : (float?)null;
+
+        private static float ScaleOf(float value) => value <= 5 ? 5 : value <= 10 ? 10 : 100;
+
+        private static float Clamp(float percent) => Math.Min(100, Math.Max(0, percent));
+
+        /// <summary>
         /// Parses an assistant evaluation payload. Accepts fenced JSON, the four canonical
         /// verdicts, and legacy Recommended / select / reject labels. Hydrates llm_detection
         /// from either snake_case or camelCase, including per-question instance objects.

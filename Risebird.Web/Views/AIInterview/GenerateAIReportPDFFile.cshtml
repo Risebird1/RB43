@@ -965,9 +965,9 @@
                                 <table class="sum-stats">
                                     <tr>
                                         <td>
-                                            @if (Model.AIInterviewEvaluation.OverallTechnicalScore != 0)
+                                            @if (Model.AIInterviewEvaluation.TechnicalScorePercent.HasValue)
                                             {
-                                                <div class="sum-v">@Model.AIInterviewEvaluation.OverallTechnicalScore.ToString("0.#")<small> %</small></div>
+                                                <div class="sum-v">@Model.AIInterviewEvaluation.TechnicalScorePercent.Value.ToString("0")<small> %</small></div>
                                             }
                                             else
                                             {
@@ -976,9 +976,9 @@
                                             <div class="sum-l">Technical</div>
                                         </td>
                                         <td>
-                                            @if (Model.AIInterviewEvaluation.OverallCommunicationScore != 0)
+                                            @if (Model.AIInterviewEvaluation.CommunicationScorePercent.HasValue)
                                             {
-                                                <div class="sum-v">@Model.AIInterviewEvaluation.OverallCommunicationScore.ToString("0.#")<small> %</small></div>
+                                                <div class="sum-v">@Model.AIInterviewEvaluation.CommunicationScorePercent.Value.ToString("0")<small> %</small></div>
                                             }
                                             else
                                             {

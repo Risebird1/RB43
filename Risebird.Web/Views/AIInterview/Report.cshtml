@@ -3460,9 +3460,9 @@
                         <div class="rb-sum-lbl">Hands-on Skill Evaluation</div>
                         <div class="rb-sum-stats">
                             <div class="rb-sum-stat">
-                                @if (Model.AIInterviewEvaluation.OverallTechnicalScore != 0)
+                                @if (Model.AIInterviewEvaluation.TechnicalScorePercent.HasValue)
                                 {
-                                    <div class="rb-sum-v">@Model.AIInterviewEvaluation.OverallTechnicalScore.ToString("0.#")<small> %</small></div>
+                                    <div class="rb-sum-v">@Model.AIInterviewEvaluation.TechnicalScorePercent.Value.ToString("0")<small> %</small></div>
                                 }
                                 else
                                 {
@@ -3471,9 +3471,9 @@
                                 <div class="rb-sum-l">Technical</div>
                             </div>
                             <div class="rb-sum-stat">
-                                @if (Model.AIInterviewEvaluation.OverallCommunicationScore != 0)
+                                @if (Model.AIInterviewEvaluation.CommunicationScorePercent.HasValue)
                                 {
-                                    <div class="rb-sum-v">@Model.AIInterviewEvaluation.OverallCommunicationScore.ToString("0.#")<small> %</small></div>
+                                    <div class="rb-sum-v">@Model.AIInterviewEvaluation.CommunicationScorePercent.Value.ToString("0")<small> %</small></div>
                                 }
                                 else
                                 {
@@ -3909,21 +3909,21 @@
                             }
 
                             <div class="rb-ai-summary-grid">
-                                @if (Model.AIInterviewEvaluation.OverallTechnicalScore != 0)
+                                @if (Model.AIInterviewEvaluation.TechnicalScorePercent.HasValue)
                                 {
                                     <div class="rb-ai-metric">
                                         <div class="rb-ai-metric__main">
                                             <div class="rb-ai-metric__label"><img src="/img/techskill-score.png" alt="" /> Overall Skill Score</div>
-                                            <div class="rb-ai-metric__value">@Model.AIInterviewEvaluation.OverallTechnicalScore</div>
+                                            <div class="rb-ai-metric__value">@Model.AIInterviewEvaluation.TechnicalScorePercent.Value.ToString("0")<small> %</small></div>
                                         </div>
                                     </div>
                                 }
-                                @if (Model.AIInterviewEvaluation.OverallCommunicationScore != 0)
+                                @if (Model.AIInterviewEvaluation.CommunicationScorePercent.HasValue)
                                 {
                                     <div class="rb-ai-metric">
                                         <div class="rb-ai-metric__main">
                                             <div class="rb-ai-metric__label"><img src="/img/communication-score.png" alt="" /> Communication Score</div>
-                                            <div class="rb-ai-metric__value">@Model.AIInterviewEvaluation.OverallCommunicationScore</div>
+                                            <div class="rb-ai-metric__value">@Model.AIInterviewEvaluation.CommunicationScorePercent.Value.ToString("0")<small> %</small></div>
                                         </div>
                                     </div>
                                 }
