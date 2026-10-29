@@ -63,9 +63,15 @@ namespace Risebird.Repository
             try
             {
                 using var conn = new SqlConnection(_connectionString);
-                const string sql = @"
+                // Plivo rows are written exactly as before the provider columns existed, so seeding
+                // keeps working on a database where the Provider scripts have not run yet.
+                bool plivo = PlivoCXCampaignProvider.Normalize(agent.Provider) == PlivoCXCampaignProvider.Plivo;
+                string sql = plivo ? @"
                     INSERT INTO PlivoCXAgent (Name, Description, TriggerUrl, Purpose, TargetType, CollectsSlot, Channel, IsActive)
                     VALUES (@Name, @Description, @TriggerUrl, @Purpose, @TargetType, @CollectsSlot, @Channel, @IsActive);
+                    SELECT CAST(SCOPE_IDENTITY() AS INT);" : @"
+                    INSERT INTO PlivoCXAgent (Name, Description, TriggerUrl, Purpose, TargetType, CollectsSlot, Channel, IsActive, Provider, ProviderAgentId)
+                    VALUES (@Name, @Description, @TriggerUrl, @Purpose, @TargetType, @CollectsSlot, @Channel, @IsActive, @Provider, @ProviderAgentId);
                     SELECT CAST(SCOPE_IDENTITY() AS INT);";
                 return await conn.ExecuteScalarAsync<int>(sql, agent);
             }
@@ -74,6 +80,24 @@ namespace Risebird.Repository
                 await _logger.LogMessage(LogLevelInfo.Exception, ex);
                 return 0;
             }
+        }
+
+        public async Task UpdateAgentAsync(PlivoCXAgent agent)
+        {
+            using var conn = new SqlConnection(_connectionString);
+            await conn.ExecuteAsync(@"
+                UPDATE PlivoCXAgent SET
+                    Name            = @Name,
+                    Description     = @Description,
+                    TriggerUrl      = @TriggerUrl,
+                    Purpose         = @Purpose,
+                    TargetType      = @TargetType,
+                    CollectsSlot    = @CollectsSlot,
+                    Channel         = @Channel,
+                    IsActive        = @IsActive,
+                    Provider        = @Provider,
+                    ProviderAgentId = @ProviderAgentId
+                WHERE Id = @Id", agent);
         }
 
         // ── Campaigns ─────────────────────────────────────────────────────────────
@@ -94,7 +118,12 @@ namespace Risebird.Repository
                         @MinGapMinutes, @ConcurrentCalls, @StartsOn, @EndsOn, @CreatedBy, GETUTCDATE()
                     );
                     SELECT CAST(SCOPE_IDENTITY() AS INT);";
-                return await conn.ExecuteScalarAsync<int>(sql, campaign);
+                int id = await conn.ExecuteScalarAsync<int>(sql, campaign);
+                // Written separately so a Plivo campaign saves on a database without the column yet.
+                if (id > 0 && PlivoCXCampaignProvider.Normalize(campaign.Provider) != PlivoCXCampaignProvider.Plivo)
+                    await conn.ExecuteAsync("UPDATE PlivoCXCampaign SET Provider = @Provider WHERE Id = @Id",
+                        new { Id = id, Provider = PlivoCXCampaignProvider.Normalize(campaign.Provider) });
+                return id;
             }
             catch (Exception ex)
             {
@@ -420,15 +449,30 @@ namespace Risebird.Repository
             }
         }
 
-        public async Task<int> CountAllInFlightAsync(int inFlightMinutes)
+        public async Task<int> CountAllInFlightAsync(int inFlightMinutes, string provider = "Plivo")
         {
             // Not swallowed: if the count cannot be read, the dispatcher must not assume free lines.
             using var conn = new SqlConnection(_connectionString);
-            return await conn.ExecuteScalarAsync<int>(@"
-                SELECT COUNT(*) FROM PlivoCXCallLogs
-                WHERE CallStatus IN ('initiated', 'triggered')
-                  AND CreatedAt >= DATEADD(MINUTE, -@InFlightMinutes, GETUTCDATE())",
-                new { InFlightMinutes = inFlightMinutes });
+            try
+            {
+                // Calls without a campaign (timer jobs, one-off and test calls) are Plivo's.
+                return await conn.ExecuteScalarAsync<int>(@"
+                    SELECT COUNT(*)
+                    FROM PlivoCXCallLogs l
+                    LEFT JOIN PlivoCXCampaign pc ON pc.Id = l.CampaignId
+                    WHERE l.CallStatus IN ('initiated', 'triggered')
+                      AND l.CreatedAt >= DATEADD(MINUTE, -@InFlightMinutes, GETUTCDATE())
+                      AND ISNULL(pc.Provider, 'Plivo') = @Provider",
+                    new { InFlightMinutes = inFlightMinutes, Provider = PlivoCXCampaignProvider.Normalize(provider) ?? PlivoCXCampaignProvider.Plivo });
+            }
+            catch (SqlException ex) when (ex.Number == 207) // Provider column not deployed yet: everything is Plivo
+            {
+                return await conn.ExecuteScalarAsync<int>(@"
+                    SELECT COUNT(*) FROM PlivoCXCallLogs
+                    WHERE CallStatus IN ('initiated', 'triggered')
+                      AND CreatedAt >= DATEADD(MINUTE, -@InFlightMinutes, GETUTCDATE())",
+                    new { InFlightMinutes = inFlightMinutes });
+            }
         }
 
         public async Task RefundAttemptAsync(int campaignCandidateId, DateTime nextAttemptAtUtc)

@@ -21,7 +21,7 @@
         ? PlivoCXCampaignController.StateLabel(Model.CandidateState)
         : log.InterviewBooked || log.BookingApiSuccess ? "Booked" : (log.CallStatus ?? "—");
     string outcomeClass = outcome == "Booked" ? "pcx-good" : outcome == "Not booked" ? "pcx-bad" : "";
-    string agentName = "PlivoCX · " + (Model.Agent?.Name ?? purpose);
+    string agentName = (campaign == null || Risebird.Entities.Data.PlivoCXModels.PlivoCXCampaignProvider.Normalize(campaign.Provider) == "Plivo" ? "PlivoCX" : campaign.Provider) + " · " + (Model.Agent?.Name ?? purpose);
     bool collectsSlot = Model.Agent?.CollectsSlot ?? true;
 
     string disposition = string.IsNullOrWhiteSpace(log.CandidateDisposition) ? "—"

@@ -29,6 +29,7 @@ BEGIN
         pc.IRFName,
         pc.ClientName,
         pc.SourceType,
+        pc.Provider,
         pc.AgentId,
         a.Name                     AS AgentName,
         pc.CallPurpose,

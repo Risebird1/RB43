@@ -1,5 +1,7 @@
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using Risebird.Entities.Data.ElevenLabsModels;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data.PlivoCXModels;
@@ -39,6 +41,11 @@ namespace Risebird.Business.PlivoCX
         private readonly IPlivoCXCampaignRepository _campaignRepository;
         private readonly IPhoneNumberHelper         _phoneNumberHelper;
         private readonly IApplicationErrorLogger    _logger;
+        private readonly IElevenLabsAgentService    _elevenLabs;
+
+        // ElevenLabs runs its own concurrency limit (set by the ElevenLabs plan), separate from
+        // Plivo's 50 lines: ElevenLabs:Campaigns:ConcurrencyBudget (default 10).
+        private readonly int _elevenLabsBudget;
 
         public PlivoCXCampaignService(
             IConfiguration             configuration,
@@ -46,7 +53,8 @@ namespace Risebird.Business.PlivoCX
             IPlivoCXCallRepository     callRepository,
             IPlivoCXCampaignRepository campaignRepository,
             IPhoneNumberHelper         phoneNumberHelper,
-            IApplicationErrorLogger    logger)
+            IApplicationErrorLogger    logger,
+            IElevenLabsAgentService    elevenLabs)
         {
             _configuration      = configuration;
             _plivoCX            = plivoCX;
@@ -54,6 +62,8 @@ namespace Risebird.Business.PlivoCX
             _campaignRepository = campaignRepository;
             _phoneNumberHelper  = phoneNumberHelper;
             _logger             = logger;
+            _elevenLabs         = elevenLabs;
+            _elevenLabsBudget   = Setting("ElevenLabs:Campaigns:ConcurrencyBudget", 10, 1, 500);
 
             _concurrencyBudget  = Setting("PlivoCX:CampaignConcurrencyBudget", 40, 1, 500);
             _dialIntervalMs     = Setting("PlivoCX:CampaignDialIntervalMs", 600, 0, 10000);
@@ -63,6 +73,26 @@ namespace Risebird.Business.PlivoCX
         }
 
         public int ConcurrencyBudget      => _concurrencyBudget;
+
+        public int ConcurrencyBudgetFor(string provider) =>
+            PlivoCXCampaignProvider.Normalize(provider) == PlivoCXCampaignProvider.ElevenLabs ? _elevenLabsBudget : _concurrencyBudget;
+
+        /// <summary>Why this agent cannot be dialled, or null. Each provider addresses its agents differently.</summary>
+        private string AgentProblem(PlivoCXAgent agent)
+        {
+            if (agent == null) return "The campaign's agent was not found.";
+            switch (PlivoCXCampaignProvider.Normalize(agent.Provider))
+            {
+                case PlivoCXCampaignProvider.ElevenLabs:
+                    if (string.IsNullOrWhiteSpace(agent.ProviderAgentId))
+                        return "The ElevenLabs agent has not been created yet - run Dashboard/CreateElevenLabsCampaignAgents once.";
+                    return _elevenLabs.CampaignCallingProblem;
+                case PlivoCXCampaignProvider.Plivo:
+                    return string.IsNullOrWhiteSpace(agent.TriggerUrl) ? "The campaign's agent has no trigger URL." : null;
+                default:
+                    return $"{agent.Provider} campaigns are not available yet.";
+            }
+        }
         public int InFlightTimeoutMinutes => _inFlightMinutes;
 
         private int Setting(string key, int fallback, int min, int max) =>
@@ -89,7 +119,9 @@ namespace Risebird.Business.PlivoCX
                 {
                     var url = _configuration[seed.Key];
                     if (string.IsNullOrWhiteSpace(url)) continue;
-                    if (existing.Any(a => string.Equals(a.Purpose, seed.Purpose, StringComparison.OrdinalIgnoreCase))) continue;
+                    // Seeds the Plivo agents; ElevenLabs agents are created by ProvisionElevenLabsAgentsAsync.
+                    if (existing.Any(a => PlivoCXCampaignProvider.Normalize(a.Provider) == PlivoCXCampaignProvider.Plivo
+                                       && string.Equals(a.Purpose, seed.Purpose, StringComparison.OrdinalIgnoreCase))) continue;
 
                     await _campaignRepository.InsertAgentAsync(new PlivoCXAgent
                     {
@@ -116,13 +148,108 @@ namespace Risebird.Business.PlivoCX
             return await _campaignRepository.GetAgentsAsync(activeOnly: true);
         }
 
+        /// <summary>
+        /// Creates the ElevenLabs Schedule, Reschedule and Confirm attendance agents (or updates
+        /// them when they already exist) and records each as a PlivoCXAgent row with Provider
+        /// ElevenLabs, so ElevenLabs campaigns can pick them on Create. Safe to run again: it
+        /// updates the same ElevenLabs agents instead of creating duplicates.
+        /// </summary>
+        public async Task<List<ElevenLabsAgentProvisionResult>> ProvisionElevenLabsAgentsAsync()
+        {
+            var results = new List<ElevenLabsAgentProvisionResult>();
+            var options = AgentOptions();
+            var existing = await _campaignRepository.GetAgentsAsync(activeOnly: false);
+
+            foreach (var d in ElevenLabsCampaignAgents.Definitions)
+            {
+                var result = new ElevenLabsAgentProvisionResult { Purpose = d.Purpose, Name = d.Name };
+                try
+                {
+                    var row = existing.FirstOrDefault(a => PlivoCXCampaignProvider.Normalize(a.Provider) == PlivoCXCampaignProvider.ElevenLabs
+                                                        && string.Equals(a.Purpose, d.Purpose, StringComparison.OrdinalIgnoreCase));
+                    var request = ElevenLabsCampaignAgents.BuildRequest(d, options);
+                    // Our row knows the agent; failing that, an agent of the same name made by an
+                    // earlier run whose row was not saved. Only a genuinely new agent is created.
+                    var agentId = !string.IsNullOrWhiteSpace(row?.ProviderAgentId)
+                        ? row.ProviderAgentId
+                        : await _elevenLabs.FindCampaignAgentIdByNameAsync(d.ElevenLabsName);
+                    bool update = !string.IsNullOrWhiteSpace(agentId);
+                    var response = update
+                        ? await _elevenLabs.UpdateCampaignAgentAsync(agentId, request)
+                        : await _elevenLabs.CreateCampaignAgentAsync(request);
+                    if (!response.Success)
+                    {
+                        result.Error = response.Error;
+                        results.Add(result);
+                        continue;
+                    }
+
+                    var agent = row ?? new PlivoCXAgent();
+                    agent.Name            = d.Name;
+                    agent.Description     = d.Description;
+                    agent.Provider        = PlivoCXCampaignProvider.ElevenLabs;
+                    agent.ProviderAgentId = response.AgentId;
+                    agent.TriggerUrl      = string.Empty;
+                    agent.Purpose         = d.Purpose;
+                    agent.TargetType      = "Candidate";
+                    agent.CollectsSlot    = d.CollectsSlot;
+                    agent.Channel         = "Voice";
+                    agent.IsActive        = true;
+                    result.AgentId = response.AgentId;
+                    if (row == null)
+                    {
+                        agent.Id = await _campaignRepository.InsertAgentAsync(agent);
+                        if (agent.Id <= 0)
+                        {
+                            // The ElevenLabs agent exists; running this again finds it by name and saves the row.
+                            result.Error = $"ElevenLabs agent {response.AgentId} is ready, but it could not be saved in PlivoCXAgent - " +
+                                           "run Risebird.DB/Tables/PlivoCXAgent.sql (Provider / ProviderAgentId columns) and open this page again.";
+                            results.Add(result);
+                            continue;
+                        }
+                    }
+                    else await _campaignRepository.UpdateAgentAsync(agent);
+
+                    result.PlivoCXAgentId = agent.Id;
+                    result.Action = update ? "updated" : "created";
+                }
+                catch (Exception ex)
+                {
+                    await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                    result.Error = ex.Message;
+                }
+                results.Add(result);
+            }
+            return results;
+        }
+
+        /// <summary>ElevenLabs:Campaigns:Agent overrides on top of the defaults (Ananya voice, IST).</summary>
+        private ElevenLabsCampaignAgentOptions AgentOptions()
+        {
+            var o = new ElevenLabsCampaignAgentOptions();
+            string S(string key) => _configuration["ElevenLabs:Campaigns:Agent:" + key]?.Trim();
+            double? D(string key) => double.TryParse(S(key), System.Globalization.NumberStyles.Float, System.Globalization.CultureInfo.InvariantCulture, out var v) ? v : (double?)null;
+            if (!string.IsNullOrEmpty(S("VoiceId")))    o.VoiceId    = S("VoiceId");
+            if (!string.IsNullOrEmpty(S("TtsModelId"))) o.TtsModelId = S("TtsModelId");
+            if (!string.IsNullOrEmpty(S("Llm")))        o.Llm        = S("Llm");
+            if (!string.IsNullOrEmpty(S("Timezone")))   o.Timezone   = S("Timezone");
+            if (!string.IsNullOrEmpty(S("Language")))   o.Language   = S("Language");
+            o.Temperature     = D("Temperature")     ?? o.Temperature;
+            o.Stability       = D("Stability")       ?? o.Stability;
+            o.Speed           = D("Speed")           ?? o.Speed;
+            o.SimilarityBoost = D("SimilarityBoost") ?? o.SimilarityBoost;
+            o.TurnTimeout     = D("TurnTimeout")     ?? o.TurnTimeout;
+            return o;
+        }
+
         // ── Dialling ──────────────────────────────────────────────────────────────
 
         public async Task<PlivoCXDialResult> DialCandidateAsync(PlivoCXCampaign campaign, PlivoCXCampaignCandidate cc, string actor)
         {
             var agent = await _campaignRepository.GetAgentAsync(campaign.AgentId);
-            if (agent == null || string.IsNullOrWhiteSpace(agent.TriggerUrl))
-                return new PlivoCXDialResult { Error = "The campaign's agent has no trigger URL." };
+            var agentProblem = AgentProblem(agent);
+            if (agentProblem != null)
+                return new PlivoCXDialResult { Error = agentProblem };
 
             if (!_phoneNumberHelper.TrySanitizeIndianPhoneNumber(cc.CandidatePhone, out var phone, out var phoneError))
             {
@@ -190,6 +317,12 @@ namespace Risebird.Business.PlivoCX
                 await _callRepository.IncrementCallAttemptsAsync(cc.CandidateId);
 
             await UpdateLogAfterTriggerAsync(callLog, response);
+
+            // The provider turned the call away for capacity (e.g. ElevenLabs HTTP 429 - too many
+            // concurrent calls): the candidate was never rung, so the attempt is given back.
+            if (!string.IsNullOrEmpty(response?.Error) && PlivoCXOutcomeParser.IsCapacityRejection(response.Error))
+                await _campaignRepository.RefundAttemptAsync(cc.Id, DateTime.UtcNow.AddMinutes(CapacityRetryMinutes));
+
             return new PlivoCXDialResult { Success = string.IsNullOrEmpty(response?.Error), CallLogId = logId, Error = response?.Error };
         }
 
@@ -217,7 +350,8 @@ namespace Risebird.Business.PlivoCX
 
             // Never exceed the account's lines: the scheduler passes this campaign's share of the
             // shared budget; Call now / a direct call works it out here.
-            int accountFree = maxNewCalls ?? Math.Max(0, _concurrencyBudget - await _campaignRepository.CountAllInFlightAsync(_inFlightMinutes));
+            int budget = ConcurrencyBudgetFor(campaign.Provider);
+            int accountFree = maxNewCalls ?? Math.Max(0, budget - await _campaignRepository.CountAllInFlightAsync(_inFlightMinutes, PlivoCXCampaignProvider.Normalize(campaign.Provider)));
             bool accountLimited = accountFree < slots;
             slots = Math.Min(slots, accountFree);
 
@@ -247,7 +381,7 @@ namespace Risebird.Business.PlivoCX
                 ? $"Dialled {result.Dialled}" + (result.Failed > 0 ? $", {result.Failed} failed" : "") + $". {result.Remaining} still pending."
                 : slots == 0
                     ? accountLimited
-                        ? $"All {_concurrencyBudget} campaign lines on the Plivo account are busy - calls resume as lines free up."
+                        ? $"All {budget} {PlivoCXCampaignProvider.Normalize(campaign.Provider)} campaign lines are busy - calls resume as lines free up."
                         : $"{result.InFlight} call(s) still connecting - the Concurrent limit ({campaign.ConcurrentCalls}) is reached."
                     : result.Remaining == 0
                         ? "Nobody is left pending."
@@ -258,8 +392,9 @@ namespace Risebird.Business.PlivoCX
         public async Task<PlivoCXDialResult> TestCallAsync(PlivoCXCampaign campaign, string phoneRaw, string name, string email, string actor)
         {
             var agent = await _campaignRepository.GetAgentAsync(campaign.AgentId);
-            if (agent == null || string.IsNullOrWhiteSpace(agent.TriggerUrl))
-                return new PlivoCXDialResult { Error = "The campaign's agent has no trigger URL." };
+            var agentProblem = AgentProblem(agent);
+            if (agentProblem != null)
+                return new PlivoCXDialResult { Error = agentProblem };
             if (!_phoneNumberHelper.TrySanitizeIndianPhoneNumber(phoneRaw, out var phone, out var phoneError))
                 return new PlivoCXDialResult { Error = "Invalid phone number: " + phoneError };
 
@@ -314,12 +449,38 @@ namespace Risebird.Business.PlivoCX
             };
         }
 
+        /// <summary>
+        /// Places the call on ElevenLabs. The dynamic variables are exactly the fields the Plivo
+        /// trigger sends (snake_case, e.g. candidate_name, log_id, tomorrow_date), so the agent
+        /// prompts and the webhook read the same names on both providers; call_source marks the
+        /// event as a campaign call on the shared ElevenLabs webhook. Blank values are sent as ""
+        /// because ElevenLabs rejects a call whose prompt variable is missing.
+        /// </summary>
+        private async Task<PlivoCXTriggerResponse> TriggerElevenLabsAsync(PlivoCXAgent agent, PlivoCXTriggerRequest request)
+        {
+            var variables = JObject.FromObject(request).Properties()
+                .ToDictionary(p => p.Name, p => (object)(p.Value.Type == JTokenType.Null ? string.Empty : p.Value.ToString()));
+            variables[ElevenLabsCampaignAgents.CallSourceVariable] = ElevenLabsCampaignAgents.CallSourceValue;
+
+            var r = await _elevenLabs.PlaceCampaignCallAsync(agent.ProviderAgentId, request.PhoneNumber, variables);
+            return new PlivoCXTriggerResponse
+            {
+                ConversationId  = r.ConversationId,
+                ApiId           = r.CallSid,
+                Error           = string.IsNullOrEmpty(r.Error) && string.IsNullOrEmpty(r.ConversationId) ? "ElevenLabs returned no conversation_id." : r.Error,
+                RawResponseBody = r.RawResponseBody,
+                HttpStatusCode  = r.HttpStatusCode
+            };
+        }
+
         private async Task<PlivoCXTriggerResponse> TriggerAsync(PlivoCXAgent agent, PlivoCXTriggerRequest request, int logId)
         {
             PlivoCXTriggerResponse response;
             try
             {
-                response = await _plivoCX.TriggerByUrlAsync(agent.TriggerUrl, request);
+                response = PlivoCXCampaignProvider.Normalize(agent.Provider) == PlivoCXCampaignProvider.ElevenLabs
+                    ? await TriggerElevenLabsAsync(agent, request)
+                    : await _plivoCX.TriggerByUrlAsync(agent.TriggerUrl, request);
             }
             catch (Exception ex)
             {
@@ -413,9 +574,16 @@ namespace Risebird.Business.PlivoCX
             }
             if (ready.Count == 0) return;
 
-            int accountFree = Math.Max(0, _concurrencyBudget - await _campaignRepository.CountAllInFlightAsync(_inFlightMinutes));
-            var plan = PlivoCXCampaignRules.PlanSlots(
-                ready.Select(r => (r.Campaign.Id, r.Campaign.ConcurrentCalls, r.InFlight)).ToList(), accountFree);
+            // Each provider has its own line budget (Plivo's account limit, ElevenLabs' plan limit),
+            // shared in turn between that provider's ready campaigns.
+            var plan = new Dictionary<int, int>();
+            foreach (var group in ready.GroupBy(r => PlivoCXCampaignProvider.Normalize(r.Campaign.Provider) ?? PlivoCXCampaignProvider.Plivo))
+            {
+                int free = Math.Max(0, ConcurrencyBudgetFor(group.Key) - await _campaignRepository.CountAllInFlightAsync(_inFlightMinutes, group.Key));
+                foreach (var kv in PlivoCXCampaignRules.PlanSlots(
+                             group.Select(r => (r.Campaign.Id, r.Campaign.ConcurrentCalls, r.InFlight)).ToList(), free))
+                    plan[kv.Key] = kv.Value;
+            }
 
             foreach (var (campaign, _) in ready)
             {
