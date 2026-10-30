@@ -5,6 +5,7 @@ using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
@@ -144,6 +145,78 @@ namespace Risebird.Repository
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return new EmailLookupResultVM { SearchEmail = emailId, IsFound = false };
+            }
+        }
+
+        public async Task<List<OpsToolkitEmergencyUnassignVM>> GetEmergencyUnassignments(DateTime fromDate, DateTime toDate)
+        {
+            try
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@FromDate", fromDate.Date, DbType.Date);
+                parameters.Add("@ToDate", toDate.Date, DbType.Date);
+
+                using var con = new SqlConnection(connectionString);
+                var rows = await con.QueryAsync<OpsToolkitEmergencyUnassignVM>(
+                    "usp_OpsToolkit_GetEmergencyUnassignments",
+                    parameters,
+                    commandType: CommandType.StoredProcedure,
+                    commandTimeout: 120);
+                return rows.ToList();
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return new List<OpsToolkitEmergencyUnassignVM>();
+            }
+        }
+
+        public async Task<OpsToolkitInterviewHistoryVM> GetInterviewPointsHistory(int interviewId)
+        {
+            var result = new OpsToolkitInterviewHistoryVM { InterviewId = interviewId };
+            try
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@InterviewId", interviewId);
+
+                using var con = new SqlConnection(connectionString);
+                using var multi = await con.QueryMultipleAsync(
+                    "usp_OpsToolkit_GetInterviewPointsHistory",
+                    parameters,
+                    commandType: CommandType.StoredProcedure,
+                    commandTimeout: 120);
+
+                result.Points      = (await multi.ReadAsync<OpsToolkitPointsEntryVM>()).ToList();
+                result.Assignments = (await multi.ReadAsync<OpsToolkitAssignmentChangeVM>()).ToList();
+                result.Actions     = (await multi.ReadAsync<OpsToolkitActionLogVM>()).ToList();
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return result;
+        }
+
+        public async Task<OpsToolkitActionResultVM> RemoveUnassignPenalty(int interviewPointsId, string reason, string performedBy)
+        {
+            try
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@InterviewPointsId", interviewPointsId);
+                parameters.Add("@Reason", reason);
+                parameters.Add("@PerformedBy", performedBy);
+
+                using var con = new SqlConnection(connectionString);
+                var result = await con.QueryFirstOrDefaultAsync<OpsToolkitActionResultVM>(
+                    "usp_OpsToolkit_RemoveUnassignPenalty",
+                    parameters,
+                    commandType: CommandType.StoredProcedure);
+                return result ?? new OpsToolkitActionResultVM { Success = false, Message = "No response from database." };
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return new OpsToolkitActionResultVM { Success = false, Message = "Could not remove the penalty." };
             }
         }
     }
