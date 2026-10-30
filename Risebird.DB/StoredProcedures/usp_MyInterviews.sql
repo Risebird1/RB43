@@ -35,7 +35,9 @@ IRF.AudioComment,Cl.Name as ClientName,IRF.JobCountry,tqc.id as QCPresent,ISNULL
 im.BackUpLink,im.BackUpLinkId, irf.IsFixedInterviewduration, Case When irf.IsNewSkillChannel=1 then (pm.DurationSelectedMin+5) else IRF.interviewDuration end as MaxInterviewDuration,tirf.PerSuccessRate as ExpectedPerHourRate,      
 Case When tirf.Surcharge>0 and irf.IsNewSkillChannel=1 then tirf.Surcharge when tirf.Surcharge=0 and irf.IsNewSkillChannel=1 then im.Surcharge Else 0 end as Surcharge,
 irf.IsNewSkillChannel, ca.CodedResumeLink as CandidateCodedResumeLink,ISNULL(pr.ProxyvotingCount,0) as ProxyvotingCount,
-pr.id as ProxyId,IRF.IsVideoRequired, irf.TechRubricType,ic.AITranscriptVerdict,ic.AudioTranscriptFileLink,ic.AIVerdict, ca.id as CandidateId     
+pr.id as ProxyId,IRF.IsVideoRequired, irf.TechRubricType,ic.AITranscriptVerdict,ic.AudioTranscriptFileLink,ic.AIVerdict, ca.id as CandidateId,
+ir.CreatedOn as ReportSubmittedOn, irf.EnableReportEditWindow,   -- interviewer report edit window
+(select count(1) from InterviewReportEditLog rel where rel.InterviewId = im.id and rel.Action = 'Edit' and rel.PerformedBy = im.interviewer) as InterviewerEditCount
 from InterviewMeetings im                         
 inner join IRF  irf on im.IRFId=irf.IRFId
 left join InterviewComments ic on im.id = ic.InterviewId           

@@ -144,6 +144,12 @@ namespace Risebird.Entities.Data
         public string SessionId { get; set; }
         public int Score { get; set; }
         public int CandidateId { get; set; }
+        /// <summary>InterviewReport.CreatedOn from usp_MyInterviews: first report submission (interviewer report edit window).</summary>
+        public DateTime? ReportSubmittedOn { get; set; }
+        /// <summary>IRF.EnableReportEditWindow from usp_MyInterviews. NULL or false: legacy report button window.</summary>
+        public bool? EnableReportEditWindow { get; set; }
+        /// <summary>Edits the interview's own interviewer has made after submitting (usp_MyInterviews).</summary>
+        public int InterviewerEditCount { get; set; }
 
     }
 }

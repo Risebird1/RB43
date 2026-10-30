@@ -436,6 +436,17 @@ namespace Risebird.Entities.ViewModel
         public int AIVideoCount { get; set; }
         public string TranscriptSummary { get; set; }
 
+        /// <summary>
+        /// Interviewer report edit window: the interviewer's written justification for their one allowed edit
+        /// of a submitted report. Stored in InterviewReportEditLog.EditReason.
+        /// </summary>
+        [Display(Name = "Reason for Edit")]
+        public string EditReason { get; set; }
+        /// <summary>True when the form must show the mandatory Reason for Edit box (flagged IRF, interviewer editing a submitted report).</summary>
+        public bool RequireEditReason { get; set; }
+        /// <summary>Which form saved the report ('AddReport' / 'ProctorReport'), recorded in the audit log. Set on the server.</summary>
+        public string EditSource { get; set; }
+
     }
     public class RBInterviewDetails
     {

@@ -1,0 +1,181 @@
+@model List<Risebird.Entities.ViewModel.ReportEditAlert>
+@using Risebird.Entities.Enum
+@using System.Text.RegularExpressions
+@{
+    ViewData["Title"] = "Report Edit Alerts";
+    int days = ViewBag.Days ?? 7;
+    Func<int?, string> verdictText = s => s.HasValue
+        ? (Enum.IsDefined(typeof(InterviewStatus), s.Value) ? ((InterviewStatus)s.Value).GetDescription() : s.Value.ToString())
+        : "-";
+    Func<int?, string> meetingText = s => s.HasValue
+        ? (Enum.IsDefined(typeof(MeetingStatus), s.Value) ? ((MeetingStatus)s.Value).GetDescription() : s.Value.ToString())
+        : "-";
+    Func<double?, string> scoreText = s => s.HasValue ? s.Value.ToString("0.##") : "-";
+    Func<string, string> commentText = c =>
+    {
+        if (string.IsNullOrWhiteSpace(c))
+        {
+            return "-";
+        }
+        var plain = Regex.Replace(System.Web.HttpUtility.HtmlDecode(c), "<.*?>", string.Empty).Trim();
+        return plain.Length > 300 ? plain.Substring(0, 300) + "..." : plain;
+    };
+}
+<style>
+    .rea-table { width: 100%; border-collapse: collapse; font-size: 13px; background: #fff; }
+    .rea-table th { background: #2f4a6d; color: #fff; padding: 8px; text-align: left; position: sticky; top: 0; }
+    .rea-table td { padding: 8px; border-bottom: 1px solid #e3e6ea; vertical-align: top; }
+    .rea-verdict { background: #fde2e1; }
+    .rea-score { background: #ffe8cc; }
+    .rea-comment { background: #fff8d6; }
+    .rea-badge { display: inline-block; padding: 2px 8px; border-radius: 3px; font-weight: 700; font-size: 11px; color: #fff; white-space: nowrap; }
+    .rea-badge-verdict { background: #c62828; }
+    .rea-badge-score { background: #e67e22; }
+    .rea-badge-comment { background: #b8a200; }
+    .rea-old { color: #8a1c1c; text-decoration: line-through; }
+    .rea-new { color: #1b5e20; font-weight: 600; }
+    .rea-muted { color: #6b7280; font-size: 12px; }
+    .rea-comment-text { max-width: 320px; white-space: pre-wrap; word-break: break-word; }
+</style>
+<div class="container-fluid" style="padding:15px;">
+    <div class="row" style="margin-bottom:12px;">
+        <div class="col-md-8">
+            <h4 style="margin:0;"><strong>Report Edit Alerts (911)</strong></h4>
+            <div class="rea-muted">Every change to a submitted feedback report's verdict, overall score, meeting status or interviewer comment, newest first.</div>
+        </div>
+        <div class="col-md-4 text-right">
+            <form method="get" action="@Url.Action("ReportEditAlerts", "Interview")" style="display:inline-block;">
+                <label for="days" style="margin-right:6px;">Last</label>
+                <select id="days" name="days" class="select-css" style="width:auto;display:inline-block;" onchange="this.form.submit()">
+                    @foreach (var option in new[] { 1, 3, 7, 15, 30, 60, 90 })
+                    {
+                        if (option == days)
+                        {
+                            <option value="@option" selected>@option days</option>
+                        }
+                        else
+                        {
+                            <option value="@option">@option days</option>
+                        }
+                    }
+                </select>
+            </form>
+        </div>
+    </div>
+    <div class="rea-muted" style="margin-bottom:8px;">
+        <span class="rea-badge rea-badge-verdict">911 VERDICT</span> verdict changed &nbsp;
+        <span class="rea-badge rea-badge-score">SCORE</span> overall score changed &nbsp;
+        <span class="rea-badge rea-badge-comment">COMMENT</span> comment / meeting status only &nbsp;
+        &middot; @Model.Count change(s)
+    </div>
+    <div style="overflow-x:auto;">
+        <table class="rea-table">
+            <thead>
+                <tr>
+                    <th>Severity</th>
+                    <th>Edited On</th>
+                    <th>Candidate / Position</th>
+                    <th>Verdict</th>
+                    <th>Overall Score</th>
+                    <th>Meeting Status</th>
+                    <th>Interviewer Comment</th>
+                    <th>Edited By</th>
+                    <th>Form</th>
+                    <th>Reason</th>
+                    <th>Report</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Count == 0)
+                {
+                    <tr><td colspan="11" class="text-center rea-muted">No report changes in the last @days days.</td></tr>
+                }
+                @foreach (var item in Model)
+                {
+                    var rowClass = item.IsVerdictChange ? "rea-verdict" : item.IsScoreChange ? "rea-score" : "rea-comment";
+                    <tr class="@rowClass">
+                        <td>
+                            @if (item.IsVerdictChange)
+                            {
+                                <span class="rea-badge rea-badge-verdict">911 VERDICT</span>
+                            }
+                            else if (item.IsScoreChange)
+                            {
+                                <span class="rea-badge rea-badge-score">SCORE</span>
+                            }
+                            else
+                            {
+                                <span class="rea-badge rea-badge-comment">COMMENT</span>
+                            }
+                        </td>
+                        <td style="white-space:nowrap;">
+                            @item.PerformedOn.ToString("dd-MMM-yyyy hh:mm tt")
+                            @if (item.ReportSubmittedOn.HasValue)
+                            {
+                                <div class="rea-muted">@((int)(item.PerformedOn - item.ReportSubmittedOn.Value).TotalMinutes) min after submit</div>
+                            }
+                        </td>
+                        <td>
+                            @item.CandidateName
+                            <div class="rea-muted">@item.JDTiltle</div>
+                            <div class="rea-muted">Interview #@item.InterviewId</div>
+                        </td>
+                        <td>
+                            @if (item.IsVerdictChange)
+                            {
+                                <span class="rea-old">@verdictText(item.OldInterviewStatus)</span> <span>&rarr;</span> <span class="rea-new">@verdictText(item.NewInterviewStatus)</span>
+                            }
+                            else
+                            {
+                                @verdictText(item.NewInterviewStatus)
+                            }
+                        </td>
+                        <td>
+                            @if (item.IsScoreChange)
+                            {
+                                <span class="rea-old">@scoreText(item.OldOverallScore)</span> <span>&rarr;</span> <span class="rea-new">@scoreText(item.NewOverallScore)</span>
+                            }
+                            else
+                            {
+                                @scoreText(item.NewOverallScore)
+                            }
+                        </td>
+                        <td>
+                            @if (item.IsMeetingStatusChange)
+                            {
+                                <span class="rea-old">@meetingText(item.OldMeetingStatus)</span> <span>&rarr;</span> <span class="rea-new">@meetingText(item.NewMeetingStatus)</span>
+                            }
+                            else
+                            {
+                                @meetingText(item.NewMeetingStatus)
+                            }
+                        </td>
+                        <td>
+                            @if (item.IsCommentChange)
+                            {
+                                <div class="rea-comment-text"><span class="rea-muted">Old:</span> @commentText(item.OldInterviewerComment)</div>
+                                <div class="rea-comment-text" style="margin-top:4px;"><span class="rea-muted">New:</span> @commentText(item.NewInterviewerComment)</div>
+                            }
+                            else
+                            {
+                                <span class="rea-muted">unchanged</span>
+                            }
+                        </td>
+                        <td>
+                            @item.PerformedBy
+                            <div class="rea-muted">@(item.IsByInterviewer ? "(interviewer)" : "(internal)")</div>
+                        </td>
+                        <td>@(item.Action == "CommentsEdit" ? "Comments" : (item.Source ?? "Report"))</td>
+                        <td class="rea-comment-text">@(string.IsNullOrWhiteSpace(item.EditReason) ? "-" : item.EditReason)</td>
+                        <td>
+                            @if (item.IRFId.HasValue)
+                            {
+                                <a target="_blank" href="@Url.Action("AddReport", "Interview", new { interviewId = item.InterviewId, irfId = item.IRFId })">Open</a>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

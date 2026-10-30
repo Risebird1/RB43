@@ -807,23 +807,19 @@ namespace Risebird.CommonHelper
             // Remove spaces, dashes, parentheses, etc.
             string phone = Regex.Replace(input, @"[^\d\+]", "");
 
-            // Case 1: Starts with '+'
-            if (phone.StartsWith("+"))
+            // Case 1/2: starts with '+' or '00'. Match a known country code: a plain \d{1,3} split is greedy and
+            // turned +919876543210 (how interviewer profiles store numbers) into +919 / 876543210.
+            if (phone.StartsWith("+") || phone.StartsWith("00"))
             {
-                var match = Regex.Match(phone, @"^\+(\d{1,3})(\d+)$");
-                if (match.Success)
+                var digits = phone.StartsWith("+") ? phone.Substring(1) : phone.Substring(2);
+                if (Regex.IsMatch(digits, @"^\d+$"))
                 {
-                    return ($"+{match.Groups[1].Value}", match.Groups[2].Value);
-                }
-            }
-
-            // Case 2: Starts with '00'
-            if (phone.StartsWith("00"))
-            {
-                var match = Regex.Match(phone, @"^00(\d{1,3})(\d+)$");
-                if (match.Success)
-                {
-                    return ($"+{match.Groups[1].Value}", match.Groups[2].Value);
+                    var split = SplitKnownCountryCode(digits);
+                    if (split.HasValue)
+                        return split.Value;
+                    var match = Regex.Match(digits, @"^(\d{1,3}?)(\d{6,14})$");
+                    if (match.Success)
+                        return ($"+{match.Groups[1].Value}", match.Groups[2].Value);
                 }
             }
 
@@ -833,24 +829,32 @@ namespace Risebird.CommonHelper
                 if (phone.Length <= 10)
                     return ("", phone); // Local number (no country code)
 
-                for (int len = 3; len >= 1; len--)
+                var split = SplitKnownCountryCode(phone);
+                if (split.HasValue)
+                    return split.Value;
+            }
+            // Default: No country code detected
+            return ("", phone.TrimStart('+'));
+        }
+
+        private static (string CountryCode, string MobileNumber)? SplitKnownCountryCode(string digits)
+        {
+            for (int len = 3; len >= 1; len--)
+            {
+                if (digits.Length > len)
                 {
-                    if (phone.Length > len)
+                    string prefix = digits.Substring(0, len);
+                    if (KnownCountryCodes.Contains(prefix))
                     {
-                        string prefix = phone.Substring(0, len);
-                        if (KnownCountryCodes.Contains(prefix))
+                        string remainder = digits.Substring(len);
+                        if (remainder.Length >= 6 && remainder.Length <= 14)
                         {
-                            string remainder = phone.Substring(len);
-                            if (remainder.Length >= 6 && remainder.Length <= 14)
-                            {
-                                return ($"+{prefix}", remainder);
-                            }
+                            return ($"+{prefix}", remainder);
                         }
                     }
                 }
             }
-            // Default: No country code detected
-            return ("", phone);
+            return null;
         }
     }
 }

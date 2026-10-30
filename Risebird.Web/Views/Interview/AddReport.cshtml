@@ -1425,6 +1425,10 @@
                                         @Html.HiddenFor(m => m.PrimarySkill)
                                         @Html.HiddenFor(m => m.IsQCRequired)
                                         @Html.HiddenFor(m => m.JDTiltle)
+                                        @if (Model.RequireEditReason)
+                                        {
+                                            <partial name="_ReportEditReason" model="Model" />
+                                        }
                                         <div class="clearfix"></div>
                                         <div class="card-footer" style="margin-top:15px;">
                                             <div class="row">
@@ -1865,7 +1869,7 @@
     function SubmitForm() {
         //disable button
         document.getElementById("btnUpload").disabled = true;
-        if (CheckConditions()) {
+        if (CheckConditions() && (typeof CheckEditReason !== "function" || CheckEditReason())) {
             document.getElementById("reportForm").submit();
         }
         else {
