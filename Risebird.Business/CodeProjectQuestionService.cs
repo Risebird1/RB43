@@ -205,7 +205,32 @@ namespace Risebird.Business
             var details = await _repository.GetCodeProjectDetails(questionId);
             if (details == null || details.ValidationStatus != CodeProjectValidationStatus.Passed) return;
             if (!await _repository.ClaimEnvironment(sessionId, questionId, details.StackImageCode)) return;
+            await StartProvisioningAsync(sessionId, questionId, details, ct);
+        }
 
+        /// <summary>
+        /// A failure before any machine existed (the provisioner unreachable while it restarted, or a
+        /// configuration error) costs the candidate nothing yet -- the clock starts at handover -- so
+        /// it may be tried again. Once a machine exists, or the candidate has been handed it, a
+        /// failure stays final and the question is reported as not scored.
+        /// </summary>
+        public static bool CanRetryEnvironment(CodeProjectEnvironment env) =>
+            env != null && env.State == CodeProjectEnvironmentState.Failed
+            && string.IsNullOrEmpty(env.EnvironmentHandle) && env.HandedOverAtUtc == null;
+
+        public async Task<CodeProjectEnvironment> RetryEnvironmentAsync(string sessionId, int questionId, CancellationToken ct = default)
+        {
+            var env = await _repository.GetEnvironment(sessionId, questionId);
+            if (!CanRetryEnvironment(env)) return env;
+            var details = await _repository.GetCodeProjectDetails(questionId);
+            if (details == null || details.ValidationStatus != CodeProjectValidationStatus.Passed) return env;
+            await _repository.UpdateEnvironment(sessionId, questionId, CodeProjectEnvironmentState.Requested, message: "Trying again…");
+            await StartProvisioningAsync(sessionId, questionId, details, ct);
+            return await _repository.GetEnvironment(sessionId, questionId);
+        }
+
+        private async Task StartProvisioningAsync(string sessionId, int questionId, CodeProjectDetails details, CancellationToken ct)
+        {
             if (!_provisioner.IsConfigured)
             {
                 await _repository.UpdateEnvironment(sessionId, questionId, CodeProjectEnvironmentState.Failed,

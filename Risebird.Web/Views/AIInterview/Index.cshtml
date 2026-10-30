@@ -6596,6 +6596,7 @@ git commit -m "implement the requirements"</div>
                             <p id="cpIdleText">A private machine with the project and its tools already installed.</p>
                             <p class="rb-cp-warn" id="cpDeviceWarn" style="display:none">This task needs a laptop or desktop with a keyboard and a screen at least 1024 pixels wide. On a phone or tablet the remote machine will be very hard to use — if you can, switch device before launching. The timer starts at launch.</p>
                             <button type="button" class="rb-cp-btn" id="cpLaunchBtn">Launch environment</button>
+                            <button type="button" class="rb-cp-btn" id="cpRetryBtn" style="display:none;margin-left:8px">Try again</button>
                             <p class="rb-cp-err" id="cpIdleErr" style="display:none;margin-top:12px"></p>
                         </div>
 
@@ -6782,6 +6783,28 @@ git commit -m "implement the requirements"</div>
                     var btn = $('cpLaunchBtn');
                     btn.disabled = false; btn.textContent = 'Continue interview';
                     btn.onclick = function () { submit(false); };
+                    // Nothing was created yet and the clock has not started, so trying again is free.
+                    var retry = $('cpRetryBtn');
+                    if (retry) {
+                        retry.style.display = env.canRetry ? '' : 'none';
+                        retry.disabled = false;
+                        retry.onclick = function () {
+                            retry.disabled = true;
+                            launching = true;
+                            show('cpIdleErr', false); show('cpIdle', false); show('cpConnecting', true);
+                            badge('Connecting', 'run');
+                            $('cpConnMsg').textContent = 'Trying again…';
+                            fetch(launchUrl + qs + '&retry=true', { method: 'POST', headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+                                .then(function (r) { return r.json(); })
+                                .then(function (data) {
+                                    retry.style.display = 'none';
+                                    if (data && data.success) renderEnv(data.environment);
+                                    var s = data && data.environment && data.environment.state;
+                                    if (s !== 'handedover' && s !== 'failed' && s !== 'submitted') pollTimer = setTimeout(launchStep, 3000);
+                                })
+                                .catch(function () { retry.disabled = false; pollTimer = setTimeout(launchStep, 5000); });
+                        };
+                    }
                     return;
                 }
                 if (launching) {
