@@ -465,7 +465,7 @@ namespace Risebird.Web.Controllers
             var result = await _supportService.SaveRaisedIssueDetails(model);
             if (result)
             {
-                if (profileName == ProfileNames.SupportAdmin || profileName == ProfileNames.SeniorHR || profileName == ProfileNames.HR || profileName == ProfileNames.QualityController || profileName == ProfileNames.Finance || profileName == ProfileNames.InterviewerManagement || profileName == ProfileNames.SeniorInterviewerManagement || profileName == ProfileNames.Recruiter)
+                if (profileName == ProfileNames.SupportAdmin || profileName == ProfileNames.SeniorHR || profileName == ProfileNames.HR || profileName == ProfileNames.QualityController || profileName == ProfileNames.Finance || profileName == ProfileNames.FinanceSupport || profileName == ProfileNames.InterviewerManagement || profileName == ProfileNames.SeniorInterviewerManagement || profileName == ProfileNames.Recruiter)
                 {
                     await _notificationHelper.SendTechSupportMail(model.Comment, DateTime.Now, model.RequestedBy);
                 }

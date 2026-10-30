@@ -11,7 +11,7 @@
                         <tr>
                             <th>Action</th>
                             <th>EmailId</th>
-                            @if (ViewBag.Profile == "Finance" || ViewBag.Profile == "Admin")
+                            @if (ViewBag.Profile == "Finance" || ViewBag.Profile == "Finance Support" || ViewBag.Profile == "Admin")
                             {
                                 <th>Billing(@(Model?.FirstOrDefault()?.BillingCurrency ?? "INR"))</th>
                             }
@@ -107,7 +107,7 @@
                                 {
                                     <td></td>
                                 }
-                                @if (ViewBag.Profile == "Finance" || ViewBag.Profile == "Admin")
+                                @if (ViewBag.Profile == "Finance" || ViewBag.Profile == "Finance Support" || ViewBag.Profile == "Admin")
                                 {
                                     <td><input type="text" class="form-control" value="@item.BillingRate" onchange="SaveInterviewerBillingRate(this.value,'@item.UserId', '@item.IRFId')" /></td>
                                 }

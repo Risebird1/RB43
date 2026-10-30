@@ -48,7 +48,7 @@
                                                     <th>Company Type</th>
                                                     <th>Plan Type</th>
                                                     <th>Interviewer</th>
-                                                    @if (ViewBag.Profile == "Finance" || ViewBag.Profile == "Admin")
+                                                    @if (ViewBag.Profile == "Finance" || ViewBag.Profile == "Finance Support" || ViewBag.Profile == "Admin")
                                                     {
                                                         <th>Billing(@(Model?.FirstOrDefault()?.BillingCurrency ?? "INR"))</th>
                                                     }
@@ -71,7 +71,7 @@
                                                     <th>Company Type</th>
                                                     <th>Plan Type</th>
                                                     <th>Interviewer</th>
-                                                    @if (ViewBag.Profile == "Finance" || ViewBag.Profile == "Admin")
+                                                    @if (ViewBag.Profile == "Finance" || ViewBag.Profile == "Finance Support" || ViewBag.Profile == "Admin")
                                                     {
                                                         <th>Billing(@(Model?.FirstOrDefault()?.BillingCurrency ?? "INR"))</th>
                                                     }
@@ -99,7 +99,7 @@
                                                             <td>@item.Heuristicsscore</td>
                                                             <td>@item.EmailId</td>
 
-                                                            @if (ViewBag.Profile == "Finance" || ViewBag.Profile == "Admin")
+                                                            @if (ViewBag.Profile == "Finance" || ViewBag.Profile == "Finance Support" || ViewBag.Profile == "Admin")
                                                             {
                                                                 <td><input type="text" class="form-control" value="@item.BillingRate" onchange="SaveInterviewerBillingRate(this.value,'@item.UserId', '@item.IRFId')" /></td>
                                                             }

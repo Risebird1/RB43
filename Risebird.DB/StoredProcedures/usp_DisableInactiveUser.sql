@@ -23,7 +23,7 @@ where datediff(day, cast(LastLogout as date), cast(@date as date))>180
 and cl.IsPasswordReset = 1
 
 Update UserList set IsActive=0 
-where datediff(day, cast(LastLogin as date), cast(Getdate() as date))>3 and idProfile in(2,5,28,29,30,31)  
+where datediff(day, cast(LastLogin as date), cast(Getdate() as date))>3 and idProfile in(2,5,28,29,30,31,35)
 END
 
 GO

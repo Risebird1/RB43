@@ -129,12 +129,12 @@
                                 <span data-toggle="tooltip" data-placement="top" title="Click here to Send Open Interview Notification" onclick="SendOpenInterview(null)" data-original-title="Tooltip on top"><font style="font-family: Roboto, sans-serif; font-size:12px;">Send Open Interview</font></span>
                             </button>
 
-                            @if (ViewBag.ProfileName == "SeniorHR" || ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin" || ViewBag.ProfileName == "SeniorInterviewerManagement" || ViewBag.ProfileName == "Finance" || ViewBag.ProfileName == "InterviewerManagement" || ViewBag.ProfileName != "Quality Controller")
+                            @if (ViewBag.ProfileName == "SeniorHR" || ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin" || ViewBag.ProfileName == "SeniorInterviewerManagement" || ViewBag.ProfileName == "Finance" || ViewBag.ProfileName == "Finance Support" || ViewBag.ProfileName == "InterviewerManagement" || ViewBag.ProfileName != "Quality Controller")
                             {
                                 <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded card-title-space">
                                     <span data-toggle="tooltip" data-placement="top" title="Click here to Send Open Interview Notification as per Skill Channel" onclick="location.href = '@Url.Action("SendOpenInterviewsNotification", "Dashboard" , new { actionstatus = RibbonActionType.InterviewCount})'" data-original-title="Tooltip on top"><font style="font-family: Roboto, sans-serif; font-size:12px;">Send Open Interview Mail(Skillwise clubbed)</font></span>
                                 </button>
-                                @if (ViewBag.ProfileName == "SeniorHR" || ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin" || ViewBag.ProfileName == "SeniorInterviewerManagement" || ViewBag.ProfileName == "Finance" || ViewBag.ProfileName == "InterviewerManagement" || ViewBag.ProfileName == "HR")
+                                @if (ViewBag.ProfileName == "SeniorHR" || ViewBag.ProfileName == "Admin" || ViewBag.ProfileName == "SupportAdmin" || ViewBag.ProfileName == "SeniorInterviewerManagement" || ViewBag.ProfileName == "Finance" || ViewBag.ProfileName == "Finance Support" || ViewBag.ProfileName == "InterviewerManagement" || ViewBag.ProfileName == "HR")
                                 {
 
                                     <a target="_blank" href="@Url.Action("UnassignedMags", "Dashboard")" title="MAGs of all Unassigned Interviews" style="text-decoration:none;display: inline-block;margin: 4px 4px;">

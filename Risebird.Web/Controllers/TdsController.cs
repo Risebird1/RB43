@@ -46,7 +46,7 @@ namespace Risebird.Web.Controllers
         private bool IsFinanceOrAdmin()
         {
             var profile = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "");
-            return profile == "Finance" || profile == "Admin";
+            return profile == "Finance" || profile == "Finance Support" || profile == "Admin";
         }
 
         private string OperatorEmail()

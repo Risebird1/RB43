@@ -7783,7 +7783,7 @@ namespace Risebird.Web.Controllers
 
             var profileName = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "");
             if (profileName != "Admin" && profileName != "SupportAdmin" && profileName != "SeniorHR"
-                && profileName != "SeniorInterviewerManagement" && profileName != "Finance")
+                && profileName != "SeniorInterviewerManagement" && profileName != "Finance" && profileName != "Finance Support")
             {
                 return Json(new { ok = false, message = "Forbidden" });
             }

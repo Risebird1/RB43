@@ -19,6 +19,7 @@ namespace Risebird.Web.Helpers
             "InterviewerManagement",
             "SeniorInterviewerManagement",
             "Finance",
+            "Finance Support",
             "Interviewer",
             "MappingAdmin"
         };

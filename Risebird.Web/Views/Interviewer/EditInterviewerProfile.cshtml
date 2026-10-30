@@ -214,7 +214,7 @@
                                             @Html.HiddenFor(model => model.IsActive)
                                             @Html.HiddenFor(model => model.IsInterviewerAccess)
                                         }
-                                         @if (ViewBag.Profile == "Admin" || ViewBag.Profile == "Finance")
+                                         @if (ViewBag.Profile == "Admin" || ViewBag.Profile == "Finance" || ViewBag.Profile == "Finance Support")
                                         {
                                             <div class="form-group">
                                                 @Html.LabelFor(model => model.IsHoldPayment, htmlAttributes: new { @class = "control-label col-lg-12 col-md-12 col-sm-12 col-xs-12 desp-label" })
