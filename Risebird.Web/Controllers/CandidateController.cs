@@ -1612,7 +1612,11 @@ namespace Risebird.Web.Controllers
 
                             }
                         }
-                        if (await _irfService.SendInvite(irfId, emailId, loggedInUserEmail, linkurl, communicationMedium))
+                        // From the Reschedule page the WhatsApp invite is the reschedule template (C2), with its own 3-send limit.
+                        var whatsAppEvent = !string.IsNullOrEmpty(pageUrl) && pageUrl.Contains("ReScheduleMeetings", StringComparison.OrdinalIgnoreCase)
+                            ? "Reschedule Interview"
+                            : null;
+                        if (await _irfService.SendInvite(irfId, emailId, loggedInUserEmail, linkurl, communicationMedium, whatsAppEvent))
                         {
 
                             TempData["SuccessErrorMessageCandidate"] = "Invitation has been sent Successfully!";
