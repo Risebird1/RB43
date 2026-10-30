@@ -4141,7 +4141,9 @@ namespace Risebird.Web.Controllers
                 username = connected ? connection?.Username : null,
                 password = connected ? connection?.Password : null,
                 secondsRemaining,
-                timeLimitMinutes = limit
+                timeLimitMinutes = limit,
+                // A failure before any machine existed can be tried again at no cost to the candidate.
+                canRetry = CodeProjectQuestionService.CanRetryEnvironment(env)
             };
         }
 
@@ -4178,13 +4180,15 @@ namespace Risebird.Web.Controllers
 
         /// <summary>"Launch environment". Hands the machine over once it is ready; the clock starts then.</summary>
         [HttpPost]
-        public async Task<JsonResult> CodeProjectLaunch(Guid sid, int questionId)
+        public async Task<JsonResult> CodeProjectLaunch(Guid sid, int questionId, bool retry = false)
         {
             try
             {
                 var details = await AuthorizeCodeProjectAsync(sid, questionId);
                 if (details == null)
                     return Json(new { success = false, message = "Your interview session could not be verified. Please reload the page." });
+                // "Try again" after a failure that happened before any machine existed.
+                if (retry) await _codeProjectQuestionService.RetryEnvironmentAsync(sid.ToString(), questionId);
                 var env = await _codeProjectQuestionService.HandOverAsync(sid.ToString(), questionId);
                 var connection = await _codeProjectQuestionService.GetConnectionAsync(env);
                 return Json(new { success = true, environment = BuildCodeProjectEnvironmentView(env, details, connection) });

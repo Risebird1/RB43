@@ -193,8 +193,17 @@ namespace Risebird.CommonHelper
         {
             if (!IsConfigured)
                 return new CodeProjectProvisionResult { Accepted = false, Error = "The environment provisioner is not configured (CodeProjects:ProvisionerUrl)." };
-            return await SendAsync<CodeProjectProvisionResult>(HttpMethod.Post, "/provision", request, ct)
-                ?? new CodeProjectProvisionResult { Accepted = false, Error = "The provisioner did not respond." };
+            // The functions app is briefly unreachable while it restarts (a deployment or a settings
+            // change). Provisioning is idempotent per (session, question), so a no-answer is retried.
+            var delays = new[] { TimeSpan.FromSeconds(2), TimeSpan.FromSeconds(6) };
+            for (var attempt = 0; ; attempt++)
+            {
+                var result = await SendAsync<CodeProjectProvisionResult>(HttpMethod.Post, "/provision", request, ct);
+                if (result != null) return result;
+                if (attempt >= delays.Length)
+                    return new CodeProjectProvisionResult { Accepted = false, Error = "The provisioner did not respond." };
+                await Task.Delay(delays[attempt], ct);
+            }
         }
 
         public async Task<CodeProjectEnvironmentStatus> GetStatusAsync(string handle, CancellationToken ct = default)
