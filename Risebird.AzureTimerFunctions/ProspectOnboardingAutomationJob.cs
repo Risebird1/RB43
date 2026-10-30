@@ -46,6 +46,7 @@ namespace Risebird.AzureTimerFunctions
         private readonly IAssistantServiceHelper      _assistantServiceHelper;
         private readonly IInterviewerService          _interviewerService;
         private readonly IHttpRequestHelper           _httpRequestHelper;
+        private readonly IWhatsAppHelper              _whatsAppHelper;
         private readonly string                       _evApiKey;
         private readonly string                       _evEndpoint;
         private readonly ILogger                      _log;
@@ -66,7 +67,8 @@ namespace Risebird.AzureTimerFunctions
             IAadhaarService             aadhaarService,
             IAssistantServiceHelper     assistantServiceHelper,
             IInterviewerService         interviewerService,
-            IHttpRequestHelper          httpRequestHelper)
+            IHttpRequestHelper          httpRequestHelper,
+            IWhatsAppHelper             whatsAppHelper)
         {
             _configuration     = configuration;
             _repository        = repository;
@@ -80,7 +82,8 @@ namespace Risebird.AzureTimerFunctions
             _assistantServiceHelper = assistantServiceHelper;
             _interviewerService = interviewerService;
             _httpRequestHelper = httpRequestHelper;
-            _evApiKey          = _configuration["EmploymentVerfication:apikey"];
+            _whatsAppHelper    = whatsAppHelper;
+            _evApiKey         = _configuration["EmploymentVerfication:apikey"];
             _evEndpoint        = _configuration["EmploymentVerfication:endPoint"];
             _log = loggerFactory.CreateLogger<ProspectOnboardingAutomationJob>();
         }
@@ -1246,6 +1249,31 @@ namespace Risebird.AzureTimerFunctions
                 await _repository.UpdateInvitationEmailSentAsync(p.Id);
 
                 _log.LogInformation($"[OnboardAuto] #{p.Id} — invitation email sent to {email}.");
+
+                // I1: the same next step over WhatsApp, as the manual send in NaukriOnboardingController does.
+                if (!string.IsNullOrWhiteSpace(p.ParsedPhone))
+                {
+                    try
+                    {
+                        var whatsAppResult = await _whatsAppHelper.WhatsAppSendNaukriInvitation(new WhatsAppVM
+                        {
+                            Emailid = email,
+                            Phone = p.ParsedPhone,
+                            UserName = p.CandidateName,
+                            MessageValue = magName,
+                            buttonlink = appLink,
+                            ProspectId = p.Id,
+                            SentBy = "AutomationJob"
+                        });
+                        await _repository.InsertHistoryAsync(p.Id, "InvitationWhatsAppSent", "—",
+                            $"WhatsApp to {p.ParsedPhone}: {whatsAppResult}", "AutomationJob");
+                    }
+                    catch (Exception ex)
+                    {
+                        // The email went out; a WhatsApp failure must not mark the invitation as failed.
+                        _log.LogError($"[OnboardAuto] #{p.Id} — WhatsApp error: {ex.Message}");
+                    }
+                }
                 return true;
             }
             catch (Exception ex)
