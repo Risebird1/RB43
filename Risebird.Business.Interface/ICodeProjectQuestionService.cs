@@ -44,6 +44,9 @@ namespace Risebird.Business.Interface
         /// <summary>Hands the machine to the candidate. The clock starts here, once; a reconnect does not restart it.</summary>
         Task<CodeProjectEnvironment> HandOverAsync(string sessionId, int questionId, CancellationToken ct = default);
 
+        /// <summary>Starts the machine again after a failure that happened before any machine existed; otherwise returns the environment unchanged.</summary>
+        Task<CodeProjectEnvironment> RetryEnvironmentAsync(string sessionId, int questionId, CancellationToken ct = default);
+
         /// <summary>Pulls the last commit off the VM, grades it against the hidden tests in a container, saves, releases the VM.</summary>
         Task<(CodeProjectAssessment Assessment, CodeProjectGradeResult Grade)> SubmitAsync(string sessionId, int questionId,
             string createdBy, CancellationToken ct = default);
