@@ -690,6 +690,7 @@ namespace Risebird.Web.Controllers
                             ViewBag.Message = TempData["MessageInterviewer"].ToString();
                             TempData.Remove("MessageInterviewer");
                         }
+                        ViewBag.Profile = profileName;
                         var model = await _interviewerService.GetHoldPaymentInterviewers();
                         return View("HoldPayment", model);
                     }

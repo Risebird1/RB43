@@ -7,6 +7,7 @@
     int grandPendingCount  = Model != null ? Model.Sum(x => x.PendingInterviewCount) : 0;
     int grandPendingAmount = Model != null ? Model.Sum(x => x.TotalPendingAmount) : 0;
     int grandPaidAmount    = Model != null ? Model.Sum(x => x.TotalPaidAmount) : 0;
+    bool showActionColumn  = ViewBag.Profile != "Finance Support";
 }
 <script>
     var Header = "<a href='/Interviewer/Index'>Interviewers</a>&nbsp;/&nbsp;Hold Payment";
@@ -128,7 +129,10 @@
                                         <th title="Total amount already paid out">Total Paid (₹)</th>
                                         <th>Last Payout</th>
                                         <th>Reason for Hold</th>
-                                        <th>Action</th>
+                                        @if (showActionColumn)
+                                        {
+                                            <th>Action</th>
+                                        }
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -203,13 +207,16 @@
                                                 }
                                             </td>
 
-                                            <td>
-                                                <a href="@Url.Action("EditInterviewerProfile", "Interviewer", new { userId = item.UserId })"
-                                                   class="btn btn-sm btn-outline-primary" title="Edit Interviewer">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-                                                    Edit
-                                                </a>
-                                            </td>
+                                            @if (showActionColumn)
+                                            {
+                                                <td>
+                                                    <a href="@Url.Action("EditInterviewerProfile", "Interviewer", new { userId = item.UserId })"
+                                                       class="btn btn-sm btn-outline-primary" title="Edit Interviewer">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                                                        Edit
+                                                    </a>
+                                                </td>
+                                            }
                                         </tr>
                                         sr++;
                                     }
@@ -220,7 +227,7 @@
                                         <td class="text-center">@grandPendingCount</td>
                                         <td class="text-right text-danger">&#8377; @grandPendingAmount.ToString("N0")</td>
                                         <td class="text-right">&#8377; @grandPaidAmount.ToString("N0")</td>
-                                        <td colspan="3"></td>
+                                        <td colspan="@(showActionColumn ? 3 : 2)"></td>
                                     </tr>
                                 </tfoot>
                             </table>
