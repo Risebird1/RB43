@@ -3393,7 +3393,7 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     var loggedInUserEmail = HttpContext.Session.GetString("email")?.Trim();
                     loggedInUserEmail = loggedInUserEmail.Replace("\"", "");
-                    if (profileName == "Client" || profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "Finance" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement")
+                    if (profileName == "Client" || profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "Finance" || profileName == "Finance Support" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement")
                     {
                         var linkurl = "https://" + Request.Host.ToString();
                         if (await _irfService.SendInvite(Convert.ToInt32(irfId), emailId, loggedInUserEmail, linkurl))
@@ -4465,7 +4465,7 @@ namespace Risebird.Web.Controllers
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
 
-                    if (profileName == "Admin" || profileName == "Finance" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "SeniorInterviewerManagement" || profileName == "Client")
+                    if (profileName == "Admin" || profileName == "Finance" || profileName == "Finance Support" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "SeniorInterviewerManagement" || profileName == "Client")
                     {
                         IEnumerable<StatsVM> statsList;
                         statsList = await _clientService.GetStaffingAgencyStats(irfId);
@@ -4508,7 +4508,7 @@ namespace Risebird.Web.Controllers
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
 
-                    if (profileName == "Admin" || profileName == "Finance" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "SeniorInterviewerManagement" || profileName == "Client")
+                    if (profileName == "Admin" || profileName == "Finance" || profileName == "Finance Support" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "SeniorInterviewerManagement" || profileName == "Client")
                     {
                         IEnumerable<StatsVM> statsList;
                         statsList = await _clientService.GetClientHRStats(irfId);
@@ -4550,7 +4550,7 @@ namespace Risebird.Web.Controllers
                 var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                 profileName = profileName.Replace("\"", "");
 
-                if (profileName == "Admin" || profileName == "Finance" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "SeniorInterviewerManagement")
+                if (profileName == "Admin" || profileName == "Finance" || profileName == "Finance Support" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "SeniorInterviewerManagement")
                 {
                     IEnumerable<StatsDetailsVM> statsDetailsList;
                     statsDetailsList = await _clientService.GetClientRoleWiseStatsDetails(userId, statType, clientRole, irfId, startDate, endDate);
@@ -4699,7 +4699,7 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     var emailId = HttpContext.Session.GetString("email")?.Trim();
                     emailId = emailId.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "Finance" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "SeniorInterviewerManagement")
+                    if (profileName == "Admin" || profileName == "Finance" || profileName == "Finance Support" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "SeniorInterviewerManagement")
                     {
                         IEnumerable<StatsDerived> statsList;
                         statsList = await _clientService.GetDateRangeWiseMeetingStatusForClientByIRF(startDateValue, endDateValue, emailId, clientId, clientUserEmailId, role);
@@ -4878,7 +4878,7 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     var loggedInUserEmail = HttpContext.Session.GetString("email")?.Trim();
                     loggedInUserEmail = loggedInUserEmail.Replace("\"", "");
-                    if (profileName == "Client" || profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "Finance" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement")
+                    if (profileName == "Client" || profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "Finance" || profileName == "Finance Support" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement")
                     {
                         var linkurl = "https://" + Request.Host.ToString();
                         if (await _irfService.SendInvite(Convert.ToInt32(irfId), emailId, loggedInUserEmail, linkurl))

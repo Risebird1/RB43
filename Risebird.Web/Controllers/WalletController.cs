@@ -1119,7 +1119,7 @@ namespace Risebird.Web.Controllers
             if (HttpContext.Session.GetString("email") == null || HttpContext.Session.GetString("profileName") == null)
                 return false;
             var profileName = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "");
-            return profileName == "Admin" || profileName == "Finance";
+            return profileName == "Admin" || profileName == "Finance" || profileName == "Finance Support";
         }
 
         /// <summary>View-only role for Agreement documents — no download affordance, unlike Admin/Finance.</summary>

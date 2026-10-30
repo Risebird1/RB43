@@ -116,7 +116,7 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "Finance" || profileName == "SeniorInterviewerManagement" || profileName == "SupportAdmin" || profileName == "MappingAdmin")//|| profileName == "InterviewerManagement" 
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Finance" || profileName == "Finance Support" || profileName == "SeniorInterviewerManagement" || profileName == "SupportAdmin" || profileName == "MappingAdmin")//|| profileName == "InterviewerManagement" 
                     {
                         ViewBag.profile = profileName;
                         if (TempData["MessageInterviewer"] != null)
@@ -258,7 +258,7 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "Finance" || profileName == "SeniorInterviewerManagement" || profileName == "SupportAdmin" || profileName == "MappingAdmin")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Finance" || profileName == "Finance Support" || profileName == "SeniorInterviewerManagement" || profileName == "SupportAdmin" || profileName == "MappingAdmin")
                     {
                         if (filter != null)
                         {
@@ -500,7 +500,7 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "Finance" || profileName == "SeniorInterviewerManagement" || profileName == "SupportAdmin" || profileName == "MappingAdmin" || (showAddToSkillChannelOption && profileName == "InterviewerManagement"))
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Finance" || profileName == "Finance Support" || profileName == "SeniorInterviewerManagement" || profileName == "SupportAdmin" || profileName == "MappingAdmin" || (showAddToSkillChannelOption && profileName == "InterviewerManagement"))
                     {
                         InterviewerProfileVM model = _interviewerService.GetInterviewerProfileById(userId);
                         model.ShowAddToSkillChannelOption = showAddToSkillChannelOption;
@@ -546,7 +546,7 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     var emailId = HttpContext.Session.GetString("email")?.Trim();
                     emailId = emailId.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorInterviewerManagement" || profileName == "SupportAdmin" || profileName == "MappingAdmin" || profileName == "Finance" || (interviewerProfile.ShowAddToSkillChannelOption && profileName == "InterviewerManagement"))
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorInterviewerManagement" || profileName == "SupportAdmin" || profileName == "MappingAdmin" || profileName == "Finance" || profileName == "Finance Support" || (interviewerProfile.ShowAddToSkillChannelOption && profileName == "InterviewerManagement"))
                     {
                         if (interviewerProfile.ShowAddToSkillChannelOption)
                         {
@@ -683,7 +683,7 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "Finance" || profileName == "SupportAdmin")
+                    if (profileName == "Admin" || profileName == "Finance" || profileName == "Finance Support" || profileName == "SupportAdmin")
                     {
                         if (TempData["MessageInterviewer"] != null)
                         {
@@ -719,7 +719,7 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "Finance" || profileName == "SeniorInterviewerManagement" || profileName == "SupportAdmin" || profileName == "MappingAdmin" || (/*showAddToSkillChannelOption && */profileName == "InterviewerManagement"))
+                    if (profileName == "Admin" || profileName == "Finance" || profileName == "Finance Support" || profileName == "SeniorInterviewerManagement" || profileName == "SupportAdmin" || profileName == "MappingAdmin" || (/*showAddToSkillChannelOption && */profileName == "InterviewerManagement"))
                     {
                         InterviewerDirectApplicationVM model = await _interviewerService.GetApplicantById(applicantId);
                         model.ShowAddToSkillChannelOption = showAddToSkillChannelOption;
@@ -3703,7 +3703,7 @@ namespace Risebird.Web.Controllers
             {
                 var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                 profileName = profileName.Replace("\"", "");
-                if (profileName == "Admin" || profileName == "Interviewer" || profileName == "HR" || profileName == "Finance" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement" || profileName == "SupportAdmin")
+                if (profileName == "Admin" || profileName == "Interviewer" || profileName == "HR" || profileName == "Finance" || profileName == "Finance Support" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement" || profileName == "SupportAdmin")
                 {
                     var _emailid = HttpContext.Session.GetString("email")?.Trim();
                     _emailid = _emailid.Replace("\"", "");
@@ -4723,7 +4723,7 @@ namespace Risebird.Web.Controllers
         {
             if (string.IsNullOrWhiteSpace(profileName)) return false;
             return profileName == "Admin"
-                || profileName == "Finance"
+                || profileName == "Finance" || profileName == "Finance Support"
                 || profileName == "SeniorHR"
                 || profileName == "SupportAdmin"
                 || profileName == "SeniorInterviewerManagement"
@@ -4778,7 +4778,7 @@ namespace Risebird.Web.Controllers
                 //var emailid = HttpContext.Session.GetString("email")?.Trim();
                 //emailid = emailid.Replace("\"", "");
 
-                if (profileName == "Admin" || profileName == "Finance" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "SeniorInterviewerManagement")
+                if (profileName == "Admin" || profileName == "Finance" || profileName == "Finance Support" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "SeniorInterviewerManagement")
                 {
                     IEnumerable<InterviewerStatsVM> statsList;
                     statsList = await _interviewerService.GetInterviewerStatsAndRatings(irfId);
@@ -4841,7 +4841,7 @@ namespace Risebird.Web.Controllers
                 var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                 profileName = profileName.Replace("\"", "");
 
-                if (profileName == "Admin" || profileName == "Finance" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "SeniorInterviewerManagement"
+                if (profileName == "Admin" || profileName == "Finance" || profileName == "Finance Support" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "SeniorInterviewerManagement"
                     || profileName == "HR" || profileName == "Quality Controller" || profileName == "InterviewerManagement" || profileName == "TechSupport")
                 {
                     IEnumerable<StatsDetailsVM> statsDetailsList;
@@ -5170,7 +5170,7 @@ namespace Risebird.Web.Controllers
                 return PartialView(new InterviewerInsightsVM());
             }
             ViewBag.RegularAccess = "";
-            if (profileName == "Admin" || profileName == "HR" || profileName == "Finance" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "Quality Controller")
+            if (profileName == "Admin" || profileName == "HR" || profileName == "Finance" || profileName == "Finance Support" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "Quality Controller")
             {
                 ViewBag.RegularAccess = "1";
             }
@@ -5701,7 +5701,7 @@ namespace Risebird.Web.Controllers
                     emailId = emailId.Replace("\"", "");
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "SupportAdmin" || profileName == "Finance" || profileName == "SeniorHR" || profileName == "SeniorInterviewerManagement")//|| profileName== "InterviewerManagement"
+                    if (profileName == "Admin" || profileName == "SupportAdmin" || profileName == "Finance" || profileName == "Finance Support" || profileName == "SeniorHR" || profileName == "SeniorInterviewerManagement")//|| profileName== "InterviewerManagement"
                     {
                         var model = await _interviewerService.GetFLNConversionData(emailId);
                         return View(model);
@@ -6250,7 +6250,7 @@ namespace Risebird.Web.Controllers
                     emailId = emailId.Replace("\"", "");
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "SupportAdmin" || profileName == "Finance" || profileName == "SeniorHR" || profileName == "SeniorInterviewerManagement" || profileName == "InterviewerManagement" || profileName == "HR")//|| profileName== "InterviewerManagement"
+                    if (profileName == "Admin" || profileName == "SupportAdmin" || profileName == "Finance" || profileName == "Finance Support" || profileName == "SeniorHR" || profileName == "SeniorInterviewerManagement" || profileName == "InterviewerManagement" || profileName == "HR")//|| profileName== "InterviewerManagement"
                     {
                         if (TempData["MessageApplicants"] != null)
                         {
@@ -6289,7 +6289,7 @@ namespace Risebird.Web.Controllers
                     emailId = emailId.Replace("\"", "");
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "SupportAdmin" || profileName == "Finance" || profileName == "SeniorHR" || profileName == "SeniorInterviewerManagement" || profileName == "InterviewerManagement" || profileName == "HR")//|| profileName== "InterviewerManagement"
+                    if (profileName == "Admin" || profileName == "SupportAdmin" || profileName == "Finance" || profileName == "Finance Support" || profileName == "SeniorHR" || profileName == "SeniorInterviewerManagement" || profileName == "InterviewerManagement" || profileName == "HR")//|| profileName== "InterviewerManagement"
                     {
                         if (!startDate.HasValue && !endDate.HasValue)
                         {
@@ -6337,7 +6337,7 @@ namespace Risebird.Web.Controllers
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
 
-                    if (profileName == "Admin" || profileName == "SupportAdmin" || profileName == "Finance" || profileName == "SeniorHR" || profileName == "SeniorInterviewerManagement" || profileName == "InterviewerManagement" || profileName == "HR")
+                    if (profileName == "Admin" || profileName == "SupportAdmin" || profileName == "Finance" || profileName == "Finance Support" || profileName == "SeniorHR" || profileName == "SeniorInterviewerManagement" || profileName == "InterviewerManagement" || profileName == "HR")
                     {
                         if (!startDate.HasValue && !endDate.HasValue)
                         {
