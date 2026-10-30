@@ -62,21 +62,29 @@ Begin
 
 				delete from TransClonableIRFInterviewer where ClonableIRFId= @idClonableIrf  
   
-						
-			;With CTE AS( Select id, AssessmentGroupId, UserId, value from InterviewerProfile cross Apply string_split(AssessmentGroupId,','))     
+			-- The MAG's own group plus its secondary groups, resolved once: the OR/IN-subquery
+			-- filter over the split took ~42s on prod (same fix as usp_AddIRFDetails).
+			declare @magAssessmentGroups table (AGId varchar(20) primary key)
+			insert into @magAssessmentGroups (AGId)
+			select cast(@AssessmentGroupId as varchar(20))
+			union
+			select cast(sag.AssessmentGroupId as varchar(20)) from SecondaryAssessmentGroups sag
+			join MasterAssessmentGroup mag on mag.id = sag.MAGId
+			where mag.AssessmentGroupId = @AssessmentGroupId and sag.AssessmentGroupId is not null
 
-			INSERT INTO [dbo].[TransClonableIRFInterviewer](    
-											[ClonableIRFId] ,    
-											[UserId],    
-											[PerSuccessRate],   
-											[IsActive],  
-											--[IsAvailable],  
-											[InterviewerId])  
-			Select Distinct @idClonableIrf, CTE.UserId, 0, 1, CTE.id      
-			From CTE join Userlist ul on CTE.UserId=ul.id       
-			where (CTE.value = @AssessmentGroupId or CTE.value in 
-			(select AssessmentGroupId from SecondaryAssessmentGroups where MAGId = 
-			(select id from MasterAssessmentGroup where AssessmentGroupId = @AssessmentGroupId))) and ul.IsActive=1    
+			;With CTE AS( Select id, AssessmentGroupId, UserId, value from InterviewerProfile cross Apply string_split(AssessmentGroupId,','))
+
+			INSERT INTO [dbo].[TransClonableIRFInterviewer](
+											[ClonableIRFId] ,
+											[UserId],
+											[PerSuccessRate],
+											[IsActive],
+											--[IsAvailable],
+											[InterviewerId])
+			Select Distinct @idClonableIrf, CTE.UserId, 0, 1, CTE.id
+			From CTE join @magAssessmentGroups mags on CTE.value = mags.AGId
+			join Userlist ul on CTE.UserId=ul.id
+			where ul.IsActive=1
 			group by CTE.UserId,CTE.AssessmentGroupId, CTE.id
 
 
