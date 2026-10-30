@@ -6,9 +6,17 @@ namespace Risebird.Entities.ViewModel
 {
     public class OpsToolkitVM
     {
+        public const string ToolEmergencyUnassign = "emergency-unassign";
+        public const string ToolIRFScheduleLink = "irf-schedule-link";
+
+        public static string NormalizeTool(string tool) =>
+            string.Equals(tool, ToolIRFScheduleLink, StringComparison.OrdinalIgnoreCase) ? ToolIRFScheduleLink : ToolEmergencyUnassign;
+
+        public string Tool { get; set; } = ToolEmergencyUnassign;
         public DateTime FromDate { get; set; }
         public DateTime ToDate { get; set; }
         public List<OpsToolkitEmergencyUnassignVM> EmergencyUnassignments { get; set; } = new List<OpsToolkitEmergencyUnassignVM>();
+        public List<OpsToolkitIRFScheduleLinkVM> MissingScheduleLinks { get; set; } = new List<OpsToolkitIRFScheduleLinkVM>();
 
         public List<OpsToolkitEmergencyUnassignVM> PenaltyApplied =>
             EmergencyUnassignments.Where(x => x.Category == "PenaltyApplied").ToList();
@@ -43,6 +51,24 @@ namespace Risebird.Entities.ViewModel
         public string RemovedBy { get; set; }
         public DateTime? RemovedAt { get; set; }
         public string RemovedReason { get; set; }
+    }
+
+    public class OpsToolkitIRFScheduleLinkVM
+    {
+        public int IRFIntId { get; set; }
+        public string IRFId { get; set; }
+        public string ClientName { get; set; }
+        public string SkillCluster { get; set; }
+        public string PrimarySkillInvite { get; set; }
+        public DateTime? StartDate { get; set; }
+        public DateTime? EndDate { get; set; }
+        public bool IsPaused { get; set; }
+        public DateTime? CreatedOn { get; set; }
+        public string EventName { get; set; }
+        public string EventUniqueId { get; set; }
+        public bool IsEventActive { get; set; }
+        public bool HasScheduleEvent { get; set; }
+        public string SuggestedLink { get; set; }
     }
 
     public class OpsToolkitInterviewHistoryVM

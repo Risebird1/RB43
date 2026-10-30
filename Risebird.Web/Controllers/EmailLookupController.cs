@@ -65,11 +65,12 @@ namespace Risebird.Web.Controllers
             return HttpContext.Session.GetString("email") != null && Array.IndexOf(OpsToolkitProfiles, profileName) >= 0;
         }
 
-        // Ops Toolkit: one page for fixing common operational problems. Each tool is a section on the page.
-        // Defaults to the last 7 days (IST, matching InterviewMeetingsHistory.PerformedAt).
+        // Ops Toolkit: one page for fixing common operational problems. Each tool is a tab picked with ?tool=.
+        // Date range (emergency unassign tool) defaults to the last 7 days (IST, matching InterviewMeetingsHistory.PerformedAt).
         [HttpGet]
-        public async Task<IActionResult> OpsToolkit(DateTime? fromDate, DateTime? toDate)
+        public async Task<IActionResult> OpsToolkit(DateTime? fromDate, DateTime? toDate, string tool)
         {
+            tool = OpsToolkitVM.NormalizeTool(tool);
             try
             {
                 if (!CanUseOpsToolkit(out var profileName))
@@ -85,14 +86,34 @@ namespace Risebird.Web.Controllers
                 if ((to - from).TotalDays > OpsToolkitMaxRangeDays)
                     from = to.AddDays(-OpsToolkitMaxRangeDays);
 
-                var model = await _emailLookupService.GetOpsToolkitData(from, to);
+                var model = await _emailLookupService.GetOpsToolkitData(from, to, tool);
                 return View(model);
             }
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 var today = DateTime.UtcNow.AddMinutes(330).Date;
-                return View(new OpsToolkitVM { FromDate = today.AddDays(-6), ToDate = today });
+                return View(new OpsToolkitVM { FromDate = today.AddDays(-6), ToDate = today, Tool = tool });
+            }
+        }
+
+        // irfIntId = IRF.id for one skill channel, or null to add the link to every channel that can be fixed.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AddIRFScheduleLink(int? irfIntId)
+        {
+            try
+            {
+                if (!CanUseOpsToolkit(out _))
+                    return Json(new OpsToolkitActionResultVM { Success = false, Message = "You are not allowed to do this." });
+
+                var performedBy = HttpContext.Session.GetString("email")?.Replace("\"", "");
+                return Json(await _emailLookupService.AddIRFScheduleLink(irfIntId, performedBy));
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new OpsToolkitActionResultVM { Success = false, Message = "Could not add the scheduler link." });
             }
         }
 

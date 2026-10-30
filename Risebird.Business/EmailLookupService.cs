@@ -37,18 +37,38 @@ namespace Risebird.Business
             }
         }
 
-        public async Task<OpsToolkitVM> GetOpsToolkitData(DateTime fromDate, DateTime toDate)
+        // Loads only the data of the selected tool.
+        public async Task<OpsToolkitVM> GetOpsToolkitData(DateTime fromDate, DateTime toDate, string tool)
         {
-            var result = new OpsToolkitVM { FromDate = fromDate.Date, ToDate = toDate.Date };
+            var result = new OpsToolkitVM { FromDate = fromDate.Date, ToDate = toDate.Date, Tool = OpsToolkitVM.NormalizeTool(tool) };
             try
             {
-                result.EmergencyUnassignments = await _emailLookupRepository.GetEmergencyUnassignments(result.FromDate, result.ToDate);
+                if (result.Tool == OpsToolkitVM.ToolIRFScheduleLink)
+                    result.MissingScheduleLinks = await _emailLookupRepository.GetIRFMissingScheduleLink();
+                else
+                    result.EmergencyUnassignments = await _emailLookupRepository.GetEmergencyUnassignments(result.FromDate, result.ToDate);
             }
             catch (Exception ex)
             {
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
             }
             return result;
+        }
+
+        public async Task<OpsToolkitActionResultVM> AddIRFScheduleLink(int? irfIntId, string performedBy)
+        {
+            if (irfIntId.HasValue && irfIntId.Value <= 0)
+                return new OpsToolkitActionResultVM { Success = false, Message = "Invalid skill channel." };
+
+            try
+            {
+                return await _emailLookupRepository.AddIRFScheduleLink(irfIntId, performedBy);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return new OpsToolkitActionResultVM { Success = false, Message = "Could not add the scheduler link." };
+            }
         }
 
         public async Task<OpsToolkitInterviewHistoryVM> GetInterviewPointsHistory(int interviewId)

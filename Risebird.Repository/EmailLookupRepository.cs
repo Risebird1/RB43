@@ -197,6 +197,55 @@ namespace Risebird.Repository
             return result;
         }
 
+        // Scheduler links are built on HostDetails:baseUrl, e.g. https://portal.risebird.io/InterviewScheduler/ScheduleEvent?id=...
+        private string SchedulerBaseUrl =>
+            (_configuration["HostDetails:baseUrl"] ?? "https://portal.risebird.io").TrimEnd('/');
+
+        public async Task<List<OpsToolkitIRFScheduleLinkVM>> GetIRFMissingScheduleLink()
+        {
+            try
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@BaseUrl", SchedulerBaseUrl);
+
+                using var con = new SqlConnection(connectionString);
+                var rows = await con.QueryAsync<OpsToolkitIRFScheduleLinkVM>(
+                    "usp_OpsToolkit_GetIRFMissingScheduleLink",
+                    parameters,
+                    commandType: CommandType.StoredProcedure,
+                    commandTimeout: 120);
+                return rows.ToList();
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return new List<OpsToolkitIRFScheduleLinkVM>();
+            }
+        }
+
+        public async Task<OpsToolkitActionResultVM> AddIRFScheduleLink(int? irfIntId, string performedBy)
+        {
+            try
+            {
+                var parameters = new DynamicParameters();
+                parameters.Add("@IRFIntId", irfIntId);
+                parameters.Add("@BaseUrl", SchedulerBaseUrl);
+                parameters.Add("@PerformedBy", performedBy);
+
+                using var con = new SqlConnection(connectionString);
+                var result = await con.QueryFirstOrDefaultAsync<OpsToolkitActionResultVM>(
+                    "usp_OpsToolkit_AddIRFScheduleLink",
+                    parameters,
+                    commandType: CommandType.StoredProcedure);
+                return result ?? new OpsToolkitActionResultVM { Success = false, Message = "No response from database." };
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return new OpsToolkitActionResultVM { Success = false, Message = "Could not add the scheduler link." };
+            }
+        }
+
         public async Task<OpsToolkitActionResultVM> RemoveUnassignPenalty(int interviewPointsId, string reason, string performedBy)
         {
             try

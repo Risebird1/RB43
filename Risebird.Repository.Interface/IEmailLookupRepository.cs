@@ -10,6 +10,8 @@ namespace Risebird.Repository.Interface
         Task<EmailLookupResultVM> GetEmailLookupData(string emailId);
         Task<List<OpsToolkitEmergencyUnassignVM>> GetEmergencyUnassignments(DateTime fromDate, DateTime toDate);
         Task<OpsToolkitInterviewHistoryVM> GetInterviewPointsHistory(int interviewId);
+        Task<List<OpsToolkitIRFScheduleLinkVM>> GetIRFMissingScheduleLink();
+        Task<OpsToolkitActionResultVM> AddIRFScheduleLink(int? irfIntId, string performedBy);
         Task<OpsToolkitActionResultVM> RemoveUnassignPenalty(int interviewPointsId, string reason, string performedBy);
     }
 }

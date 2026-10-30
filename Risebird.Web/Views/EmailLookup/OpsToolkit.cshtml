@@ -1,5 +1,6 @@
 @model Risebird.Entities.ViewModel.OpsToolkitVM
 @using Risebird.Entities.ViewModel
+@using System.Linq
 @{
     ViewData["Title"] = "Ops Toolkit";
     Layout = "~/Views/Shared/_PublicLayout2.cshtml";
@@ -15,6 +16,13 @@
 
     var penaltyRows = vm.PenaltyApplied;
     var eiRows = vm.EINoPenalty;
+
+    bool isEmergencyTool = vm.Tool == OpsToolkitVM.ToolEmergencyUnassign;
+    bool isScheduleLinkTool = vm.Tool == OpsToolkitVM.ToolIRFScheduleLink;
+    var fixableLinks = vm.MissingScheduleLinks.Where(x => x.HasScheduleEvent).ToList();
+    var noEventLinks = vm.MissingScheduleLinks.Where(x => !x.HasScheduleEvent).ToList();
+    var todayIst = DateTime.UtcNow.AddMinutes(330).Date;
+    Func<DateTime?, string> FmtDay = d => d.HasValue ? d.Value.ToString("dd MMM yyyy") : "—";
 
     Func<DateTime?, string> Fmt = d => d.HasValue ? d.Value.ToString("dd MMM yyyy, hh:mm tt") : "—";
     Func<int?, string> FmtMinutes = m => {
@@ -83,6 +91,10 @@
     .ops-table tr.neg td { background: #fff7f7; }
     .ops-actions { display: flex; flex-direction: column; gap: 6px; align-items: flex-start; }
     .ops-btn.small { height: 30px; padding: 0 10px; font-size: 12px; }
+    .ops-btn.success { background: #fff; border-color: #16a34a; color: #15803d; }
+    .ops-btn.success:hover { background: #f0fdf4; }
+    .ops-link { font-family: Consolas, monospace; font-size: 12px; color: #374151; word-break: break-all; }
+    .ops-toolbar { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 12px; }
     @@media (max-width: 900px) { .ops-wrap { flex-direction: column; } .ops-nav { width: 100%; } }
 </style>
 
@@ -97,11 +109,14 @@
     <div class="ops-wrap">
         <div class="ops-nav">
             <div class="ops-nav-title">Tools</div>
-            <a href="#tool-emergency-unassign" class="active"><i class="fas fa-user-clock"></i> Emergency unassign penalties</a>
+            <a href="@Url.Action("OpsToolkit", "EmailLookup", new { tool = OpsToolkitVM.ToolEmergencyUnassign })" class="@(isEmergencyTool ? "active" : "")"><i class="fas fa-user-clock"></i> Emergency unassign penalties</a>
+            <a href="@Url.Action("OpsToolkit", "EmailLookup", new { tool = OpsToolkitVM.ToolIRFScheduleLink })" class="@(isScheduleLinkTool ? "active" : "")"><i class="fas fa-link"></i> Missing scheduler links</a>
             <div class="soon">More tools coming soon</div>
         </div>
 
         <div class="ops-main">
+            @if (isEmergencyTool)
+            {
             <div class="ops-card" id="tool-emergency-unassign">
                 <h4>Emergency interview unassignments</h4>
                 <div class="sub">
@@ -259,6 +274,129 @@
                     }
                 </div>
             </div>
+            }
+
+            @if (isScheduleLinkTool)
+            {
+            <div class="ops-card" id="tool-irf-schedule-link">
+                <h4>Missing scheduler links</h4>
+                <div class="sub">
+                    Skill channels with no scheduler link (IRF.CalendlyLink). The link is built from the channel's scheduler event:
+                    <span class="ops-link">/InterviewScheduler/ScheduleEvent?id=&lt;event id&gt;</span>.
+                    Channels without a scheduler event need one created in RB Scheduler first.
+                </div>
+
+                <div class="ops-toolbar">
+                    <div class="ops-tabs" style="margin-bottom:0;flex:1;">
+                        <div class="ops-tab active" data-tab="fixable">Can be fixed<span class="ops-count">@fixableLinks.Count</span></div>
+                        <div class="ops-tab" data-tab="noevent">No scheduler event<span class="ops-count">@noEventLinks.Count</span></div>
+                    </div>
+                    @if (fixableLinks.Count > 1)
+                    {
+                        <button type="button" class="ops-btn primary js-add-link" data-id="" data-label="all @fixableLinks.Count skill channels">
+                            <i class="fas fa-link"></i> Add link to all (@fixableLinks.Count)
+                        </button>
+                    }
+                </div>
+
+                <div class="ops-pane" data-pane="fixable">
+                    @if (fixableLinks.Count == 0)
+                    {
+                        <div class="ops-empty">Every skill channel that has a scheduler event already has its link.</div>
+                    }
+                    else
+                    {
+                        <div class="ops-table-wrap">
+                            <table class="ops-table">
+                                <thead>
+                                    <tr>
+                                        <th>Skill channel</th>
+                                        <th>Client</th>
+                                        <th>Skill</th>
+                                        <th>Duration</th>
+                                        <th>Status</th>
+                                        <th>Scheduler event</th>
+                                        <th>Link to add</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var r in fixableLinks)
+                                    {
+                                        <tr>
+                                            <td>@r.IRFId<div class="muted">id @r.IRFIntId</div></td>
+                                            <td>@(r.ClientName ?? "—")</td>
+                                            <td>@(r.SkillCluster ?? "—")<div class="muted">@r.PrimarySkillInvite</div></td>
+                                            <td>@FmtDay(r.StartDate)<div class="muted">to @FmtDay(r.EndDate)</div></td>
+                                            <td>
+                                                @if (r.IsPaused) { <span class="pill pill-grey">Paused</span> }
+                                                else if (r.EndDate.HasValue && r.EndDate.Value.Date < todayIst) { <span class="pill pill-grey">Ended</span> }
+                                                else { <span class="pill pill-green">Active</span> }
+                                            </td>
+                                            <td>
+                                                @(r.EventName ?? "—")
+                                                <div>
+                                                    @if (r.IsEventActive) { <span class="pill pill-blue">Event active</span> }
+                                                    else { <span class="pill pill-red">Event inactive</span> }
+                                                </div>
+                                            </td>
+                                            <td><span class="ops-link">@r.SuggestedLink</span></td>
+                                            <td>
+                                                <button type="button" class="ops-btn small success js-add-link"
+                                                        data-id="@r.IRFIntId" data-label="@r.IRFId">
+                                                    <i class="fas fa-plus"></i> Add link
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                </div>
+
+                <div class="ops-pane" data-pane="noevent" style="display:none;">
+                    @if (noEventLinks.Count == 0)
+                    {
+                        <div class="ops-empty">No skill channels without a scheduler event.</div>
+                    }
+                    else
+                    {
+                        <div class="ops-table-wrap">
+                            <table class="ops-table">
+                                <thead>
+                                    <tr>
+                                        <th>Skill channel</th>
+                                        <th>Client</th>
+                                        <th>Skill</th>
+                                        <th>Duration</th>
+                                        <th>Status</th>
+                                        <th>Created on</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var r in noEventLinks)
+                                    {
+                                        <tr>
+                                            <td>@r.IRFId<div class="muted">id @r.IRFIntId</div></td>
+                                            <td>@(r.ClientName ?? "—")</td>
+                                            <td>@(r.SkillCluster ?? "—")<div class="muted">@r.PrimarySkillInvite</div></td>
+                                            <td>@FmtDay(r.StartDate)<div class="muted">to @FmtDay(r.EndDate)</div></td>
+                                            <td>
+                                                @if (r.IsPaused) { <span class="pill pill-grey">Paused</span> }
+                                                else if (r.EndDate.HasValue && r.EndDate.Value.Date < todayIst) { <span class="pill pill-grey">Ended</span> }
+                                                else { <span class="pill pill-green">Active</span> }
+                                            </td>
+                                            <td>@FmtDay(r.CreatedOn)</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                </div>
+            </div>
+            }
         </div>
     </div>
 </div>
@@ -296,6 +434,34 @@
                 $(this).addClass('active');
                 $('.ops-pane').hide();
                 $('.ops-pane[data-pane="' + tab + '"]').show();
+            });
+
+            // Missing scheduler links: data-id = IRF.id for one channel, empty for all fixable channels.
+            $(document).on('click', '.js-add-link', function () {
+                var $btn = $(this);
+                var id = $btn.data('id');
+                if (!confirm('Add the scheduler link to ' + $btn.data('label') + '?')) return;
+                $btn.prop('disabled', true);
+                $.ajax({
+                    url: '@Url.Action("AddIRFScheduleLink", "EmailLookup")',
+                    type: 'POST',
+                    data: {
+                        irfIntId: id === '' || id === undefined ? null : id,
+                        __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val()
+                    }
+                }).done(function (r) {
+                    var ok = r && (r.success === true || r.Success === true);
+                    var msg = r ? (r.message || r.Message) : '';
+                    if (ok) {
+                        location.reload();
+                    } else {
+                        alert(msg || 'Could not add the scheduler link.');
+                        $btn.prop('disabled', false);
+                    }
+                }).fail(function (xhr) {
+                    alert('Could not add the scheduler link (HTTP ' + xhr.status + ').');
+                    $btn.prop('disabled', false);
+                });
             });
 
             function esc(v) {
