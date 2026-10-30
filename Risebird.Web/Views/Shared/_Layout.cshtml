@@ -606,7 +606,7 @@
                     {
                         var profileName = HttpContextAccessor.HttpContext.Session.GetString("profileName");
                         profileName = profileName.Trim('"');
-                        @if(profileName == ProfileNames.Admin || profileName == ProfileNames.SupportAdmin || profileName == ProfileNames.Interviewer || profileName == ProfileNames.Client || profileName == ProfileNames.SupportAdmin || profileName == ProfileNames.SeniorHR || profileName == ProfileNames.HR || profileName == ProfileNames.QualityController || profileName == ProfileNames.Finance || profileName == ProfileNames.InterviewerManagement || profileName == ProfileNames.SeniorInterviewerManagement || profileName == ProfileNames.Recruiter)
+                        @if(profileName == ProfileNames.Admin || profileName == ProfileNames.SupportAdmin || profileName == ProfileNames.Interviewer || profileName == ProfileNames.Client || profileName == ProfileNames.SupportAdmin || profileName == ProfileNames.SeniorHR || profileName == ProfileNames.HR || profileName == ProfileNames.QualityController || profileName == ProfileNames.Finance || profileName == ProfileNames.FinanceSupport || profileName == ProfileNames.InterviewerManagement || profileName == ProfileNames.SeniorInterviewerManagement || profileName == ProfileNames.Recruiter)
                         {
                             <div class="mdc-ripple-upgraded card-title-space js-tr-window-trigger" style="cursor:pointer;margin-top:-3px" data-panel="main" data-url="@Url.Action("RaiseBugRequest", "Support")">
                                 <button class="mdc-fab app-fab--absolute need-help" aria-label="NeedAssistance">

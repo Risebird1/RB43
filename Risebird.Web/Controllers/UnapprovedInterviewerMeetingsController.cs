@@ -35,7 +35,7 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "Finance" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Finance" || profileName == "Finance Support" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement")
                     {
                         if (TempData["SuccessErrorMessageUnapprovedInterviewer"] != null)
                         {
@@ -489,7 +489,7 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "Finance" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Finance" || profileName == "Finance Support" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement")
                     {
                         if (TempData["SuccessErrorMessageUnapprovedInterviewer"] != null)
                         {

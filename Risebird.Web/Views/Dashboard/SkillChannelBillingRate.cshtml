@@ -47,7 +47,7 @@
                                                     <th>Plan Type</th>
                                                     <th>Currency</th>
                                                     <th>Default Rate</th>
-                                                    @if (ViewBag.Profile == "Finance" || ViewBag.Profile == "Admin")
+                                                    @if (ViewBag.Profile == "Finance" || ViewBag.Profile == "Finance Support" || ViewBag.Profile == "Admin")
                                                     {
                                                         <th>Billing Rate</th>
                                                         <th>Rate Set?</th>
@@ -66,7 +66,7 @@
                                                     <th>Plan Type</th>
                                                     <th>Currency</th>
                                                     <th>Default Rate</th>
-                                                    @if (ViewBag.Profile == "Finance" || ViewBag.Profile == "Admin")
+                                                    @if (ViewBag.Profile == "Finance" || ViewBag.Profile == "Finance Support" || ViewBag.Profile == "Admin")
                                                     {
                                                         <th>Billing Rate</th>
                                                         <th>Rate Set?</th>
@@ -87,7 +87,7 @@
                                                         <td>@item.Heuristicsscore</td>
                                                         <td>@item.BillingCurrency</td>
                                                         <td class="text-right">@item.DefaultRate</td>
-                                                        @if (ViewBag.Profile == "Finance" || ViewBag.Profile == "Admin")
+                                                        @if (ViewBag.Profile == "Finance" || ViewBag.Profile == "Finance Support" || ViewBag.Profile == "Admin")
                                                         {
                                                             <td>
                                                                 <input type="number" min="0"

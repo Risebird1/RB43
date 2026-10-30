@@ -10,6 +10,7 @@
         public static readonly string HR = "HR";
         public static readonly string QualityController = "Quality Controller";
         public static readonly string Finance = "Finance";
+        public static readonly string FinanceSupport = "Finance Support";
         public static readonly string InterviewerManagement = "InterviewerManagement";
         public static readonly string SeniorInterviewerManagement = "SeniorInterviewerManagement";
         public static readonly string Recruiter = "Recruiter";
