@@ -1,0 +1,599 @@
+@model Risebird.Entities.ViewModel.OpsToolkitVM
+@using Risebird.Entities.ViewModel
+@using System.Linq
+@{
+    ViewData["Title"] = "Ops Toolkit";
+    Layout = "~/Views/Shared/_PublicLayout2.cshtml";
+
+    var vm = Model ?? new OpsToolkitVM();
+    string fromStr = vm.FromDate.ToString("yyyy-MM-dd");
+    string toStr = vm.ToDate.ToString("yyyy-MM-dd");
+    int rangeDays = (int)(vm.ToDate - vm.FromDate).TotalDays + 1;
+    string prevFrom = vm.FromDate.AddDays(-rangeDays).ToString("yyyy-MM-dd");
+    string prevTo = vm.FromDate.AddDays(-1).ToString("yyyy-MM-dd");
+    string nextFrom = vm.ToDate.AddDays(1).ToString("yyyy-MM-dd");
+    string nextTo = vm.ToDate.AddDays(rangeDays).ToString("yyyy-MM-dd");
+
+    var penaltyRows = vm.PenaltyApplied;
+    var eiRows = vm.EINoPenalty;
+
+    bool isEmergencyTool = vm.Tool == OpsToolkitVM.ToolEmergencyUnassign;
+    bool isScheduleLinkTool = vm.Tool == OpsToolkitVM.ToolIRFScheduleLink;
+    var fixableLinks = vm.MissingScheduleLinks.Where(x => x.HasScheduleEvent).ToList();
+    var noEventLinks = vm.MissingScheduleLinks.Where(x => !x.HasScheduleEvent).ToList();
+    var todayIst = DateTime.UtcNow.AddMinutes(330).Date;
+    Func<DateTime?, string> FmtDay = d => d.HasValue ? d.Value.ToString("dd MMM yyyy") : "—";
+
+    Func<DateTime?, string> Fmt = d => d.HasValue ? d.Value.ToString("dd MMM yyyy, hh:mm tt") : "—";
+    Func<int?, string> FmtMinutes = m => {
+        if (!m.HasValue) return "—";
+        if (m.Value < 0) return "after start";
+        if (m.Value < 60) return m.Value + " min";
+        return (m.Value / 60) + "h " + (m.Value % 60) + "m";
+    };
+}
+
+@Html.AntiForgeryToken()
+
+<link href="~/Newassets/css/interview.css?v=7" rel="stylesheet" />
+
+<style>
+    body { background: #f4f6f9 !important; }
+    .ops-hero { background: linear-gradient(135deg, #1a73e8 0%, #0d47a1 100%); padding: 32px 0 56px; margin-bottom: -36px; }
+    .ops-hero h2 { color: #fff; font-weight: 700; margin: 0; }
+    .ops-hero p { color: rgba(255,255,255,.85); margin: 4px 0 0; }
+    .ops-wrap { display: flex; gap: 20px; align-items: flex-start; }
+    .ops-nav { width: 240px; flex-shrink: 0; background: #fff; border-radius: 12px; box-shadow: 0 4px 24px rgba(0,0,0,.08); padding: 12px; }
+    .ops-nav-title { font-size: 11px; font-weight: 700; text-transform: uppercase; color: #8a94a6; padding: 6px 10px; letter-spacing: .5px; }
+    .ops-nav a { display: block; padding: 10px 12px; border-radius: 8px; color: #1f2937; text-decoration: none; font-size: 14px; }
+    .ops-nav a.active { background: #e8f0fe; color: #1a73e8; font-weight: 600; }
+    .ops-nav .soon { color: #9ca3af; font-size: 13px; padding: 10px 12px; font-style: italic; }
+    .ops-main { flex: 1; min-width: 0; }
+    .ops-card { background: #fff; border-radius: 12px; box-shadow: 0 4px 24px rgba(0,0,0,.08); padding: 20px 24px; margin-bottom: 20px; }
+    .ops-card h4 { font-size: 17px; font-weight: 700; margin: 0 0 4px; color: #111827; }
+    .ops-card .sub { color: #6b7280; font-size: 13px; margin-bottom: 14px; }
+    .ops-filter { display: flex; flex-wrap: wrap; gap: 10px; align-items: flex-end; }
+    .ops-filter label { font-size: 12px; color: #6b7280; display: block; margin-bottom: 2px; }
+    .ops-filter input[type=date] { height: 38px; border: 1px solid #d1d5db; border-radius: 8px; padding: 0 10px; }
+    .ops-btn { height: 38px; padding: 0 14px; border-radius: 8px; border: 1px solid #d1d5db; background: #fff; color: #1f2937; font-size: 13px; font-weight: 600; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; }
+    .ops-btn:hover { background: #f3f4f6; color: #1f2937; text-decoration: none; }
+    .ops-btn.primary { background: #1a73e8; border-color: #1a73e8; color: #fff; }
+    .ops-btn.primary:hover { background: #1557b0; }
+    .ops-btn.danger { background: #fff; border-color: #dc2626; color: #dc2626; height: 30px; padding: 0 10px; font-size: 12px; }
+    .ops-btn.danger:hover { background: #fef2f2; }
+    .ops-btn[disabled] { opacity: .5; cursor: not-allowed; }
+    .ops-tabs { display: flex; gap: 6px; border-bottom: 1px solid #e5e7eb; margin-bottom: 12px; }
+    .ops-tab { padding: 10px 14px; cursor: pointer; font-size: 14px; font-weight: 600; color: #6b7280; border-bottom: 2px solid transparent; margin-bottom: -1px; }
+    .ops-tab.active { color: #1a73e8; border-bottom-color: #1a73e8; }
+    .ops-count { display: inline-block; min-width: 22px; padding: 1px 7px; border-radius: 11px; background: #e5e7eb; color: #374151; font-size: 12px; margin-left: 6px; text-align: center; }
+    .ops-tab.active .ops-count { background: #1a73e8; color: #fff; }
+    .ops-table-wrap { overflow-x: auto; }
+    .ops-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .ops-table th { background: #f9fafb; color: #6b7280; font-weight: 600; text-align: left; padding: 10px; border-bottom: 1px solid #e5e7eb; white-space: nowrap; }
+    .ops-table td { padding: 10px; border-bottom: 1px solid #f1f1f1; vertical-align: top; }
+    .ops-table .muted { color: #6b7280; font-size: 12px; }
+    .pill { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 600; white-space: nowrap; }
+    .pill-red { background: #fee2e2; color: #b91c1c; }
+    .pill-green { background: #dcfce7; color: #15803d; }
+    .pill-grey { background: #f3f4f6; color: #4b5563; }
+    .pill-blue { background: #e0ecff; color: #1d4ed8; }
+    .ops-empty { text-align: center; color: #9ca3af; padding: 32px 0; }
+    .ops-modal-bg { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.45); z-index: 2000; align-items: center; justify-content: center; }
+    .ops-modal { background: #fff; border-radius: 12px; padding: 22px; width: 440px; max-width: calc(100% - 32px); }
+    .ops-modal h5 { font-weight: 700; margin-bottom: 6px; }
+    .ops-modal textarea { width: 100%; min-height: 90px; border: 1px solid #d1d5db; border-radius: 8px; padding: 8px; font-size: 14px; }
+    .ops-modal .err { color: #dc2626; font-size: 13px; min-height: 18px; margin-top: 4px; }
+    #removePenaltyModal { z-index: 2100; }
+    .ops-modal.wide { width: 1100px; max-height: calc(100vh - 48px); overflow-y: auto; }
+    .ops-modal-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+    .ops-modal-close { border: none; background: none; font-size: 22px; line-height: 1; color: #6b7280; cursor: pointer; }
+    .ops-hist-title { font-size: 13px; font-weight: 700; color: #374151; margin: 16px 0 6px; text-transform: uppercase; letter-spacing: .4px; }
+    .ops-table tr.neg td { background: #fff7f7; }
+    .ops-actions { display: flex; flex-direction: column; gap: 6px; align-items: flex-start; }
+    .ops-btn.small { height: 30px; padding: 0 10px; font-size: 12px; }
+    .ops-btn.success { background: #fff; border-color: #16a34a; color: #15803d; }
+    .ops-btn.success:hover { background: #f0fdf4; }
+    .ops-link { font-family: Consolas, monospace; font-size: 12px; color: #374151; word-break: break-all; }
+    .ops-toolbar { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 12px; }
+    @@media (max-width: 900px) { .ops-wrap { flex-direction: column; } .ops-nav { width: 100%; } }
+</style>
+
+<div class="ops-hero">
+    <div class="container-fluid" style="padding: 0 24px;">
+        <h2><i class="fas fa-toolbox"></i> Ops Toolkit</h2>
+        <p>Find and fix common operational problems in one place.</p>
+    </div>
+</div>
+
+<div class="container-fluid" style="padding: 0 24px 40px;">
+    <div class="ops-wrap">
+        <div class="ops-nav">
+            <div class="ops-nav-title">Tools</div>
+            <a href="@Url.Action("OpsToolkit", "EmailLookup", new { tool = OpsToolkitVM.ToolEmergencyUnassign })" class="@(isEmergencyTool ? "active" : "")"><i class="fas fa-user-clock"></i> Emergency unassign penalties</a>
+            <a href="@Url.Action("OpsToolkit", "EmailLookup", new { tool = OpsToolkitVM.ToolIRFScheduleLink })" class="@(isScheduleLinkTool ? "active" : "")"><i class="fas fa-link"></i> Missing scheduler links</a>
+            <div class="soon">More tools coming soon</div>
+        </div>
+
+        <div class="ops-main">
+            @if (isEmergencyTool)
+            {
+            <div class="ops-card" id="tool-emergency-unassign">
+                <h4>Emergency interview unassignments</h4>
+                <div class="sub">
+                    Emergency interviews unassigned in the selected period (by unassign date, IST).
+                    An unassign penalty is applied when the interviewer unassigns within 30 minutes of the interview.
+                    Only <b>Pending</b> penalties can be removed; paid or submitted ones are locked.
+                </div>
+
+                <form method="get" action="@Url.Action("OpsToolkit", "EmailLookup")" class="ops-filter" style="margin-bottom:16px;">
+                    <div>
+                        <label for="fromDate">From</label>
+                        <input type="date" id="fromDate" name="fromDate" value="@fromStr" />
+                    </div>
+                    <div>
+                        <label for="toDate">To</label>
+                        <input type="date" id="toDate" name="toDate" value="@toStr" />
+                    </div>
+                    <button type="submit" class="ops-btn primary"><i class="fas fa-filter"></i> Apply</button>
+                    <a class="ops-btn" href="@Url.Action("OpsToolkit", "EmailLookup", new { fromDate = prevFrom, toDate = prevTo })"><i class="fas fa-chevron-left"></i> Previous week</a>
+                    <a class="ops-btn" href="@Url.Action("OpsToolkit", "EmailLookup", new { fromDate = nextFrom, toDate = nextTo })">Next week <i class="fas fa-chevron-right"></i></a>
+                    <a class="ops-btn" href="@Url.Action("OpsToolkit", "EmailLookup")">Last 7 days</a>
+                </form>
+
+                <div class="ops-tabs">
+                    <div class="ops-tab active" data-tab="penalty">Penalty applied<span class="ops-count">@penaltyRows.Count</span></div>
+                    <div class="ops-tab" data-tab="ei">Emergency interviewer, no penalty<span class="ops-count">@eiRows.Count</span></div>
+                </div>
+
+                <div class="ops-pane" data-pane="penalty">
+                    @if (penaltyRows.Count == 0)
+                    {
+                        <div class="ops-empty">No unassign penalties on emergency interviews from @vm.FromDate.ToString("dd MMM") to @vm.ToDate.ToString("dd MMM yyyy").</div>
+                    }
+                    else
+                    {
+                        <div class="ops-table-wrap">
+                            <table class="ops-table">
+                                <thead>
+                                    <tr>
+                                        <th>Interview</th>
+                                        <th>Candidate</th>
+                                        <th>Interview date</th>
+                                        <th>Unassigned by</th>
+                                        <th>Unassigned at</th>
+                                        <th>Before interview</th>
+                                        <th>Penalty</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var r in penaltyRows)
+                                    {
+                                        <tr>
+                                            <td>#@r.InterviewId<div class="muted">@r.IRFId</div></td>
+                                            <td>@r.CandidateName<div class="muted">@r.CandidateEmail</div></td>
+                                            <td>@Fmt(r.InterviewDate)</td>
+                                            <td>
+                                                @r.UnassignedByName<div class="muted">@r.UnassignedBy</div>
+                                                @if (r.IsEmergencyInterviewer) { <span class="pill pill-blue">Emergency interviewer</span> }
+                                            </td>
+                                            <td>@Fmt(r.UnassignedAt)</td>
+                                            <td>@FmtMinutes(r.MinutesBeforeInterview)</td>
+                                            <td>
+                                                @if (r.RemovedAt.HasValue && (r.PenaltyPoints ?? 0) >= 0)
+                                                {
+                                                    <span class="pill pill-green">Removed (@r.RemovedPoints)</span>
+                                                    <div class="muted">by @r.RemovedBy, @Fmt(r.RemovedAt)</div>
+                                                    <div class="muted">@r.RemovedReason</div>
+                                                }
+                                                else if ((r.PenaltyPoints ?? 0) < 0)
+                                                {
+                                                    <span class="pill pill-red">@r.PenaltyPoints points</span>
+                                                    <div class="muted">@(r.PenaltyStatus ?? "—")</div>
+                                                }
+                                                else
+                                                {
+                                                    <span class="pill pill-grey">0 points</span>
+                                                    <div class="muted">Proctor interview, no deduction</div>
+                                                }
+                                            </td>
+                                            <td>
+                                                <div class="ops-actions">
+                                                    <button type="button" class="ops-btn small js-history" data-interview-id="@r.InterviewId">
+                                                        <i class="fas fa-history"></i> History
+                                                    </button>
+                                                    @if (r.CanRemovePenalty)
+                                                    {
+                                                        <button type="button" class="ops-btn danger js-remove-penalty"
+                                                                data-id="@r.InterviewPointsId"
+                                                                data-label="#@r.InterviewId · @r.UnassignedBy · @r.PenaltyPoints points">
+                                                            <i class="fas fa-undo"></i> Remove penalty
+                                                        </button>
+                                                    }
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                </div>
+
+                <div class="ops-pane" data-pane="ei" style="display:none;">
+                    @if (eiRows.Count == 0)
+                    {
+                        <div class="ops-empty">No emergency interviewer unassigned an emergency interview without a penalty from @vm.FromDate.ToString("dd MMM") to @vm.ToDate.ToString("dd MMM yyyy").</div>
+                    }
+                    else
+                    {
+                        <div class="ops-table-wrap">
+                            <table class="ops-table">
+                                <thead>
+                                    <tr>
+                                        <th>Interview</th>
+                                        <th>Candidate</th>
+                                        <th>Interview date</th>
+                                        <th>Emergency interviewer</th>
+                                        <th>Unassigned at</th>
+                                        <th>Before interview</th>
+                                        <th>Now assigned to</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var r in eiRows)
+                                    {
+                                        <tr>
+                                            <td>#@r.InterviewId<div class="muted">@r.IRFId</div></td>
+                                            <td>@r.CandidateName<div class="muted">@r.CandidateEmail</div></td>
+                                            <td>@Fmt(r.InterviewDate)</td>
+                                            <td>@r.UnassignedByName<div class="muted">@r.UnassignedBy</div></td>
+                                            <td>@Fmt(r.UnassignedAt)</td>
+                                            <td>@FmtMinutes(r.MinutesBeforeInterview)</td>
+                                            <td>
+                                                @if (string.IsNullOrWhiteSpace(r.CurrentInterviewer))
+                                                {
+                                                    <span class="pill pill-red">Unassigned</span>
+                                                }
+                                                else
+                                                {
+                                                    @r.CurrentInterviewer
+                                                }
+                                            </td>
+                                            <td>
+                                                <button type="button" class="ops-btn small js-history" data-interview-id="@r.InterviewId">
+                                                    <i class="fas fa-history"></i> History
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                </div>
+            </div>
+            }
+
+            @if (isScheduleLinkTool)
+            {
+            <div class="ops-card" id="tool-irf-schedule-link">
+                <h4>Missing scheduler links</h4>
+                <div class="sub">
+                    Skill channels with no scheduler link (IRF.CalendlyLink). The link is built from the channel's scheduler event:
+                    <span class="ops-link">/InterviewScheduler/ScheduleEvent?id=&lt;event id&gt;</span>.
+                    Channels without a scheduler event need one created in RB Scheduler first.
+                </div>
+
+                <div class="ops-toolbar">
+                    <div class="ops-tabs" style="margin-bottom:0;flex:1;">
+                        <div class="ops-tab active" data-tab="fixable">Can be fixed<span class="ops-count">@fixableLinks.Count</span></div>
+                        <div class="ops-tab" data-tab="noevent">No scheduler event<span class="ops-count">@noEventLinks.Count</span></div>
+                    </div>
+                    @if (fixableLinks.Count > 1)
+                    {
+                        <button type="button" class="ops-btn primary js-add-link" data-id="" data-label="all @fixableLinks.Count skill channels">
+                            <i class="fas fa-link"></i> Add link to all (@fixableLinks.Count)
+                        </button>
+                    }
+                </div>
+
+                <div class="ops-pane" data-pane="fixable">
+                    @if (fixableLinks.Count == 0)
+                    {
+                        <div class="ops-empty">Every skill channel that has a scheduler event already has its link.</div>
+                    }
+                    else
+                    {
+                        <div class="ops-table-wrap">
+                            <table class="ops-table">
+                                <thead>
+                                    <tr>
+                                        <th>Skill channel</th>
+                                        <th>Client</th>
+                                        <th>Skill</th>
+                                        <th>Duration</th>
+                                        <th>Status</th>
+                                        <th>Scheduler event</th>
+                                        <th>Link to add</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var r in fixableLinks)
+                                    {
+                                        <tr>
+                                            <td>@r.IRFId<div class="muted">id @r.IRFIntId</div></td>
+                                            <td>@(r.ClientName ?? "—")</td>
+                                            <td>@(r.SkillCluster ?? "—")<div class="muted">@r.PrimarySkillInvite</div></td>
+                                            <td>@FmtDay(r.StartDate)<div class="muted">to @FmtDay(r.EndDate)</div></td>
+                                            <td>
+                                                @if (r.IsPaused) { <span class="pill pill-grey">Paused</span> }
+                                                else if (r.EndDate.HasValue && r.EndDate.Value.Date < todayIst) { <span class="pill pill-grey">Ended</span> }
+                                                else { <span class="pill pill-green">Active</span> }
+                                            </td>
+                                            <td>
+                                                @(r.EventName ?? "—")
+                                                <div>
+                                                    @if (r.IsEventActive) { <span class="pill pill-blue">Event active</span> }
+                                                    else { <span class="pill pill-red">Event inactive</span> }
+                                                </div>
+                                            </td>
+                                            <td><span class="ops-link">@r.SuggestedLink</span></td>
+                                            <td>
+                                                <button type="button" class="ops-btn small success js-add-link"
+                                                        data-id="@r.IRFIntId" data-label="@r.IRFId">
+                                                    <i class="fas fa-plus"></i> Add link
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                </div>
+
+                <div class="ops-pane" data-pane="noevent" style="display:none;">
+                    @if (noEventLinks.Count == 0)
+                    {
+                        <div class="ops-empty">No skill channels without a scheduler event.</div>
+                    }
+                    else
+                    {
+                        <div class="ops-table-wrap">
+                            <table class="ops-table">
+                                <thead>
+                                    <tr>
+                                        <th>Skill channel</th>
+                                        <th>Client</th>
+                                        <th>Skill</th>
+                                        <th>Duration</th>
+                                        <th>Status</th>
+                                        <th>Created on</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var r in noEventLinks)
+                                    {
+                                        <tr>
+                                            <td>@r.IRFId<div class="muted">id @r.IRFIntId</div></td>
+                                            <td>@(r.ClientName ?? "—")</td>
+                                            <td>@(r.SkillCluster ?? "—")<div class="muted">@r.PrimarySkillInvite</div></td>
+                                            <td>@FmtDay(r.StartDate)<div class="muted">to @FmtDay(r.EndDate)</div></td>
+                                            <td>
+                                                @if (r.IsPaused) { <span class="pill pill-grey">Paused</span> }
+                                                else if (r.EndDate.HasValue && r.EndDate.Value.Date < todayIst) { <span class="pill pill-grey">Ended</span> }
+                                                else { <span class="pill pill-green">Active</span> }
+                                            </td>
+                                            <td>@FmtDay(r.CreatedOn)</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                </div>
+            </div>
+            }
+        </div>
+    </div>
+</div>
+
+<div class="ops-modal-bg" id="historyModal">
+    <div class="ops-modal wide">
+        <div class="ops-modal-head">
+            <h5 style="margin:0;">Interview <span id="historyInterviewId"></span> history</h5>
+            <button type="button" class="ops-modal-close" id="historyClose" aria-label="Close">&times;</button>
+        </div>
+        <div id="historyBody"></div>
+    </div>
+</div>
+
+<div class="ops-modal-bg" id="removePenaltyModal">
+    <div class="ops-modal">
+        <h5>Remove unassign penalty</h5>
+        <div class="muted" id="removePenaltyLabel" style="color:#6b7280;font-size:13px;margin-bottom:10px;"></div>
+        <label for="removePenaltyReason" style="font-size:13px;">Reason (required)</label>
+        <textarea id="removePenaltyReason" maxlength="500"></textarea>
+        <div class="err" id="removePenaltyError"></div>
+        <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:10px;">
+            <button type="button" class="ops-btn" id="removePenaltyCancel">Cancel</button>
+            <button type="button" class="ops-btn primary" id="removePenaltyConfirm">Remove penalty</button>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(function () {
+            $('.ops-tab').on('click', function () {
+                var tab = $(this).data('tab');
+                $('.ops-tab').removeClass('active');
+                $(this).addClass('active');
+                $('.ops-pane').hide();
+                $('.ops-pane[data-pane="' + tab + '"]').show();
+            });
+
+            // Missing scheduler links: data-id = IRF.id for one channel, empty for all fixable channels.
+            $(document).on('click', '.js-add-link', function () {
+                var $btn = $(this);
+                var id = $btn.data('id');
+                if (!confirm('Add the scheduler link to ' + $btn.data('label') + '?')) return;
+                $btn.prop('disabled', true);
+                $.ajax({
+                    url: '@Url.Action("AddIRFScheduleLink", "EmailLookup")',
+                    type: 'POST',
+                    data: {
+                        irfIntId: id === '' || id === undefined ? null : id,
+                        __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val()
+                    }
+                }).done(function (r) {
+                    var ok = r && (r.success === true || r.Success === true);
+                    var msg = r ? (r.message || r.Message) : '';
+                    if (ok) {
+                        location.reload();
+                    } else {
+                        alert(msg || 'Could not add the scheduler link.');
+                        $btn.prop('disabled', false);
+                    }
+                }).fail(function (xhr) {
+                    alert('Could not add the scheduler link (HTTP ' + xhr.status + ').');
+                    $btn.prop('disabled', false);
+                });
+            });
+
+            function esc(v) {
+                return v === null || v === undefined || v === '' ? '—' : $('<div>').text(v).html();
+            }
+            function fmtDate(v) {
+                if (!v) return '—';
+                var d = new Date(v);
+                if (isNaN(d.getTime())) return esc(v);
+                return d.toLocaleString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit', hour12: true });
+            }
+            function table(headers, rows) {
+                var h = '<div class="ops-table-wrap"><table class="ops-table"><thead><tr>';
+                headers.forEach(function (x) { h += '<th>' + x + '</th>'; });
+                return h + '</tr></thead><tbody>' + rows.join('') + '</tbody></table></div>';
+            }
+
+            var $history = $('#historyModal');
+
+            function loadHistory(interviewId) {
+                $('#historyInterviewId').text('#' + interviewId);
+                $('#historyBody').html('<div class="ops-empty">Loading…</div>');
+                $history.css('display', 'flex');
+
+                $.get('@Url.Action("OpsToolkitInterviewHistory", "EmailLookup")', { interviewId: interviewId })
+                    .done(function (d) {
+                        var html = '<div class="ops-hist-title">Points entries</div>';
+                        if (!d.points || !d.points.length) {
+                            html += '<div class="ops-empty">No points entries for this interview.</div>';
+                        } else {
+                            html += table(['Id', 'User', 'Type', 'Points', 'Status', 'Comment', 'Date', 'Penalty %', 'Payment', 'Action'],
+                                d.points.map(function (p) {
+                                    var points = p.points === null ? '—' : p.points;
+                                    var action = p.canRemovePenalty
+                                        ? '<button type="button" class="ops-btn danger js-remove-penalty" data-id="' + p.interviewPointsId +
+                                          '" data-label="#' + interviewId + ' · ' + esc(p.emailId) + ' · ' + points + ' points"><i class="fas fa-undo"></i> Remove penalty</button>'
+                                        : '<span class="muted">—</span>';
+                                    return '<tr' + (p.points < 0 ? ' class="neg"' : '') + '>' +
+                                        '<td>' + p.interviewPointsId + '</td>' +
+                                        '<td>' + esc(p.name) + '<div class="muted">' + esc(p.emailId) + '</div></td>' +
+                                        '<td>' + esc(p.type) + '</td>' +
+                                        '<td>' + (p.points < 0 ? '<span class="pill pill-red">' + points + '</span>' : points) + '</td>' +
+                                        '<td>' + esc(p.status) + '</td>' +
+                                        '<td>' + esc(p.comment) + '</td>' +
+                                        '<td>' + fmtDate(p.date) + '</td>' +
+                                        '<td>' + esc(p.penaltyAmount) + '</td>' +
+                                        '<td>' + esc(p.paymentHistoryId) + '</td>' +
+                                        '<td>' + action + '</td></tr>';
+                                }));
+                        }
+
+                        html += '<div class="ops-hist-title">Assignment changes</div>';
+                        if (!d.assignments || !d.assignments.length) {
+                            html += '<div class="ops-empty">No assignment changes recorded.</div>';
+                        } else {
+                            html += table(['When', 'Change', 'From', 'To'], d.assignments.map(function (a) {
+                                var pill = a.change === 'Unassigned' ? 'pill-red' : (a.change === 'Assigned' ? 'pill-green' : 'pill-blue');
+                                return '<tr><td>' + fmtDate(a.performedAt) + '</td>' +
+                                    '<td><span class="pill ' + pill + '">' + esc(a.change) + '</span></td>' +
+                                    '<td>' + esc(a.fromInterviewer) + '</td>' +
+                                    '<td>' + esc(a.toInterviewer) + '</td></tr>';
+                            }));
+                        }
+
+                        if (d.actions && d.actions.length) {
+                            html += '<div class="ops-hist-title">Ops Toolkit actions</div>';
+                            html += table(['When', 'Action', 'Points entry', 'User', 'Points', 'Reason', 'By'], d.actions.map(function (l) {
+                                return '<tr><td>' + fmtDate(l.performedAt) + '</td>' +
+                                    '<td>' + esc(l.actionType) + '</td>' +
+                                    '<td>' + esc(l.interviewPointsId) + '</td>' +
+                                    '<td>' + esc(l.emailId) + '</td>' +
+                                    '<td>' + esc(l.oldPoints) + ' → ' + esc(l.newPoints) + '</td>' +
+                                    '<td>' + esc(l.reason) + '</td>' +
+                                    '<td>' + esc(l.performedBy) + '</td></tr>';
+                            }));
+                        }
+
+                        $('#historyBody').html(html);
+                    })
+                    .fail(function (xhr) {
+                        var detail = xhr.status ? ('HTTP ' + xhr.status + ' ' + (xhr.statusText || '')) : 'No response from server';
+                        $('#historyBody').html('<div class="ops-empty">Could not load history (' + esc(detail) + '). Please try again.</div>');
+                    });
+            }
+
+            $(document).on('click', '.js-history', function () {
+                loadHistory($(this).data('interview-id'));
+            });
+            $('#historyClose').on('click', function () { $history.hide(); });
+            $history.on('click', function (e) { if (e.target === this) $history.hide(); });
+
+            var pendingId = null;
+            var $modal = $('#removePenaltyModal');
+
+            $(document).on('click', '.js-remove-penalty', function () {
+                pendingId = $(this).data('id');
+                $('#removePenaltyLabel').text($(this).data('label'));
+                $('#removePenaltyReason').val('');
+                $('#removePenaltyError').text('');
+                $('#removePenaltyConfirm').prop('disabled', false);
+                $modal.css('display', 'flex');
+                $('#removePenaltyReason').trigger('focus');
+            });
+
+            $('#removePenaltyCancel').on('click', function () { $modal.hide(); pendingId = null; });
+
+            $('#removePenaltyConfirm').on('click', function () {
+                var reason = $.trim($('#removePenaltyReason').val());
+                if (!reason) { $('#removePenaltyError').text('Please enter a reason.'); return; }
+                var $btn = $(this).prop('disabled', true);
+                $.ajax({
+                    url: '@Url.Action("RemoveUnassignPenalty", "EmailLookup")',
+                    type: 'POST',
+                    data: {
+                        interviewPointsId: pendingId,
+                        reason: reason,
+                        __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val()
+                    }
+                }).done(function (r) {
+                    var ok = r && (r.success === true || r.Success === true);
+                    var msg = r ? (r.message || r.Message) : '';
+                    if (ok) {
+                        location.reload();
+                    } else {
+                        $('#removePenaltyError').text(msg || 'Could not remove the penalty.');
+                        $btn.prop('disabled', false);
+                    }
+                }).fail(function () {
+                    $('#removePenaltyError').text('Could not remove the penalty. Please try again.');
+                    $btn.prop('disabled', false);
+                });
+            });
+        });
+    </script>
+}

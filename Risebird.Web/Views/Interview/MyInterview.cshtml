@@ -541,6 +541,14 @@
                                                                     <td width="10%" class="text-center">
                                                                         @{
                                                                             var interviewDate = @item.interviewDate.AddHours(Convert.ToInt32(ViewBag.TimeExpire));
+                                                                            // Interviewer report edit window: IRF flag on -> submit window / single edit; flag off -> legacy ExpireTime window.
+                                                                            var legacyReportWindowOpen = item.interviewDate <= DateTime.Now && DateTime.Now <= interviewDate;
+                                                                            var showFeedbackReport = item.EnableReportEditWindow == true
+                                                                                ? Risebird.Entities.ViewModel.InterviewReportEditState.IsFeedbackReportButtonVisible(item.EnableReportEditWindow, item.interviewDate, item.interviewDuration, item.ReportSubmittedOn, item.InterviewerEditCount,
+                                                                                    (int)(ViewBag.ReportSubmitWindowMinutes ?? Risebird.Entities.ViewModel.InterviewReportEditState.DefaultSubmitWindowMinutes),
+                                                                                    (int)(ViewBag.ReportEditWindowMinutes ?? Risebird.Entities.ViewModel.InterviewReportEditState.DefaultEditWindowMinutes),
+                                                                                    Convert.ToInt32(ViewBag.TimeExpire), DateTime.Now)
+                                                                                : legacyReportWindowOpen;
                                                                         }
 
                                                                         @if (ViewBag.MeetingLineUpType == MeetingLineUpType.Completed){
@@ -580,9 +588,11 @@
 
                                                                         }
 
-                                                                        @if (item.interviewDate <= DateTime.Now && DateTime.Now <= @interviewDate)
+                                                                        @if (legacyReportWindowOpen || showFeedbackReport)
                                                                         {
 
+                                                                            @if (showFeedbackReport)
+                                                                            {
                                                                             <div class="btn btn-unassign shadow btn-xs sharp me-1" style="background:#a1b6d1;border-color:#a1b6d1">
                                                                                 <a target="_blank" href="@Url.Action("AddReport", "Interview", new { interviewId = item.id, irfId = item.irfIntId })">
                                                                                     <span id="myinterview_10" class="feedbackreportbtn" aria-label="Feedback Report">
@@ -590,6 +600,7 @@
                                                                                     </span>
                                                                                 </a>
                                                                             </div>
+                                                                            }
                                                                             @if (item.IsAIInterview)
                                                                             {
                                                                                 <span class="interview_9">

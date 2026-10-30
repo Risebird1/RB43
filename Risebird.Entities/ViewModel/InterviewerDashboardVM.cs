@@ -15,6 +15,8 @@
         public bool RedmarkerAcknowledge { get; set; }
         public bool VideoKYC { get; set; }
         public string AcknowledgementStatus { get; set; }
+        /// <summary>InterviewerProfile.ReportPolicyAcknowledged: false shows the report policy popup on the dashboard.</summary>
+        public bool ReportPolicyAcknowledged { get; set; }
     }
 
 }

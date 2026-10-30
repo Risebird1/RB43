@@ -562,3 +562,11 @@ BEGIN
     ALTER TABLE InterviewerProfile Add TrialOnboardingPolicyVersion varchar(50) null
 END
 GO
+
+-- Interviewer report edit window: one-time acceptance of the report submission / edit policy popup shown
+-- on the interviewer dashboard. NULL = popup shows at next login.
+IF NOT EXISTS(SELECT * FROM sys.columns WHERE Name = N'ReportPolicyAcknowledged' AND Object_ID = Object_ID(N'InterviewerProfile'))
+BEGIN
+    ALTER TABLE InterviewerProfile Add ReportPolicyAcknowledged bit null
+END
+GO

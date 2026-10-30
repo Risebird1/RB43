@@ -23,7 +23,7 @@ namespace Risebird.Repository.Interface
         Task<string> AssignYourself(int meetingid, string interviewerMail);
         Task<bool> UnassignYourself(int meetingid);
         Task<IEnumerable<Meeting>> GetAllAssignedInterview(string emailId, string meetingLineUpType = null);
-        Task<bool> UpdateComments(InterviewComments interviewComments);
+        Task<bool> UpdateComments(InterviewComments interviewComments, string performedBy = null);
         Task<InterviewComments> GetInterviewComments(int interviewId);
         Task<IEnumerable<TransJoinability>> GetTransJoinability(int id);
         Task<IEnumerable<TransSkill>> GetSkillsbyIRFid(int id);
@@ -294,6 +294,9 @@ namespace Risebird.Repository.Interface
         Task<IEnumerable<PaymentSLAVM>> FetchPaymentSlaDetails(string actionstatus);
         Task<bool> PaymentSlaNotApproved(int interviewid, string emailid);
         Task<bool> AgreeToPaymentSLAConditions(string emailid);
+        Task<ReportEditWindowInfo> GetReportEditWindowInfo(int interviewId);
+        Task<bool> AcknowledgeReportPolicy(string emailid);
+        Task<List<ReportEditAlert>> GetReportEditAlerts(int days);
         Task<bool> AddTransInterviewersReliabilityScores(TransInterviewersReliabilityScoresVm model);
         Task<bool> AddTransReliabilityScoresSelectAndReject(int InterviewMeetingId);
         Task<Meeting> GetAudioCommentDetails(int interviewId);

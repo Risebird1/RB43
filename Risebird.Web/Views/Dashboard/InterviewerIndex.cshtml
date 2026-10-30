@@ -962,6 +962,43 @@
         </div>
     </div>
 </div>
+<div id="ReportPolicyModel" class="modal modal-bg" style="z-index:7;top:13px;">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="filheader">
+                <div class="filavatar">
+                    <span>
+                        <img style="width: 32px;position: relative;top: 7px;" src="~/img/video-confirm.png" />
+                    </span>
+                </div>
+                <h5 class="modal-title pull-left">Interview Feedback Report Policy</h5>
+            </div>
+            <div class="modal-body" style="color:black;margin-bottom:0px;">
+                <h3>
+                    <strong>
+                        Dear Interviewer,
+                    </strong>
+                </h3>
+                <p>
+                    To protect the integrity of every hiring decision made on Risebird, the following rules now apply to all interview feedback reports. Please read them carefully and provide your acceptance before continuing.
+                </p>
+                <div class="instruction">
+                    <ul>
+                        <li><strong>Fill the report on time -</strong> Submit the feedback report within 10 minutes of completing the interview, ideally while the interview is in progress. A grace period of up to 20 minutes is provided, after which the report can no longer be submitted.</li>
+                        <li><strong>Report is final once submitted -</strong> Please review the verdict, scores and comments carefully before you submit.</li>
+                        <li><strong>One edit only, with a written reason -</strong> If you made a genuine mistake, you may edit the report only once, shortly after submitting it, and you must give a written reason for the edit.</li>
+                        <li><strong>Strong justification for verdict or score changes -</strong> Changing the candidate verdict or the overall score needs a detailed, strong justification.</li>
+                        <li><strong>Everything is audited -</strong> Every submission and every edit is permanently recorded (who, when, old and new values, and the reason) and is reviewed by the Risebird quality team.</li>
+                        <li><strong>Need a late correction? -</strong> Once a report is locked, please contact Risebird support.</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="model-footer text-center" style="padding: 10px;font-weight: bold;background: #d2dfe9;">
+                <input style="margin-right:10px;" type="checkbox" id="chk_reportpolicy" onchange="AcknowledgeReportPolicy()" />I have read and agree to the above feedback report policy.
+            </div>
+        </div>
+    </div>
+</div>
 <div id="InterviewerRedMarkerReportModel" class="modal modal-bg" style="z-index:6">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
@@ -1092,6 +1129,14 @@
         });
     </script>
 }
+@if (ViewBag.ReportPolicyAcknowledged != null && !ViewBag.ReportPolicyAcknowledged)
+{
+    <script>
+        $(document).ready(function () {
+            openReportPolicyModel();
+        });
+    </script>
+}
 @*@if (!ViewBag.InterviewerRedMarkerReport)
 {
     <script>
@@ -1212,6 +1257,33 @@
             type: 'POST',
             success: function (data) {
                 closePaymentSLADetailsModel();
+            }
+        });
+    }
+    function openReportPolicyModel() {
+        var model = document.getElementById("ReportPolicyModel");
+        model.style.display = "block";
+    }
+    function closeReportPolicyModel() {
+        var model = document.getElementById("ReportPolicyModel");
+        model.style.display = "none";
+    }
+    function AcknowledgeReportPolicy() {
+        var checkbox = document.getElementById("chk_reportpolicy");
+        if (!checkbox.checked) {
+            return;
+        }
+        checkbox.disabled = true;
+        $.ajax({
+            url: '/Interview/AcknowledgeReportPolicy',
+            type: 'POST',
+            success: function (data) {
+                closeReportPolicyModel();
+            },
+            error: function () {
+                checkbox.checked = false;
+                checkbox.disabled = false;
+                swal.fire("Could not save your acceptance, please try again.");
             }
         });
     }
