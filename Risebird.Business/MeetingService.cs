@@ -1051,7 +1051,7 @@ namespace Risebird.Business
         {
             try
             {
-                var result = await _meetingRespository.UpdateComments(comments);
+                var result = await _meetingRespository.UpdateComments(comments, performedBy);
                 //if (result && comments.QCStatus.HasValue && comments.QCStatus == (int)QCStatus.Failed)
                 //{
                 //    //add to activity tracker
@@ -4764,6 +4764,26 @@ namespace Risebird.Business
                 await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return false;
             }
+        }
+        public async Task<ReportEditWindowInfo> GetReportEditWindowInfo(int interviewId)
+        {
+            return await _meetingRespository.GetReportEditWindowInfo(interviewId);
+        }
+        public async Task<bool> AcknowledgeReportPolicy(string emailid)
+        {
+            try
+            {
+                return await _meetingRespository.AcknowledgeReportPolicy(emailid);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return false;
+            }
+        }
+        public async Task<List<ReportEditAlert>> GetReportEditAlerts(int days)
+        {
+            return await _meetingRespository.GetReportEditAlerts(days);
         }
         public async Task<bool> AddTransInterviewersReliabilityScoresService(TransInterviewersReliabilityScoresVm model)
         {

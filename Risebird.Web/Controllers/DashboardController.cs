@@ -4967,6 +4967,8 @@ NEVER:
                         ViewBag.TimeExpire = _configuration["InterviewerReport:ExpireTime"];
                         ViewBag.isFirstTimeLogin = model.FirstTimePopupDisplayed;
                         ViewBag.PaymentSLAConfirmation = model.PaymentSLAConfirmation;
+                        // Interviewer report edit window: one-time report policy popup (all interviewers).
+                        ViewBag.ReportPolicyAcknowledged = model.ReportPolicyAcknowledged;
                         ViewBag.InterviewerRedMarkerReport = model.RedmarkerAcknowledge;
                         ViewBag.VideoKYC = model.VideoKYC;
                         if (model.VideoConfirmation == 0)
