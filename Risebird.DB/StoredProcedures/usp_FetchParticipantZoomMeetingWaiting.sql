@@ -279,6 +279,9 @@ left join UserList ulc on ulc.EmailId = im.candidateEmail
 left join UserList uli on uli.EmailId = im.interviewer
 where ISNULL(IRF.IsAIInterview,0)=0 and im.Confirmationstatus=1
 and ISNULL(im.IsMeetingNotificationSent,0)=1 and ISNULL(im.IsWaitingFinalAlertSent,0)!=1 and
+-- At least 3 minutes after the first alert: the first block above sets IsMeetingNotificationSent in this same run,
+-- so without this a first alert that fires at 5+ minutes was followed by this one seconds later.
+im.NotificationSentDate<=dateadd(minute,-3,getdate()) and
 dateadd(minute,5,im.Interviewdate)<=dateadd(minute,330,getdate()) and
 dateadd(minute,30,im.Interviewdate)>dateadd(minute,330,getdate()) and
 ((Case When (imj.Joinedon is null and pct.PerformedOn is null) then 0 When (imj.Joinedon is not null and pct.PerformedOn is not null) then 0 else 1 end)=1)
