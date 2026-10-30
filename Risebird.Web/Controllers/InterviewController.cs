@@ -1703,6 +1703,9 @@ namespace Risebird.Web.Controllers
                             ViewBag.isCodedResumePresent = true;
                         }
                         ViewBag.TimeExpire = _configuration["InterviewerReport:ExpireTime"];
+                        // Interviewer report edit window (IRFs with EnableReportEditWindow on).
+                        ViewBag.ReportSubmitWindowMinutes = ReportSubmitWindowMinutes;
+                        ViewBag.ReportEditWindowMinutes = ReportEditWindowMinutes;
                         ViewBag.IsSME = isSME;
                         myInterview = myInterview.Select(x => { x.confirmationStatus = ((ReceiveMeetingStatus)Convert.ToInt32(x.confirmationStatus)).GetDescription(); x.interviewSlot = ((InterviewSlots)Convert.ToInt32(x.interviewSlot)).GetDescription(); x.JobLevelDesc = ((JobLevels)Convert.ToInt32(x.JobLevel)).GetDescription(); x.HeuristicProfileTypeDesc = ((Heuristicsscorelevel)Convert.ToInt32(x.HeuristicProfileType)).GetDescription(); return x; }).ToList();
                         foreach (var item in myInterview)
@@ -3150,6 +3153,24 @@ namespace Risebird.Web.Controllers
                     }
                 }
 
+                // Interviewer report edit window: enforced on the server for the Interviewer profile (flagged IRFs only).
+                bool requireEditReason = false;
+                if (isInterviewer)
+                {
+                    var window = await ValidateInterviewerReportWindow(interviewId);
+                    if (window.BlockedMessage != null)
+                    {
+                        TempData["SuccessErrorMessage"] = window.BlockedMessage;
+                        return RedirectToAction("MyInterview");
+                    }
+                    requireEditReason = window.Status == InterviewReportEditStatus.EditAllowed;
+                    if (TempData["ReportEditReasonError"] != null)
+                    {
+                        ViewBag.ReportEditReasonError = TempData["ReportEditReasonError"].ToString();
+                        TempData.Remove("ReportEditReasonError");
+                    }
+                }
+
                 var model = await _meetingService.GetInteviewReport(interviewId, irfId);
                 if (model != null && model.CandidateIDVerificationStatus.HasValue && model.CandidateIDVerificationStatus.Value > 0)
                 {
@@ -3167,6 +3188,7 @@ namespace Risebird.Web.Controllers
                         return RedirectToAction("MyInterview");
                     }
                 }
+                model.RequireEditReason = requireEditReason;
                 if (!string.IsNullOrWhiteSpace(model.InterviewerComment))
                 {
                     model.InterviewerComment = System.Web.HttpUtility.HtmlDecode(model.InterviewerComment);
@@ -3321,6 +3343,16 @@ namespace Risebird.Web.Controllers
                         model.UserDetails = emailid;
                         if (profileName == "Admin" || profileName == "Interviewer" || profileName == "SupportAdmin")// || profileName == "Quality Controller"// //
                         {
+                            // Interviewer report edit window: enforced on the server for the Interviewer profile (flagged IRFs only).
+                            if (profileName == "Interviewer")
+                            {
+                                var blockedResult = await GuardInterviewerReportSave(model);
+                                if (blockedResult != null)
+                                {
+                                    return blockedResult;
+                                }
+                            }
+                            model.EditSource = "AddReport";
                             if (model.AudioFile != null)
                             {
                                 var fileMimeType = _fileMimeTypeHelper.GetFileMimeType(model.AudioFile);
@@ -5438,6 +5470,9 @@ namespace Risebird.Web.Controllers
                         ViewBag.totalPage = a;
                         ViewBag.totalentry = myInterview.Count;
                         ViewBag.MeetingLineUpType = meetingLineUpType;
+                        // Interviewer report edit window (IRFs with EnableReportEditWindow on).
+                        ViewBag.ReportSubmitWindowMinutes = ReportSubmitWindowMinutes;
+                        ViewBag.ReportEditWindowMinutes = ReportEditWindowMinutes;
                         return PartialView("MyInterviewPartial", myInterview?.Take(10)?.ToList());
                         //return Json(new { result = myInterview.Take(10), startPage = Pagestart, endPage = Pageend, totalPage = a, totalentry = myInterview.Count });
                     }
@@ -5987,6 +6022,154 @@ namespace Risebird.Web.Controllers
             return new JsonResult(message);
         }
 
+        #region Interviewer report edit window
+        private int ReportSubmitWindowMinutes => InterviewReportEditState.ParseOrDefault(_configuration["InterviewerReport:SubmitWindowMinutes"], InterviewReportEditState.DefaultSubmitWindowMinutes);
+        private int ReportEditWindowMinutes => InterviewReportEditState.ParseOrDefault(_configuration["InterviewerReport:EditWindowMinutes"], InterviewReportEditState.DefaultEditWindowMinutes);
+        private int ReportExpireTimeHours => InterviewReportEditState.ParseOrDefault(_configuration["InterviewerReport:ExpireTime"], InterviewReportEditState.DefaultExpireTimeHours);
+
+        /// <summary>
+        /// Server-side guard for the Interviewer profile's feedback report (AddReport GET / POST, ProctorReport POST).
+        /// IRF flag off: NotEnforced (legacy). Fails open: a lookup error or no row allows the request under legacy rules.
+        /// BlockedMessage is null when the request is allowed.
+        /// </summary>
+        private async Task<(string BlockedMessage, InterviewReportEditStatus Status, ReportEditWindowInfo Info)> ValidateInterviewerReportWindow(int interviewId)
+        {
+            try
+            {
+                var info = await _meetingService.GetReportEditWindowInfo(interviewId);
+                if (info == null)
+                {
+                    return (null, InterviewReportEditStatus.NotEnforced, null);
+                }
+                var status = InterviewReportEditState.Evaluate(info, ReportSubmitWindowMinutes, ReportEditWindowMinutes, DateTime.Now);
+                var message = InterviewReportEditState.IsBlocked(status)
+                    ? InterviewReportEditState.GetBlockedMessage(status, ReportSubmitWindowMinutes, ReportEditWindowMinutes)
+                    : null;
+                return (message, status, info);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return (null, InterviewReportEditStatus.NotEnforced, null);
+            }
+        }
+
+        /// <summary>
+        /// The one allowed interviewer edit needs a written reason: at least 20 characters, and at least 100 when the
+        /// verdict changes or OverallScore moves by more than 1 point. Old verdict and score come from the database
+        /// (<paramref name="info"/>), never from the posted form. Returns null when the reason is acceptable.
+        /// </summary>
+        private static string ValidateEditReason(InterviewReport model, ReportEditWindowInfo info)
+        {
+            var reason = (model.EditReason ?? string.Empty).Trim();
+            if (reason.Length < InterviewReportEditState.MinEditReasonLength)
+            {
+                return "Please enter a Reason for Edit of at least " + InterviewReportEditState.MinEditReasonLength + " characters. Only one edit is allowed after submission.";
+            }
+            // Same verdict the save will store: dropped meeting statuses imply the verdict (see MeetingService.AddInterviewReport).
+            int? newInterviewStatus = model.InterviewStatus;
+            if (model.MeetingStatus == (int)MeetingStatus.DroppedSelected)
+            {
+                newInterviewStatus = (int)InterviewStatus.Selected;
+            }
+            else if (model.MeetingStatus == (int)MeetingStatus.DroppedRejected)
+            {
+                newInterviewStatus = (int)InterviewStatus.Rejected;
+            }
+            else if (model.MeetingStatus == (int)MeetingStatus.DroppedBorderLine)
+            {
+                newInterviewStatus = (int)InterviewStatus.BorderLine;
+            }
+            bool verdictChanged = info.CurrentInterviewStatus != newInterviewStatus;
+            bool scoreChanged = Math.Abs((info.CurrentOverallScore ?? 0) - model.OverallScore) > InterviewReportEditState.StrongReasonScoreChange;
+            if ((verdictChanged || scoreChanged) && reason.Length < InterviewReportEditState.MinStrongEditReasonLength)
+            {
+                return "Changing the verdict or moving the overall score by more than 1 point needs a strong justification: please enter a Reason for Edit of at least " + InterviewReportEditState.MinStrongEditReasonLength + " characters.";
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// Runs the window guard and, for the single allowed edit, the reason check, for a report save by the Interviewer
+        /// profile. Returns the redirect to use when the save is rejected, or null to continue with the save.
+        /// </summary>
+        private async Task<IActionResult> GuardInterviewerReportSave(InterviewReport model)
+        {
+            var window = await ValidateInterviewerReportWindow(model.InterviewId);
+            if (window.BlockedMessage != null)
+            {
+                TempData["SuccessErrorMessage"] = window.BlockedMessage;
+                return RedirectToAction("MyInterview");
+            }
+            if (window.Status == InterviewReportEditStatus.EditAllowed)
+            {
+                var reasonError = ValidateEditReason(model, window.Info);
+                if (reasonError != null)
+                {
+                    TempData["ReportEditReasonError"] = reasonError;
+                    return RedirectToAction("AddReport", new { interviewId = model.InterviewId, irfId = model.IRFId });
+                }
+            }
+            else
+            {
+                // A reason is only recorded for the interviewer's one allowed edit.
+                model.EditReason = null;
+            }
+            return null;
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> AcknowledgeReportPolicy()
+        {
+            if (HttpContext.Session.GetString("email") != null)
+            {
+                var emailId = HttpContext.Session.GetString("email")?.Trim();
+                emailId = emailId.Replace("\"", "");
+                await _meetingService.AcknowledgeReportPolicy(emailId);
+            }
+            return Json("Success");
+        }
+
+        /// <summary>
+        /// "911" monitor: every change to a submitted report's verdict, overall score, meeting status or interviewer
+        /// comment, by anyone, newest first. Admin, SupportAdmin, SeniorHR and Quality Controller only.
+        /// </summary>
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> ReportEditAlerts(int days = 7)
+        {
+            try
+            {
+                if (HttpContext.Session.GetString("email") == null || HttpContext.Session.GetString("profileName") == null)
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "");
+                if (!(profileName == "Admin" || profileName == "SupportAdmin" || profileName == "SeniorHR" || profileName == "Quality Controller"))
+                {
+                    return RedirectToAction("SignOut", "Session");
+                }
+                if (days <= 0)
+                {
+                    days = 7;
+                }
+                if (days > 365)
+                {
+                    days = 365;
+                }
+                ViewBag.Days = days;
+                ViewBag.PageStatus = "Mainurl";
+                var alerts = await _meetingService.GetReportEditAlerts(days);
+                return View(alerts ?? new List<ReportEditAlert>());
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return RedirectToAction("Index");
+            }
+        }
+        #endregion
+
         #region Proctor Report
         [Authorize]
         [HttpPost]
@@ -6007,6 +6190,16 @@ namespace Risebird.Web.Controllers
                     model.UserDetails = emailid;
                     if (profileName == "Admin" || profileName == "HR" || profileName == "Interviewer" || profileName == "SeniorHR" || profileName == "SupportAdmin")
                     {
+                        // Interviewer report edit window: enforced on the server for the Interviewer profile (flagged IRFs only).
+                        if (profileName == "Interviewer")
+                        {
+                            var blockedResult = await GuardInterviewerReportSave(model);
+                            if (blockedResult != null)
+                            {
+                                return blockedResult;
+                            }
+                        }
+                        model.EditSource = "ProctorReport";
 
                         if (model.AudioFile != null)
                         {

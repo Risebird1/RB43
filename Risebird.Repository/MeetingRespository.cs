@@ -1038,7 +1038,7 @@ namespace Risebird.Repository
             return null;
         }
 
-        public async Task<bool> UpdateComments(InterviewComments interviewComments)
+        public async Task<bool> UpdateComments(InterviewComments interviewComments, string performedBy = null)
         {
             try
             {
@@ -1046,8 +1046,14 @@ namespace Risebird.Repository
                 DynamicParameters parameters = SetStoredProcedureParameterForComments(interviewComments);
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
+                    // Interviewer report edit window: internal (admin comments) edits of a submitted report are audited too.
+                    var auditBefore = await GetReportAuditState(con, interviewComments.InterviewId);
                     await SqlMapper.QueryAsync<int>(con, "usp_UpdateInterviewComments", parameters,
                         commandType: CommandType.StoredProcedure);
+                    if (auditBefore != null && auditBefore.ReportSubmittedOn.HasValue)
+                    {
+                        await InsertReportEditLog(con, interviewComments.InterviewId, null, "CommentsEdit", performedBy, auditBefore, null, "Comments");
+                    }
                     return true;
                 }
             }
@@ -1333,6 +1339,8 @@ namespace Risebird.Repository
             {
                 using (SqlConnection con = new SqlConnection(connectionString))
                 {
+                    // Interviewer report edit window: state before this save, for the audit log.
+                    var auditBefore = await GetReportAuditState(con, reportDetails.InterviewId);
                     //check if the data is edited
                     InterviewComments interviewComments = new InterviewComments();
                     DynamicParameters parameters = new DynamicParameters();
@@ -1544,6 +1552,12 @@ namespace Risebird.Repository
 
                     await SqlMapper.QueryAsync<int>(con, "usp_UpdateInterviewReportComments", parameters,
                             commandType: CommandType.StoredProcedure, commandTimeout: 100);
+
+                    if (auditBefore != null)
+                    {
+                        await InsertReportEditLog(con, reportDetails.InterviewId, reportDetails.IRFId, auditBefore.HasReport ? "Edit" : "Submit",
+                            loggedInEmailId, auditBefore, reportDetails.EditReason, reportDetails.EditSource);
+                    }
 
                     if (reportDetails.MeetingStatus != 2)
                     {
@@ -7910,6 +7924,176 @@ WHERE ip.Interviewid = @interviewId AND ip.Type = 'Interview' AND u.EmailId = @i
             }
             return false;
         }
+
+        #region Interviewer report edit window
+        /// <summary>Report state captured around a save for InterviewReportEditLog.</summary>
+        public sealed class ReportAuditState
+        {
+            public int? IRFId { get; set; }
+            public bool HasReport { get; set; }
+            public DateTime? ReportSubmittedOn { get; set; }
+            public int? InterviewStatus { get; set; }
+            public int? MeetingStatus { get; set; }
+            public string InterviewerComment { get; set; }
+            public double? OverallScore { get; set; }
+        }
+
+        private const string ReportAuditStateQuery = @"
+select top 1 irf.id as IRFId,
+    cast(case when rep.ReportCount > 0 then 1 else 0 end as bit) as HasReport,
+    case when rep.ReportCount > 0 then coalesce(rep.FirstCreatedOn, rep.FirstModifiedOn, im.interviewDate) end as ReportSubmittedOn,
+    ic.InterviewStatus, ic.MeetingStatus, ic.InterviewerComment, lastRep.OverallScore
+from InterviewMeetings im
+left join IRF irf on irf.IRFId = im.IRFId
+outer apply (select count(1) as ReportCount, min(ir.CreatedOn) as FirstCreatedOn, min(ir.ModifiedOn) as FirstModifiedOn
+             from InterviewReport ir where ir.InterviewId = im.id) rep
+outer apply (select top 1 ir.OverallScore from InterviewReport ir where ir.InterviewId = im.id order by ir.id desc) lastRep
+outer apply (select top 1 c.InterviewStatus, c.MeetingStatus, c.InterviewerComment from InterviewComments c where c.InterviewId = im.id order by c.id desc) ic
+where im.id = @InterviewId";
+
+        /// <summary>Never throws: an audit failure must not fail the report save.</summary>
+        private async Task<ReportAuditState> GetReportAuditState(SqlConnection con, int interviewId)
+        {
+            try
+            {
+                return await con.QueryFirstOrDefaultAsync<ReportAuditState>(ReportAuditStateQuery, new { InterviewId = interviewId });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// Writes one InterviewReportEditLog row: old values from <paramref name="before"/>, new values read back
+        /// from the database after the save. Never throws: an audit failure must not fail the report save.
+        /// </summary>
+        private async Task InsertReportEditLog(SqlConnection con, int interviewId, int? irfId, string action, string performedBy,
+            ReportAuditState before, string editReason, string source)
+        {
+            try
+            {
+                var after = await con.QueryFirstOrDefaultAsync<ReportAuditState>(ReportAuditStateQuery, new { InterviewId = interviewId });
+                const string insertSql = @"
+insert into InterviewReportEditLog (InterviewId, IRFId, Action, PerformedBy, PerformedOn,
+    OldInterviewStatus, NewInterviewStatus, OldMeetingStatus, NewMeetingStatus,
+    OldInterviewerComment, NewInterviewerComment, OldOverallScore, NewOverallScore, EditReason, Source)
+values (@InterviewId, @IRFId, @Action, @PerformedBy, @PerformedOn,
+    @OldInterviewStatus, @NewInterviewStatus, @OldMeetingStatus, @NewMeetingStatus,
+    @OldInterviewerComment, @NewInterviewerComment, @OldOverallScore, @NewOverallScore, @EditReason, @Source)";
+                await con.ExecuteAsync(insertSql, new
+                {
+                    InterviewId = interviewId,
+                    IRFId = irfId.HasValue && irfId.Value > 0 ? irfId : (after?.IRFId ?? before?.IRFId),
+                    Action = action,
+                    PerformedBy = performedBy,
+                    PerformedOn = DateTime.Now,
+                    OldInterviewStatus = before?.HasReport == true ? before.InterviewStatus : null,
+                    NewInterviewStatus = after?.InterviewStatus,
+                    OldMeetingStatus = before?.HasReport == true ? before.MeetingStatus : null,
+                    NewMeetingStatus = after?.MeetingStatus,
+                    OldInterviewerComment = before?.HasReport == true ? before.InterviewerComment : null,
+                    NewInterviewerComment = after?.InterviewerComment,
+                    OldOverallScore = before?.HasReport == true ? before.OverallScore : null,
+                    NewOverallScore = after?.OverallScore,
+                    EditReason = string.IsNullOrWhiteSpace(editReason) ? null : editReason.Trim(),
+                    Source = string.IsNullOrWhiteSpace(source) ? "Report" : source
+                });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+        }
+
+        public async Task<ReportEditWindowInfo> GetReportEditWindowInfo(int interviewId)
+        {
+            const string query = @"
+select top 1 im.id as InterviewId, irf.id as IRFId, im.interviewDate as InterviewDate, im.interviewer as Interviewer,
+    case when irf.IsNewSkillChannel = 1 then pm.DurationSelectedMin else irf.InterviewDuration end as InterviewDuration,
+    case when rep.ReportCount > 0 then coalesce(rep.FirstCreatedOn, rep.FirstModifiedOn, im.interviewDate) end as ReportSubmittedOn,
+    irf.EnableReportEditWindow,
+    (select count(1) from InterviewReportEditLog rel where rel.InterviewId = im.id and rel.Action = 'Edit' and rel.PerformedBy = im.interviewer) as InterviewerEditCount,
+    ic.InterviewStatus as CurrentInterviewStatus, lastRep.OverallScore as CurrentOverallScore
+from InterviewMeetings im
+inner join IRF irf on irf.IRFId = im.IRFId
+left join PlanTypeChargesMaster pm on pm.CountryType = irf.JobCountry and pm.PlanTypeEnumValue = irf.Heuristicsscore and pm.CompanyType = irf.CompanyType
+outer apply (select count(1) as ReportCount, min(ir.CreatedOn) as FirstCreatedOn, min(ir.ModifiedOn) as FirstModifiedOn
+             from InterviewReport ir where ir.InterviewId = im.id) rep
+outer apply (select top 1 ir.OverallScore from InterviewReport ir where ir.InterviewId = im.id order by ir.id desc) lastRep
+outer apply (select top 1 c.InterviewStatus from InterviewComments c where c.InterviewId = im.id order by c.id desc) ic
+where im.id = @InterviewId";
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    return await con.QueryFirstOrDefaultAsync<ReportEditWindowInfo>(query, new { InterviewId = interviewId });
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return null;
+        }
+
+        public async Task<bool> AcknowledgeReportPolicy(string emailid)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var parameters = new DynamicParameters();
+                    parameters.Add("@InterviewerEmail", emailid);
+                    await SqlMapper.QueryAsync(con, "usp_AcknowledgeReportPolicy", parameters,
+                         commandType: CommandType.StoredProcedure);
+                    return true;
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return false;
+        }
+
+        public async Task<List<ReportEditAlert>> GetReportEditAlerts(int days)
+        {
+            const string query = @"
+select l.id, l.InterviewId, l.IRFId, l.Action, l.PerformedBy, l.PerformedOn,
+    l.OldInterviewStatus, l.NewInterviewStatus, l.OldMeetingStatus, l.NewMeetingStatus,
+    l.OldInterviewerComment, l.NewInterviewerComment, l.OldOverallScore, l.NewOverallScore, l.EditReason, l.Source,
+    im.interviewer as Interviewer,
+    case when ul.LastName is null then ul.FirstName else RTRIM(LTRIM(ul.FirstName)) + SPACE(1) + RTRIM(LTRIM(ul.LastName)) end as CandidateName,
+    irf.JDTiltle,
+    (select min(ir.CreatedOn) from InterviewReport ir where ir.InterviewId = l.InterviewId) as ReportSubmittedOn
+from InterviewReportEditLog l
+inner join InterviewMeetings im on im.id = l.InterviewId
+left join IRF irf on irf.IRFId = im.IRFId
+left join UserList ul on ul.EmailId = im.candidateEmail
+where l.Action in ('Edit', 'CommentsEdit')
+  and l.PerformedOn >= @FromDate
+  and (ISNULL(l.OldInterviewStatus, -1) <> ISNULL(l.NewInterviewStatus, -1)
+    or ISNULL(l.OldMeetingStatus, -1) <> ISNULL(l.NewMeetingStatus, -1)
+    or ISNULL(l.OldOverallScore, -1) <> ISNULL(l.NewOverallScore, -1)
+    or ISNULL(l.OldInterviewerComment, '') <> ISNULL(l.NewInterviewerComment, ''))
+order by l.PerformedOn desc";
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await con.QueryAsync<ReportEditAlert>(query, new { FromDate = DateTime.Now.AddDays(-days) }, commandTimeout: 100);
+                    return result.ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+            return new List<ReportEditAlert>();
+        }
+        #endregion
 
         public async Task<bool> AddTransInterviewersReliabilityScores(TransInterviewersReliabilityScoresVm model)
         {

@@ -1,0 +1,80 @@
+@model Risebird.Entities.ViewModel.InterviewReport
+@*
+    Interviewer report edit window: mandatory "Reason for Edit" for the interviewer's one allowed edit of a
+    submitted report (IRFs with EnableReportEditWindow on). Rendered by AddReport and ProctorReport only when
+    Model.RequireEditReason is true. The server re-checks the same rules against the verdict and score stored
+    in the database, so this is only an early, friendly check.
+*@
+@{
+    var minReasonLength = Risebird.Entities.ViewModel.InterviewReportEditState.MinEditReasonLength;
+    var minStrongReasonLength = Risebird.Entities.ViewModel.InterviewReportEditState.MinStrongEditReasonLength;
+}
+<div class="clearfix"></div>
+<div class="form-group" id="editReasonSection" style="margin:15px 15px 0px 15px;padding:12px 15px;border:1px solid #f0ad4e;border-radius:4px;background:#fffaf0;">
+    <strong>@Html.LabelFor(model => model.EditReason, htmlAttributes: new { @class = "placeholder-label" })</strong><span style="color:red;"> *</span>
+    <p style="font-size:12px;color:#8a5a00;margin:4px 0px 8px 0px;">
+        This report has already been submitted and only one edit is allowed. Please explain why you are changing it
+        (minimum @minReasonLength characters). Changing the verdict or moving the overall score by more than 1 point
+        needs a strong justification (minimum @minStrongReasonLength characters). Every edit is audited.
+    </p>
+    @Html.TextAreaFor(m => m.EditReason, new
+    {
+        @id = "EditReason",
+        @class = "form-control text-box scrollbar",
+        @style = "height:110px;padding:10px;width:100%",
+        @maxlength = "2000",
+        @spellcheck = "true",
+        @placeholder = "Reason for Edit (mandatory)",
+        data_old_status = Model.OldInterviewStatus,
+        data_old_score = Model.OverallScore.ToString(System.Globalization.CultureInfo.InvariantCulture),
+        data_min_length = minReasonLength,
+        data_min_strong_length = minStrongReasonLength
+    })
+    @* Posted back so the box is shown again if the save re-renders the form (e.g. a failed upload); the server never trusts it. *@
+    @Html.HiddenFor(m => m.RequireEditReason)
+    <label class="text-danger" id="editReason_Error" style="color:red;font-size:12px;">@ViewBag.ReportEditReasonError</label>
+</div>
+@if (ViewBag.ReportEditReasonError != null)
+{
+    <script>
+        $(document).ready(function () {
+            swal.fire("Report not saved", document.getElementById("editReason_Error").innerText, "error");
+        });
+    </script>
+}
+<script>
+    // Called from SubmitForm() before the report form is posted.
+    function CheckEditReason() {
+        var reasonElem = document.getElementById("EditReason");
+        if (!reasonElem) {
+            return true;
+        }
+        var reason = (reasonElem.value || "").trim();
+        var minLength = parseInt(reasonElem.getAttribute("data-min-length"), 10) || 20;
+        var minStrongLength = parseInt(reasonElem.getAttribute("data-min-strong-length"), 10) || 100;
+        var statusElem = document.getElementById("InterviewStatus");
+        var oldStatus = reasonElem.getAttribute("data-old-status") || "";
+        var verdictChanged = statusElem != null && (statusElem.value || "") !== oldStatus;
+        var scoreElem = document.getElementById("OverallScore");
+        var oldScore = parseFloat(reasonElem.getAttribute("data-old-score"));
+        var newScore = scoreElem != null ? parseFloat(scoreElem.value) : NaN;
+        var scoreChanged = !isNaN(oldScore) && !isNaN(newScore) && Math.abs(newScore - oldScore) > 1;
+        var required = (verdictChanged || scoreChanged) ? minStrongLength : minLength;
+        var errorElem = document.getElementById("editReason_Error");
+        if (reason.length < required) {
+            var message = (verdictChanged || scoreChanged)
+                ? "Changing the verdict or moving the overall score by more than 1 point needs a Reason for Edit of at least " + required + " characters (currently " + reason.length + ")."
+                : "Please enter a Reason for Edit of at least " + required + " characters (currently " + reason.length + ").";
+            if (errorElem) {
+                errorElem.innerHTML = message;
+            }
+            swal.fire(message);
+            reasonElem.focus();
+            return false;
+        }
+        if (errorElem) {
+            errorElem.innerHTML = "";
+        }
+        return true;
+    }
+</script>

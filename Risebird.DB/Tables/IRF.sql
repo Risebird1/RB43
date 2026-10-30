@@ -1034,3 +1034,18 @@ BEGIN
       AND LTRIM(RTRIM([Name])) = 'Advanced'
 END
 GO
+
+-- Interviewer report edit window (controlled launch). 1 = the interviewer may submit the feedback report
+-- only until interview end + InterviewerReport:SubmitWindowMinutes, gets one edit within
+-- InterviewerReport:EditWindowMinutes of first submitting (with a written reason), and both limits are
+-- enforced on the server. NULL / 0 = today's behaviour (button visible for InterviewerReport:ExpireTime hours).
+IF NOT EXISTS(
+    SELECT *
+    FROM sys.columns
+    WHERE Name = N'EnableReportEditWindow'
+      AND Object_ID = Object_ID(N'IRF'))
+BEGIN
+    ALTER TABLE IRF
+    Add EnableReportEditWindow bit NULL
+END
+GO
