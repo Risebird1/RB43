@@ -247,7 +247,8 @@ namespace Risebird.Web.Controllers
                 || profileName == "HR"
                 || profileName == "InterviewerManagement"
                 || profileName == "SeniorInterviewerManagement"
-                || profileName == "TechSupport";
+                || profileName == "TechSupport"
+                || profileName == "Finance Support";
         }
 
         /// <summary>HR/SeniorHR can access IRF Audit but only for IRFs they own as Channel Owner (IRF.RisebirdHr).</summary>
@@ -7180,7 +7181,7 @@ NEVER:
                     emailid = emailid.Replace("\"", "");
                     ViewBag.Profile = profileName;
                     ViewBag.ReturnBack = returnBack;
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "Quality Controller" || profileName == "SeniorInterviewerManagement")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "Quality Controller" || profileName == "Finance Support" || profileName == "SeniorInterviewerManagement")
                     {
                         if (type == "Shortselectcomment")
                         {
