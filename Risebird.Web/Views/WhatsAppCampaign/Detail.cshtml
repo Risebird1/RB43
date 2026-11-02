@@ -1,0 +1,282 @@
+@model Risebird.Entities.Data.WhatsAppCampaignModels.WhatsAppCampaignDetailVM
+@using Risebird.Entities.Data.PlivoCXModels
+@using Risebird.Entities.Data.WhatsAppCampaignModels
+@{
+    var c = Model.Campaign;
+    ViewData["Title"] = c.Name + " · WhatsApp Campaign";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var tz = Model.TimeZone;
+    var nowUtc = DateTime.UtcNow;
+    Func<DateTime?, DateTime?> local = d => d.HasValue ? TimeZoneInfo.ConvertTimeFromUtc(DateTime.SpecifyKind(d.Value, DateTimeKind.Utc), tz) : (DateTime?)null;
+
+    bool confirm = c.Purpose == WhatsAppCampaignPurpose.Confirm;
+    string convertedLabel = WhatsAppCampaignCandidateState.Label(WhatsAppCampaignCandidateState.Converted, c.Purpose);
+    int converted = Model.Count(WhatsAppCampaignCandidateState.Converted);
+    int declined = Model.Count(WhatsAppCampaignCandidateState.Declined);
+    int sent = Model.Count(WhatsAppCampaignCandidateState.Sent);
+    int pending = Model.Count(WhatsAppCampaignCandidateState.Pending);
+    int noResponse = Model.Count(WhatsAppCampaignCandidateState.NoResponse);
+    int noNumber = Model.Count(WhatsAppCampaignCandidateState.NoNumber);
+    int failed = Model.Count(WhatsAppCampaignCandidateState.Failed);
+    int total = Model.Candidates.Count;
+    Func<int, string> pct = n => total == 0 ? "0" : (n * 100.0 / total).ToString("0.##", System.Globalization.CultureInfo.InvariantCulture);
+
+    bool isRunning = c.Status == WhatsAppCampaignStatus.Running;
+    bool isPaused = c.Status == WhatsAppCampaignStatus.Paused;
+    bool isCompleted = c.Status == WhatsAppCampaignStatus.Completed;
+    string created = local(c.CreatedAt)?.ToString("dd MMM yyyy");
+    string[] palette = { "#2563eb", "#059669", "#db2777", "#7c3aed", "#d97706", "#0891b2", "#64748b" };
+
+    Func<WhatsAppCampaignCandidate, string> nextSend = cc =>
+    {
+        if (cc.State == WhatsAppCampaignCandidateState.Sent && cc.LastSentAt.HasValue)
+        {
+            if (cc.Sends >= c.MaxSends) return "no re-send left";
+            return "re-send " + local(cc.LastSentAt.Value.AddHours(c.ResendAfterHours))?.ToString("dd MMM HH:mm");
+        }
+        if (cc.State != WhatsAppCampaignCandidateState.Pending) return null;
+        if (!cc.NextSendAt.HasValue || cc.NextSendAt.Value <= nowUtc) return "due now";
+        return "due " + local(cc.NextSendAt)?.ToString("dd MMM HH:mm");
+    };
+    string sourceLine = c.IRFName + (string.IsNullOrWhiteSpace(c.ClientName) ? "" : " · " + c.ClientName);
+    string policyLine = "Sends " + c.WindowOpens.ToString(@"hh\:mm") + "–" + c.WindowCloses.ToString(@"hh\:mm") + " " + c.TimeZone
+        + " · up to " + c.MaxSends + (c.MaxSends == 1 ? " send" : " sends") + " per candidate, re-sent after " + c.ResendAfterHours + " h · " + c.BatchSize + " per pass"
+        + (c.StartsOn.HasValue || c.EndsOn.HasValue ? " · " + (c.StartsOn?.ToString("dd MMM") ?? "—") + " to " + (c.EndsOn?.ToString("dd MMM") ?? "—") : "");
+}
+@await Html.PartialAsync("_WhatsAppCampaignStyles")
+
+@* Standard portal page frame (main-panel), so the page sits beside the side menu like the rest of the app. *@
+<div class="main-panel" id="main-panel">
+<div class="pt30">
+<div class="content client">
+<div class="pcx-page">
+    <div class="pcx-wrap">
+        <div style="margin-bottom:8px;"><a class="pcx-link pcx-small" href="@Url.Action("Index", "WhatsAppCampaign")">&larr; ALL WHATSAPP CAMPAIGNS</a></div>
+
+        <div class="pcx-card"><div class="pcx-card-b">
+            @Html.AntiForgeryToken()
+            <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+                <h3 style="margin:0;font-size:22px;font-weight:700;">@c.Name</h3>
+                <span class="pcx-chip @c.Status" id="wacStatus">@c.Status</span>
+            </div>
+            <p class="pcx-sub">Template: <b>@WhatsAppCampaignPurpose.TemplateLabel(c.Purpose)</b> (event <code>@c.EventName</code>) · @sourceLine · @created · @c.CreatedBy</p>
+            <p class="pcx-sub">@policyLine</p>
+
+            <div class="pcx-actions" style="margin-top:12px;">
+                <button type="button" class="pcx-btn primary" id="wacSendNow" @(isPaused || isCompleted ? "disabled" : "") title="Send to the due pending candidates once, up to @c.BatchSize - ignores the window and dates, keeps the send limits">&#9679; Send now</button>
+                <button type="button" class="pcx-btn violet js-status" data-action="StartAutomatic" @(isRunning ? "disabled" : "") title="The scheduler sends inside the window every 5 minutes and re-sends after the gap until everyone is settled">Start automatic</button>
+                <button type="button" class="pcx-btn js-status" data-action="Pause" @(isRunning ? "" : "disabled") title="Stop sending; nothing more goes out until you start again">Pause</button>
+            </div>
+            @if (!Model.SchedulerEnabled)
+            {
+                <div class="pcx-alert warn" style="margin-top:12px;">&#9888; Automatic sending is switched off (<code>WhatsAppCampaign:SchedulerEnabled</code> is not true), so a Running campaign is only sent by <b>Send now</b>. Turn it on once the templates are live in Interakt.</div>
+            }
+            <div id="wacMsg" class="pcx-alert" style="display:none;margin-top:12px;"></div>
+
+            <div class="pcx-tiles wac">
+                <div class="pcx-tile wac-converted"><b id="tConverted">@converted</b><span>@convertedLabel</span></div>
+                <div class="pcx-tile wac-sent"><b id="tSent">@sent</b><span>Sent · waiting</span></div>
+                <div class="pcx-tile wac-pending"><b id="tPending">@pending</b><span>Pending</span></div>
+                <div class="pcx-tile wac-grey"><b id="tNoResponse">@noResponse</b><span>No response</span></div>
+                <div class="pcx-tile wac-grey"><b id="tNoNumber">@noNumber</b><span>No number</span></div>
+                <div class="pcx-tile wac-bad"><b id="tBad">@(failed + declined)</b><span>@(confirm ? "Declined / failed" : "Failed")</span></div>
+                <div class="pcx-tile"><b id="tTotal">@total</b><span>Candidates</span></div>
+            </div>
+            <div class="pcx-bar" role="img" aria-label="@(converted + " " + convertedLabel.ToLowerInvariant() + ", " + sent + " sent, " + pending + " pending, " + (noResponse + noNumber) + " no response or no number, " + (failed + declined) + " declined or failed")">
+                <span class="wac-converted" style="width:@pct(converted)%"></span><span class="wac-sent" style="width:@pct(sent)%"></span><span class="wac-pending" style="width:@pct(pending)%"></span><span class="wac-grey" style="width:@pct(noResponse + noNumber)%"></span><span class="wac-bad" style="width:@pct(failed + declined)%"></span>
+            </div>
+            <div class="pcx-key"><span><i class="wac-converted"></i>@convertedLabel</span><span><i class="wac-sent"></i>Sent</span><span><i class="wac-pending"></i>Pending</span><span><i class="wac-grey"></i>No response / no number</span><span><i class="wac-bad"></i>@(confirm ? "Declined / failed" : "Failed")</span></div>
+
+            <details class="pcx-details">
+                <summary>Test send (optional) — send this template to one team member before launching</summary>
+                <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end;margin-top:10px;">
+                    <div><label class="pcx-label" for="wacTestEmail">Team member's Risebird email</label><input class="pcx-input" id="wacTestEmail" placeholder="name@risebird.io" style="width:260px;" /></div>
+                    <button type="button" class="pcx-btn" id="wacTestSend">Send test</button>
+                </div>
+                <p class="pcx-muted pcx-small" style="margin:8px 0 0;">Goes to the WhatsApp number on that person's Risebird profile, with this campaign's client and role. Its buttons open a test page, not a real interview, and it does not count toward anyone's limit.</p>
+            </details>
+
+            <div class="pcx-card" id="policy" style="background:#fbfcfe;margin-bottom:14px;"><div class="pcx-card-b">
+                <h5 style="margin:0;font-weight:700;">Sending policy</h5>
+                <p class="pcx-muted" style="margin:3px 0 12px;">Applies to every send of this campaign from the next pass. The 3-per-IRF limit of C1 and C2 applies on top, across every route.</p>
+                <form id="wacPolicy">
+                    <div class="pcx-grid">
+                        <div><label class="pcx-label" for="pWindowOpens">Window opens</label><input class="pcx-input" type="time" id="pWindowOpens" name="windowOpens" value="@c.WindowOpens.ToString(@"hh\:mm")" required /></div>
+                        <div><label class="pcx-label" for="pWindowCloses">Window closes</label><input class="pcx-input" type="time" id="pWindowCloses" name="windowCloses" value="@c.WindowCloses.ToString(@"hh\:mm")" required /></div>
+                        <div><label class="pcx-label" for="pTimeZone">Time zone</label><input class="pcx-input" id="pTimeZone" name="timeZone" value="@c.TimeZone" list="wacZones" /></div>
+                        <div><label class="pcx-label" for="pMaxSends">Max sends / candidate</label><input class="pcx-input" type="number" min="1" max="3" id="pMaxSends" name="maxSends" value="@c.MaxSends" /></div>
+                        <div><label class="pcx-label" for="pResend">Re-send after (hours)</label><input class="pcx-input" type="number" min="4" max="168" id="pResend" name="resendAfterHours" value="@c.ResendAfterHours" /></div>
+                        <div><label class="pcx-label" for="pBatch">Batch size</label><input class="pcx-input" type="number" min="1" max="200" id="pBatch" name="batchSize" value="@c.BatchSize" aria-describedby="wacRate" /><div class="pcx-muted pcx-small" id="wacRate" style="margin-top:4px;"></div></div>
+                        <div>
+                            <span class="pcx-label">Starts / ends on</span>
+                            <div style="display:flex;gap:6px;">
+                                <input class="pcx-input" type="date" name="startsOn" value="@(c.StartsOn?.ToString("yyyy-MM-dd"))" aria-label="Starts on" />
+                                <input class="pcx-input" type="date" name="endsOn" value="@(c.EndsOn?.ToString("yyyy-MM-dd"))" aria-label="Ends on" />
+                            </div>
+                        </div>
+                    </div>
+                    <datalist id="wacZones"><option value="Asia/Kolkata"></option><option value="Asia/Dubai"></option><option value="Asia/Singapore"></option><option value="Europe/London"></option><option value="America/New_York"></option><option value="UTC"></option></datalist>
+                    <button type="submit" class="pcx-btn" style="margin-top:12px;">Save policy</button>
+                </form>
+            </div></div>
+
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:8px;">
+                <input class="pcx-input" type="search" id="wacSearch" placeholder="Search candidates…" style="max-width:360px;" aria-label="Search candidates" />
+                <span class="pcx-muted" id="wacShown">@(total == 1 ? "1 candidate" : total + " candidates")</span>
+            </div>
+            <div class="pcx-table-wrap">
+                <table class="pcx-table" id="wacTable">
+                    <thead>
+                        <tr><th>Candidate</th><th>Phone</th><th>IRF</th><th>State</th><th class="pcx-num">Sends</th><th>Last sent</th><th>Outcome</th><th>Last result</th><th></th></tr>
+                    </thead>
+                    <tbody>
+                        @if (total == 0)
+                        {
+                            <tr><td colspan="9" class="pcx-empty">No candidates in this campaign.</td></tr>
+                        }
+                        @foreach (var cc in Model.Candidates)
+                        {
+                            var name = string.IsNullOrWhiteSpace(cc.CandidateName) ? "Candidate" : cc.CandidateName.Trim();
+                            var parts = name.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+                            var initials = (parts[0].Substring(0, 1) + (parts.Length > 1 ? parts[parts.Length - 1].Substring(0, 1) : "")).ToUpperInvariant();
+                            var color = palette[Math.Abs(cc.CandidateId) % palette.Length];
+                            var next = nextSend(cc);
+                            <tr data-search="@((name + " " + cc.Phone + " " + cc.CandidateEmail + " " + cc.IRFName).ToLowerInvariant())">
+                                <td>
+                                    <div class="pcx-person">
+                                        <span class="pcx-avatar" style="background:@color;" aria-hidden="true">@initials</span>
+                                        <div>
+                                            <div class="strong">@name</div>
+                                            <div class="pcx-muted pcx-small">@cc.CandidateEmail</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td style="white-space:nowrap;">@(cc.Phone ?? "—")</td>
+                                <td>
+                                    <div>@(cc.IRFName ?? "—")</div>
+                                    <div class="pcx-muted pcx-small">@(cc.OriginalInterviewDate != null ? "meeting " + cc.OriginalInterviewDate : cc.JobTitle)</div>
+                                </td>
+                                <td><span class="pcx-chip @cc.State">@WhatsAppCampaignCandidateState.Label(cc.State, c.Purpose)</span>@if (next != null) {<div class="pcx-muted pcx-small">@next</div>}</td>
+                                <td class="pcx-num">@cc.Sends / @c.MaxSends</td>
+                                <td style="white-space:nowrap;">@(local(cc.LastSentAt)?.ToString("dd MMM HH:mm") ?? "—")</td>
+                                <td>@(cc.OutcomeNote ?? "—")</td>
+                                <td class="pcx-small" style="max-width:240px;" title="@cc.LastError">@(cc.LastResult ?? "—")</td>
+                                <td style="white-space:nowrap;">
+                                    <button type="button" class="pcx-link js-send" data-candidate="@cc.CandidateId" data-name="@name" @(isCompleted ? "disabled" : "")>Re-send</button>
+                                    <span class="pcx-muted">·</span>
+                                    <span class="pcx-menu">
+                                        <button type="button" class="pcx-link js-menu" aria-haspopup="true">Mark…</button>
+                                        <span class="pcx-menu-list" role="menu">
+                                            <button type="button" class="js-mark" data-candidate="@cc.CandidateId" data-state="Converted" role="menuitem">@convertedLabel</button>
+                                            @if (confirm)
+                                            {
+                                                <button type="button" class="js-mark" data-candidate="@cc.CandidateId" data-state="Declined" role="menuitem">Declined</button>
+                                            }
+                                            <button type="button" class="js-mark" data-candidate="@cc.CandidateId" data-state="NoResponse" role="menuitem">No response (stop)</button>
+                                            <button type="button" class="js-mark" data-candidate="@cc.CandidateId" data-state="Pending" role="menuitem">Pending (send again)</button>
+                                        </span>
+                                    </span>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div></div>
+    </div>
+</div>
+</div>
+</div>
+</div>
+
+<script>
+(function () {
+    var id = @c.Id;
+    var token = function () { return $('input[name="__RequestVerificationToken"]').val(); };
+    var base = '@Url.Content("~/WhatsAppCampaign")';
+
+    function say(msg, kind) { $('#wacMsg').removeClass('ok err warn').addClass(kind || 'ok').text(msg).show(); }
+    function post(url, data, btn, reloadAfter) {
+        var label = btn ? btn.html() : null;
+        if (btn) btn.prop('disabled', true).html('<i class="fa fa-spinner fa-spin"></i> ' + btn.text());
+        data = data || {};
+        data.__RequestVerificationToken = token();
+        return $.post(url, data).done(function (res) {
+            say(res && res.message || (res && res.ok ? 'Done.' : 'That did not work.'), res && res.ok ? 'ok' : 'err');
+            if (res && reloadAfter) setTimeout(function () { location.reload(); }, 2200);
+        }).fail(function () {
+            say('The request failed. Try again.', 'err');
+        }).always(function () {
+            if (btn && !reloadAfter) btn.prop('disabled', false).html(label);
+        });
+    }
+
+    $('#wacSendNow').on('click', function () {
+        if (!confirm('Send the WhatsApp template now to the due candidates (up to @c.BatchSize)?')) return;
+        say('Sending — about a third of a second per message…', 'warn');
+        post(base + '/' + id + '/SendNow', {}, $(this), true);
+    });
+    $('.js-status').on('click', function () {
+        post(base + '/' + id + '/' + $(this).data('action'), {}, $(this), true);
+    });
+    $('#wacTestSend').on('click', function () {
+        var email = $.trim($('#wacTestEmail').val());
+        if (!email) { say('Enter a team member\'s Risebird email for the test.', 'err'); return; }
+        post(base + '/' + id + '/TestSend', { email: email }, $(this), false);
+    });
+
+    // One pass every 5 minutes: batch × 12 per hour.
+    function showRate() {
+        var n = parseInt($('#pBatch').val(), 10) || 0;
+        $('#wacRate').text(n > 0 ? '≈ ' + (n * 12) + ' messages an hour inside the window' : '');
+    }
+    $('#pBatch').on('input', showRate);
+    showRate();
+
+    $('#wacPolicy').on('submit', function (e) {
+        e.preventDefault();
+        var data = {};
+        $(this).serializeArray().forEach(function (f) { data[f.name] = f.value; });
+        post(base + '/' + id + '/SavePolicy', data, $(this).find('button[type=submit]'), true);
+    });
+    $('#wacTable').on('click', '.js-send', function () {
+        if (!confirm('Send the WhatsApp template to ' + $(this).data('name') + ' now? Opt-out and the send limit still apply.')) return;
+        post(base + '/SendCandidate', { campaignId: id, candidateId: $(this).data('candidate') }, $(this), true);
+    });
+    $('#wacTable').on('click', '.js-menu', function (e) {
+        e.stopPropagation();
+        var m = $(this).closest('.pcx-menu');
+        $('.pcx-menu').not(m).removeClass('open');
+        m.toggleClass('open');
+    });
+    $(document).on('click', function () { $('.pcx-menu').removeClass('open'); });
+    $('#wacTable').on('click', '.js-mark', function () {
+        post(base + '/MarkCandidate', { campaignId: id, candidateId: $(this).data('candidate'), state: $(this).data('state') }, null, true);
+    });
+    $('#wacSearch').on('input', function () {
+        var q = this.value.toLowerCase(), n = 0;
+        $('#wacTable tbody tr[data-search]').each(function () {
+            var hit = !q || ($(this).attr('data-search') || '').indexOf(q) >= 0;
+            $(this).toggle(hit); if (hit) n++;
+        });
+        $('#wacShown').text(n + (n === 1 ? ' candidate' : ' candidates'));
+    });
+
+    // Live counts while the scheduler is sending.
+    @if (isRunning)
+    {
+        <text>
+    setInterval(function () {
+        $.get(base + '/' + id + '/Counts').done(function (r) {
+            if (!r || !r.ok) return;
+            $('#tConverted').text(r.converted); $('#tSent').text(r.sent); $('#tPending').text(r.pending);
+            $('#tNoResponse').text(r.noResponse); $('#tNoNumber').text(r.noNumber);
+            $('#tBad').text(r.failed + r.declined); $('#tTotal').text(r.total);
+            if (r.status !== 'Running') location.reload();
+        });
+    }, 30000);
+        </text>
+    }
+})();
+</script>

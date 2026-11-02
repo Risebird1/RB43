@@ -1,5 +1,6 @@
 ﻿@model IEnumerable<Risebird.Entities.ViewModel.MeetingVM>
 @using Risebird.Entities.Data
+@using Microsoft.AspNetCore.Http
 
 @{
     ViewData["Title"] = "Not Confirmed Candidates";
@@ -19,6 +20,11 @@
                 <div class="pull-left">
                     <h4 class="card-title"></h4>
                     <div class="mobile-view"> <h4 class="card-title">Not Confirmed Candidates</h4></div>
+                    @if (new[] { "Admin", "SupportAdmin", "SeniorHR", "HR" }.Contains(Context.Session.GetString("profileName")?.Trim().Replace("\"", "")))
+                    {
+                        <button type="button" class="btn btn-sm btn-success" style="margin-top:6px;margin-right:6px;" data-bs-toggle="modal" data-bs-target="#sendRemindersModal" title="Send the confirmation reminder by email and / or WhatsApp to candidates matching filters"><i class="fas fa-share"></i> Send reminders</button>
+                        <a href="@Url.Action("Create", "WhatsAppCampaign", new { source = "Unconfirmed" })" class="btn btn-sm btn-outline-success" style="margin-top:6px;" title="Send the confirmation reminder (C3) over WhatsApp to candidates on this list"><i class="fab fa-whatsapp"></i> WhatsApp campaign</a>
+                    }
                 </div>
 
                 @* <div class="pull-right">
@@ -444,3 +450,17 @@
     }
 
 </script>
+@if (new[] { "Admin", "SupportAdmin", "SeniorHR", "HR" }.Contains(Context.Session.GetString("profileName")?.Trim().Replace("\"", "")))
+{
+    @* Bulk send (C3 by email and / or WhatsApp) - shared modal, opened by Send reminders above. *@
+    @await Html.PartialAsync("~/Views/Shared/_BulkSendModal.cshtml", new Risebird.Entities.ViewModel.BulkSendModalVM
+    {
+        ModalId = "sendRemindersModal",
+        Title = "Send confirmation reminders",
+        DateLabel = "Interview date",
+        ButtonText = "Send reminders",
+        ConfirmText = "Send the confirmation reminder to every candidate matching these filters?",
+        Endpoint = Url.Action("SendNotConfirmedBulkReminders", "Dashboard"),
+        SkillChannelIds = Model.Select(x => x.IRFId).Where(x => !string.IsNullOrEmpty(x)).Distinct().ToList()
+    })
+}

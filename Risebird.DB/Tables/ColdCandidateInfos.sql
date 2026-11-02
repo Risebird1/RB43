@@ -52,3 +52,14 @@ BEGIN
 END
 END
 GO
+
+-- WhatsApp unsubscribe -> cold (usp_MarkCandidateColdForWhatsAppOptOut): where the cold mark came from, e.g.
+-- "WhatsApp unsubscribe button (Schedule Interview)" or "WhatsApp Stop reply", and the reason the candidate picked.
+-- NULL for a cold mark set by a person in the portal. The role is the candidate row itself (FKCandidateId ->
+-- Candidate.IRFId -> IRF): one cold row per candidate per role.
+IF COL_LENGTH('dbo.ColdCandidateInfos', 'ColdSource') IS NULL
+    ALTER TABLE dbo.ColdCandidateInfos ADD ColdSource varchar(150) NULL;
+GO
+IF COL_LENGTH('dbo.ColdCandidateInfos', 'ColdReason') IS NULL
+    ALTER TABLE dbo.ColdCandidateInfos ADD ColdReason nvarchar(300) NULL;
+GO

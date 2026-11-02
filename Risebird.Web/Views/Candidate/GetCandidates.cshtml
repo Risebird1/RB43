@@ -36,7 +36,10 @@
             IRFId = c.IRFId,
             IRFName = c.IRFName,
             ClientHRAttemptContact = c.ClientHRAttemptContact,
-            IsColdCandidate = c.IsColdCandidate
+            IsColdCandidate = c.IsColdCandidate,
+            WhatsAppOptedOut = c.WhatsAppOptedOut,
+            WhatsAppSendsUsed = c.WhatsAppSendsUsed,
+            WhatsAppLimit = (ViewBag.WhatsAppLimit as int?) ?? 3
         })));
 </script>
 
@@ -1054,9 +1057,20 @@
                                                                                     <a target="_blank" class="pcs-btn-act pcs-btn-send" href="@Url.Action("SendInvite", "Candidate", new { IRFName = ViewBag.IRFName, irfId = ViewBag.IRFId, emailId = item.EmailId, endDate = item.EndDate, communicationMedium = (int)CommunicationMedium.Email })" title="Send Invite Over Mail">
                                                                                         <i class="fa fa-send"></i>
                                                                                     </a>
-                                                                                    <a target="_blank" class="pcs-btn-act pcs-btn-wa" href="@Url.Action("SendInvite", "Candidate", new { IRFName = ViewBag.IRFName, irfId = ViewBag.IRFId, emailId = item.EmailId, endDate = item.EndDate, communicationMedium = (int)CommunicationMedium.Whatsapp })" title="Send Invite over Whatsapp">
-                                                                                        <img src="~/img/whatsapp.png" />
-                                                                                    </a>
+                                                                                    var waLimit = (ViewBag.WhatsAppLimit as int?) ?? 3;
+                                                                                    var waTip = Risebird.Web.Services.WhatsAppSendButtons.Tooltip(item.WhatsAppOptedOut, item.WhatsAppSendsUsed, waLimit);
+                                                                                    if (Risebird.Web.Services.WhatsAppSendButtons.Disabled(item.WhatsAppOptedOut, item.WhatsAppSendsUsed, waLimit))
+                                                                                    {
+                                                                                        <span class="pcs-btn-act pcs-btn-wa" aria-disabled="true" title="@waTip" style="cursor:not-allowed;opacity:.45;filter:grayscale(1);">
+                                                                                            <img src="~/img/whatsapp.png" alt="@waTip" />
+                                                                                        </span>
+                                                                                    }
+                                                                                    else
+                                                                                    {
+                                                                                        <a target="_blank" class="pcs-btn-act pcs-btn-wa" href="@Url.Action("SendInvite", "Candidate", new { IRFName = ViewBag.IRFName, irfId = ViewBag.IRFId, emailId = item.EmailId, endDate = item.EndDate, communicationMedium = (int)CommunicationMedium.Whatsapp })" title="Send Invite over Whatsapp · @waTip">
+                                                                                            <img src="~/img/whatsapp.png" />
+                                                                                        </a>
+                                                                                    }
                                                                                 }
                                                                             }
                                                                             else
@@ -1194,9 +1208,20 @@
                                                                         <a target="_blank" class="pcs-btn-act pcs-btn-send" href="@Url.Action("SendInvite", "Candidate", new { IRFName = ViewBag.IRFName, irfId = ViewBag.IRFId, emailId = item.EmailId, endDate = item.EndDate, communicationMedium = (int)CommunicationMedium.Email })" title="Send Invite Over Mail">
                                                                             <i class="fa fa-send"></i>
                                                                         </a>
-                                                                        <a target="_blank" class="pcs-btn-act pcs-btn-wa" href="@Url.Action("SendInvite", "Candidate", new { IRFName = ViewBag.IRFName, irfId = ViewBag.IRFId, emailId = item.EmailId, endDate = item.EndDate, communicationMedium = (int)CommunicationMedium.Whatsapp })" title="Send Invite over Whatsapp">
-                                                                            <img src="~/img/whatsapp.png" />
-                                                                        </a>
+                                                                        var pubWaLimit = (ViewBag.WhatsAppLimit as int?) ?? 3;
+                                                                        var pubWaTip = Risebird.Web.Services.WhatsAppSendButtons.Tooltip(item.WhatsAppOptedOut, item.WhatsAppSendsUsed, pubWaLimit);
+                                                                        if (Risebird.Web.Services.WhatsAppSendButtons.Disabled(item.WhatsAppOptedOut, item.WhatsAppSendsUsed, pubWaLimit))
+                                                                        {
+                                                                            <span class="pcs-btn-act pcs-btn-wa" aria-disabled="true" title="@pubWaTip" style="cursor:not-allowed;opacity:.45;filter:grayscale(1);">
+                                                                                <img src="~/img/whatsapp.png" alt="@pubWaTip" />
+                                                                            </span>
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            <a target="_blank" class="pcs-btn-act pcs-btn-wa" href="@Url.Action("SendInvite", "Candidate", new { IRFName = ViewBag.IRFName, irfId = ViewBag.IRFId, emailId = item.EmailId, endDate = item.EndDate, communicationMedium = (int)CommunicationMedium.Whatsapp })" title="Send Invite over Whatsapp · @pubWaTip">
+                                                                                <img src="~/img/whatsapp.png" />
+                                                                            </a>
+                                                                        }
                                                                     }
 
                                                                    

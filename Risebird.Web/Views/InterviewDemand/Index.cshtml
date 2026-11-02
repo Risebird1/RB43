@@ -130,7 +130,7 @@
 
     </script>
 
-    <script src="~/js/drive-weekend-demand.js?v=20260811d"></script>
+    <script src="~/js/drive-weekend-demand.js?v=20261030a"></script>
 
     <script type="text/javascript">
 
@@ -160,9 +160,9 @@
 
             }).then(function (result) {
 
-                if (result.value === 'Success') {
+                if (typeof result.value === 'string' && result.value.indexOf('Success') === 0) {
 
-                    swal.fire('Sent!', 'Mails sent successfully.', 'success');
+                    swal.fire('Sent!', result.value.replace(/^Success:?\s*/, '') || 'Mails sent successfully.', 'success');
 
                 } else if (result.value) {
 

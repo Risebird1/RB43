@@ -8276,6 +8276,47 @@ NEVER:
             }
         }
 
+        /// <summary>
+        /// Not Confirmed page bulk send: the confirmation reminder email and / or C3 WhatsApp to every matching
+        /// candidate (interview date in the range; skill channels: none = all), at most 200.
+        /// </summary>
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> SendNotConfirmedBulkReminders(DateTime? startDate, DateTime? endDate, string[] rfids, string[] communicationMethods)
+        {
+            try
+            {
+                var email = HttpContext.Session.GetString("email")?.Trim().Replace("\"", "");
+                var profileName = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "");
+                if (string.IsNullOrEmpty(email) || !new[] { "Admin", "SupportAdmin", "SeniorHR", "HR" }.Contains(profileName))
+                    return Json(new { success = false, message = "You do not have access to send reminders." });
+                if (startDate == null || endDate == null || startDate > endDate) return Json(new { success = false, message = "Pick a valid date range." });
+                bool sendEmail = communicationMethods != null && communicationMethods.Contains("email");
+                bool sendWhatsApp = communicationMethods != null && communicationMethods.Contains("whatsapp");
+                if (!sendEmail && !sendWhatsApp) return Json(new { success = false, message = "Tick Email, WhatsApp or both." });
+
+                var end = endDate.Value.Date.AddDays(1);
+                // On this list imid is the InterviewMeetings id.
+                var meetingIds = ((await _dashboardService.GetCandidatesWhoHaventConfirmed()) ?? Enumerable.Empty<MeetingVM>())
+                    .Where(m => m.interviewDate >= startDate.Value.Date && m.interviewDate < end)
+                    .Where(m => rfids == null || rfids.Length == 0 || rfids.Contains(m.IRFId))
+                    .Select(m => m.imid).Where(id => id > 0).Distinct().ToList();
+
+                if (meetingIds.Count == 0) return Json(new { success = false, message = "No candidates match these filters." });
+                if (meetingIds.Count > 200)
+                    return Json(new { success = false, message = meetingIds.Count + " candidates match. Narrow the dates or skill channels to 200 or fewer - nothing was sent." });
+
+                var result = await _meetingService.SendCandidateConfirmationReminders(meetingIds, sendEmail, sendWhatsApp, email);
+                if (result.Found == 0) return Json(new { success = false, message = "None of these interviews is still awaiting confirmation." });
+                return Json(new { success = true, message = result.Summary(sendEmail, sendWhatsApp) });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, message = "An error occurred while sending reminders." });
+            }
+        }
+
         [Authorize]
         [HttpGet]
         public async Task<IActionResult> UnconfirmedCandidates()

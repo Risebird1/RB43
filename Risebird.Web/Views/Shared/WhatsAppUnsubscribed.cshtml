@@ -1,6 +1,10 @@
 @{
     // Public confirmation page for the WhatsApp unsubscribe buttons (candidate and interviewer). No login, no menus.
+    // The unsubscribe is already saved when this page shows; the reason form below is optional.
     Layout = null;
+    var reasons = ViewBag.Reasons as string[];
+    var fields = ViewBag.ReasonFields as Dictionary<string, string>;
+    string reasonAction = ViewBag.ReasonAction as string;
 }
 <!DOCTYPE html>
 <html lang="en">
@@ -14,6 +18,14 @@
         .card { max-width: 480px; margin: 12vh auto 0; padding: 32px 28px; background: #fff; border-radius: 10px; box-shadow: 0 2px 12px rgba(0, 0, 0, .08); text-align: center; }
         .card h1 { font-size: 20px; margin: 0 0 12px; }
         .card p { font-size: 15px; line-height: 1.5; margin: 0; }
+        .reason { margin-top: 22px; padding-top: 18px; border-top: 1px solid #eceff3; text-align: left; }
+        .reason legend { font-size: 14px; font-weight: 600; margin-bottom: 10px; padding: 0; }
+        .reason fieldset { border: 0; margin: 0; padding: 0; }
+        .reason label { display: block; font-size: 14px; padding: 7px 0; cursor: pointer; }
+        .reason input[type=radio] { margin-right: 8px; }
+        .reason input[type=text] { width: 100%; box-sizing: border-box; margin-top: 4px; padding: 8px 10px; border: 1px solid #cfd8e3; border-radius: 6px; font-size: 14px; }
+        .reason button { margin-top: 14px; width: 100%; padding: 10px; border: 0; border-radius: 6px; background: #1565c0; color: #fff; font-size: 14px; font-weight: 600; cursor: pointer; }
+        .reason .skip { display: block; margin-top: 8px; font-size: 12px; color: #888; text-align: center; }
         .brand { margin-top: 24px; font-size: 13px; color: #888; }
         @@media (max-width: 520px) { .card { margin: 8vh 16px 0; } }
     </style>
@@ -22,6 +34,26 @@
     <div class="card">
         <h1>WhatsApp messages</h1>
         <p>@ViewBag.Message</p>
+        @if (reasons != null && fields != null && !string.IsNullOrEmpty(reasonAction))
+        {
+            <form class="reason" method="post" action="@reasonAction">
+                @Html.AntiForgeryToken()
+                @foreach (var f in fields)
+                {
+                    <input type="hidden" name="@f.Key" value="@f.Value" />
+                }
+                <fieldset>
+                    <legend>Optional: tell us why</legend>
+                    @foreach (var r in reasons)
+                    {
+                        <label><input type="radio" name="reason" value="@r" required /> @r</label>
+                    }
+                    <input type="text" name="otherReason" maxlength="280" placeholder="If other, tell us more (optional)" aria-label="Other reason" />
+                </fieldset>
+                <button type="submit">Send</button>
+                <span class="skip">You can also just close this page - you are already unsubscribed.</span>
+            </form>
+        }
         <div class="brand">Risebird</div>
     </div>
 </body>
