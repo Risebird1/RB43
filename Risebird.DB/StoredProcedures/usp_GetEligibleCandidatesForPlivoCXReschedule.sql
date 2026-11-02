@@ -16,6 +16,8 @@
 --       (confirmationStatus <> '2' covers pending AND confirmed).
 --   6b. No prior Plivo reschedule call already successfully posted a future slot
 --       (BookingApiSuccess = 1 AND BookedInterviewDateTime > now).
+--   6c. No "Status Pending" meeting: confirmationStatus = '1', interview time
+--       passed, latest MeetingStatus = 2 (or NULL).
 --   7. Fewer than 2 completed reschedule calls (CallPurpose = 'reschedule') in
 --      PlivoCXCallLogs, unless disposition is NULL (never conclusively reached)
 --   8. Hard daily cap: no more than 4 reschedule calls (any status) made today
@@ -181,6 +183,27 @@ BEGIN
               AND  pcl2.CallPurpose             = 'reschedule'
               AND  pcl2.BookingApiSuccess        = 1
               AND  pcl2.BookedInterviewDateTime  > GETDATE()
+        )
+
+        -- 6c. No "Status Pending" meeting: confirmed (confirmationStatus = '1'), interview
+        --     time already passed, and the latest MeetingStatus is still 2 (or not yet
+        --     entered). The outcome is unknown, so the candidate must not be called.
+        --     Same definition as fn_CandidateLatestStatusForApi.
+        AND NOT EXISTS (
+            SELECT 1
+            FROM   InterviewMeetings im
+            OUTER APPLY (
+                SELECT TOP (1) ic0.MeetingStatus
+                FROM dbo.InterviewComments ic0
+                WHERE ic0.InterviewId = im.id
+                ORDER BY ic0.id DESC
+            ) ic
+            WHERE  im.candidateEmail       = u.EmailId
+              AND  im.IRFId               = irf.IRFId
+              AND  ISNULL(im.IsDeleted, 0) = 0
+              AND  im.confirmationStatus  = '1'
+              AND  im.interviewDate       <= @NowIST
+              AND  (ic.MeetingStatus = 2 OR ic.MeetingStatus IS NULL)
         )
 
         -- 7-10 are pacing caps, skipped when a campaign dials (@BypassCaps = 1).
