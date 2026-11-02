@@ -1,13 +1,3 @@
--- The InterviewerChurn branch reads the WhatsApp churn columns (Tables/InterviewerProfile.sql). They are added
--- here too, so this script never fails after the DROP below whatever order the scripts run in.
-IF COL_LENGTH('dbo.InterviewerProfile', 'ChurnSource') IS NULL
-    ALTER TABLE dbo.InterviewerProfile ADD ChurnSource varchar(150) NULL;
-IF COL_LENGTH('dbo.InterviewerProfile', 'ChurnReason') IS NULL
-    ALTER TABLE dbo.InterviewerProfile ADD ChurnReason nvarchar(300) NULL;
-IF COL_LENGTH('dbo.InterviewerProfile', 'ChurnDate') IS NULL
-    ALTER TABLE dbo.InterviewerProfile ADD ChurnDate datetime NULL;
-GO
-
 IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = OBJECT_ID('usp_FetchRibbonDetailsValues'))
 BEGIN
     DROP PROCEDURE dbo.usp_FetchRibbonDetailsValues
@@ -157,11 +147,8 @@ Select @Profile=pr.Name from UserList ul join Profile pr on pr.id=ul.idProfile w
 	begin
 		select distinct ipr.Id, ipr.UserId, ul.EmailId as InterviewerEmailId, ul.MobileNumber as InterviewerMobileNumber, 
 		(ul.FirstName +' '+ ul.LastName) as InterviewerName, ul.WhatsappNumber as InterviewerWhatsappNumber, ipr.ResumeLink as InterviewerResume, 
-		ipr.EmploymentComment, ipr.CompanyName, ipr.Isavailable, ipr.AvailabilityResponseDate, ipr.IsEmployed,
-		ipr.ChurnSource, ipr.ChurnReason, ipr.ChurnDate from InterviewerProfile ipr join UserList ul on ul.id = ipr.UserId
-		-- Need clarity / Drop my profile, and interviewers who unsubscribed from WhatsApp (ChurnSource).
-		where ipr.Isavailable in (3,4) or ipr.ChurnSource is not null
-		order by isnull(ipr.ChurnDate, ipr.AvailabilityResponseDate) desc--and ul.IsActive = 1
+		ipr.EmploymentComment, ipr.CompanyName, ipr.Isavailable, ipr.AvailabilityResponseDate, ipr.IsEmployed, ipr.ChurnSource, ipr.ChurnReason, ipr.ChurnDate from InterviewerProfile ipr join UserList ul on ul.id = ipr.UserId
+		where ipr.Isavailable in (3,4) or ipr.ChurnSource is not null order by ipr.AvailabilityResponseDate desc, ipr.ChurnDate desc--and ul.IsActive = 1
 
 	end
 	else If(@actionstatus ='ZoomLink')

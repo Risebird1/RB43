@@ -1,11 +1,5 @@
 /****** Object:  StoredProcedure [dbo].[usp_GetNotUpdatedMeetingsCount]    Script Date: 15-01-2021 5.08.54 PM ******/
 
--- The churn count reads InterviewerProfile.ChurnSource (Tables/InterviewerProfile.sql). It is added here too, so
--- this script never fails after the DROP below whatever order the scripts run in.
-IF COL_LENGTH('dbo.InterviewerProfile', 'ChurnSource') IS NULL
-    ALTER TABLE dbo.InterviewerProfile ADD ChurnSource varchar(150) NULL;
-GO
-
 IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = OBJECT_ID('usp_GetNotUpdatedMeetingsCount'))
 BEGIN
     DROP PROCEDURE dbo.usp_GetNotUpdatedMeetingsCount

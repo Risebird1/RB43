@@ -12,14 +12,6 @@
 -- mark came from, e.g. "WhatsApp unsubscribe button (Schedule Interview)"; ColdReason is filled later from the
 -- unsubscribe page (WhatsappRepository.UpdateColdReasonAsync). The role is the candidate row (FKCandidateId).
 -- =============================================
--- Needs ColdCandidateInfos.ColdSource / ColdReason (Tables/ColdCandidateInfos.sql); added here too so the order
--- the scripts run in does not matter.
-IF COL_LENGTH('dbo.ColdCandidateInfos', 'ColdSource') IS NULL
-    ALTER TABLE dbo.ColdCandidateInfos ADD ColdSource varchar(150) NULL;
-IF COL_LENGTH('dbo.ColdCandidateInfos', 'ColdReason') IS NULL
-    ALTER TABLE dbo.ColdCandidateInfos ADD ColdReason nvarchar(300) NULL;
-GO
-
 IF EXISTS (SELECT * FROM dbo.sysobjects WHERE id = OBJECT_ID('usp_MarkCandidateColdForWhatsAppOptOut'))
 BEGIN
     DROP PROCEDURE dbo.usp_MarkCandidateColdForWhatsAppOptOut
