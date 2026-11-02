@@ -160,7 +160,7 @@ namespace Risebird.Web.Controllers
                     var emailId = HttpContext.Session.GetString("email")?.Trim();
                     emailId = emailId.Replace("\"", "");
                     ViewBag.emailid = emailId;
-                    if (profileName == "Admin" || profileName == "HR" || profileName == "Finance" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "Quality Controller")
+                    if (profileName == "Admin" || profileName == "HR" || profileName == "Finance" || profileName == "Finance Support" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "Quality Controller")
                     {
                         ViewBag.profile = profileName;
                         if (TempData["SuccessErrorMessageInterview"] != null)
@@ -8767,7 +8767,7 @@ namespace Risebird.Web.Controllers
                 }
                 var authorized = interviewId.HasValue
                     ? CompletedInterviewsViewMode.IsEvidenceAuthorizedProfile(profileName)
-                    : profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "Quality Controller" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement" || profileName == "Finance";
+                    : profileName == "Admin" || profileName == "HR" || profileName == "SeniorHR" || profileName == "SupportAdmin" || profileName == "Quality Controller" || profileName == "InterviewerManagement" || profileName == "SeniorInterviewerManagement" || profileName == "Finance" || profileName == "Finance Support";
                 if (authorized)
                 {
                     if (string.IsNullOrWhiteSpace(actionstatus))

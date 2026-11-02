@@ -403,7 +403,7 @@ namespace Risebird.Web.Controllers
                 profileName = profileName.Replace("\"", "");
                 var emailid = HttpContext.Session.GetString("email")?.Trim();
                 emailid = emailid.Replace("\"", "");
-                if (profileName == "Admin" || profileName == "Finance")
+                if (profileName == "Admin" || profileName == "Finance" || profileName == "Finance Support")
                 {
                     var model = await _meetingService.FetchFNDetails(emailid);
                     var totalAmount = model.Sum(x => x.Points);
@@ -1277,7 +1277,7 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "Finance")
+                    if (profileName == "Admin" || profileName == "Finance" || profileName == "Finance Support")
                     {
                         var verificationdate = new DateTime(2023, 05, 01);
                         var verificationenddate = new DateTime(2024, 10, 01);
@@ -1478,7 +1478,7 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "Finance")
+                    if (profileName == "Admin" || profileName == "Finance" || profileName == "Finance Support")
                     {
                         var verificationdate = new DateTime(2023, 05, 01);
                         var verificationenddate = new DateTime(2024, 10, 01);
@@ -1676,7 +1676,7 @@ namespace Risebird.Web.Controllers
                 profileName = profileName.Replace("\"", "");
                 var emailid = HttpContext.Session.GetString("email")?.Trim();
                 emailid = emailid.Replace("\"", "");
-                if (profileName == "Admin" || profileName == "Finance")
+                if (profileName == "Admin" || profileName == "Finance" || profileName == "Finance Support")
                 {
                     var model = (await _meetingService.FetchFNPaymentHistory()) ?? new List<RBInterviewDetails>();
                     model = model.OrderByDescending(x => x.Date).ToList();
@@ -1749,7 +1749,7 @@ namespace Risebird.Web.Controllers
                 profileName = profileName.Replace("\"", "");
                 var emailid = HttpContext.Session.GetString("email")?.Trim();
                 emailid = emailid.Replace("\"", "");
-                if (profileName == "Admin" || profileName == "Finance")
+                if (profileName == "Admin" || profileName == "Finance" || profileName == "Finance Support")
                 {
                     if (filter != null)
                     {
@@ -1810,7 +1810,7 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "Finance")
+                    if (profileName == "Admin" || profileName == "Finance" || profileName == "Finance Support")
                     {
                         var model = await _meetingService.FetchFNPaymentHistory();
                         //var AssessmentsGroups = _interviewerService.FetchAssessmentGroups();
@@ -1951,7 +1951,7 @@ namespace Risebird.Web.Controllers
             {
                 var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                 profileName = profileName.Replace("\"", "");
-                if (profileName == "Admin" || profileName == "Finance")
+                if (profileName == "Admin" || profileName == "Finance" || profileName == "Finance Support")
                 {
                     if (tab != "lapsed")
                     {
@@ -2005,7 +2005,7 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "Finance")
+                    if (profileName == "Admin" || profileName == "Finance" || profileName == "Finance Support")
                     {
                         var model = await _kycPayoutLapseService.GetTrackingListAsync() ?? new List<KycPayoutLapseTrackingRow>();
 
@@ -2094,7 +2094,7 @@ namespace Risebird.Web.Controllers
                 profileName = profileName.Replace("\"", "");
                 var emailid = HttpContext.Session.GetString("email")?.Trim();
                 emailid = emailid.Replace("\"", "");
-                if (profileName == "Admin" || profileName == "Finance")
+                if (profileName == "Admin" || profileName == "Finance" || profileName == "Finance Support")
                 {
                     var model = new List<InvoiceDetailsVM>();
                     string Startdate = string.Empty;
@@ -2162,7 +2162,7 @@ namespace Risebird.Web.Controllers
                 profileName = profileName.Replace("\"", "");
                 var emailid = HttpContext.Session.GetString("email")?.Trim();
                 emailid = emailid.Replace("\"", "");
-                if (profileName == "Admin" || profileName == "Finance")
+                if (profileName == "Admin" || profileName == "Finance" || profileName == "Finance Support")
                 {
                     var currentMonth = DateTime.Now.Month;
                     var currentYear = DateTime.Now.Year;
@@ -2243,7 +2243,7 @@ namespace Risebird.Web.Controllers
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
             {
                 var profileName = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "");
-                if (profileName == "Admin" || profileName == "Finance")
+                if (profileName == "Admin" || profileName == "Finance" || profileName == "Finance Support")
                 {
                     var clients = _projectService.GetClients()
                         .Where(x => !string.IsNullOrEmpty(x.Name))
@@ -2346,7 +2346,7 @@ namespace Risebird.Web.Controllers
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
             {
                 var profileName = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "");
-                if (profileName == "Admin" || profileName == "Finance")
+                if (profileName == "Admin" || profileName == "Finance" || profileName == "Finance Support")
                 {
                     var invoice = await _meetingService.GetGeneratedInvoiceById(invoiceId);
                     if (invoice == null)
@@ -2374,7 +2374,7 @@ namespace Risebird.Web.Controllers
             if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
             {
                 var profileName = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "");
-                if (profileName == "Admin" || profileName == "Finance")
+                if (profileName == "Admin" || profileName == "Finance" || profileName == "Finance Support")
                 {
                     var invoice = await _meetingService.GetGeneratedInvoiceById(invoiceId);
                     if (invoice == null)
@@ -2563,7 +2563,7 @@ namespace Risebird.Web.Controllers
             {
                 var profileName = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "");
                 var emailid     = HttpContext.Session.GetString("email")?.Trim().Replace("\"", "");
-                if (profileName == "Admin" || profileName == "Finance")
+                if (profileName == "Admin" || profileName == "Finance" || profileName == "Finance Support")
                 {
                     model.CreatedBy = emailid;
                     if (!string.IsNullOrWhiteSpace(LineItemsJson))
@@ -2630,7 +2630,7 @@ namespace Risebird.Web.Controllers
                 profileName = profileName.Replace("\"", "");
                 var emailid = HttpContext.Session.GetString("email")?.Trim();
                 emailid = emailid.Replace("\"", "");
-                if (profileName == "Admin" || profileName == "Finance")
+                if (profileName == "Admin" || profileName == "Finance" || profileName == "Finance Support")
                 {
                     // Normalise — only three valid values
                     if (tab != "unpaid" && tab != "paid") tab = "monthly";
@@ -2771,7 +2771,7 @@ namespace Risebird.Web.Controllers
             {
                 var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                 profileName = profileName.Replace("\"", "");
-                if (profileName == "Admin" || profileName == "Finance")
+                if (profileName == "Admin" || profileName == "Finance" || profileName == "Finance Support")
                 {
                     if (filter != null)
                     {
@@ -2910,7 +2910,7 @@ namespace Risebird.Web.Controllers
             {
                 var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                 profileName = profileName.Replace("\"", "");
-                if (profileName == "Admin" || profileName == "Finance")
+                if (profileName == "Admin" || profileName == "Finance" || profileName == "Finance Support")
                 {
                     var model = await _meetingService.FetchCustomerDetails();
                     foreach (var item in model)
@@ -3125,7 +3125,7 @@ namespace Risebird.Web.Controllers
                 profileName = profileName.Replace("\"", "");
                 var emailid = HttpContext.Session.GetString("email")?.Trim();
                 emailid = emailid.Replace("\"", "");
-                if (profileName == "Admin" || profileName == "Finance")
+                if (profileName == "Admin" || profileName == "Finance" || profileName == "Finance Support")
                 {
                     //Start:Year list
                     List<string> _listyear = new List<string>();
@@ -3288,7 +3288,7 @@ namespace Risebird.Web.Controllers
                     profileName = profileName.Replace("\"", "");
                     var emailid = HttpContext.Session.GetString("email")?.Trim();
                     emailid = emailid.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "Finance")
+                    if (profileName == "Admin" || profileName == "Finance" || profileName == "Finance Support")
                     {
                         int curyear = Convert.ToInt32(year);
                         DateTime stdate = new DateTime(curyear, month, 1);
@@ -3361,7 +3361,7 @@ namespace Risebird.Web.Controllers
                 profileName = profileName.Replace("\"", "");
                 var emailid = HttpContext.Session.GetString("email")?.Trim();
                 emailid = emailid.Replace("\"", "");
-                if (profileName == "Admin" || profileName == "Finance")
+                if (profileName == "Admin" || profileName == "Finance" || profileName == "Finance Support")
                 {
                     var model = new List<FnRevenueVM>();
                     var billingType = await _clientService.GetClientBillingType(id);
@@ -3455,7 +3455,7 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "Finance")
+                    if (profileName == "Admin" || profileName == "Finance" || profileName == "Finance Support")
                     {
                         int curyear = Convert.ToInt32(year);
                         DateTime stdate = new DateTime(curyear, month, 1);

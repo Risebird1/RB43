@@ -38,7 +38,7 @@ namespace Risebird.Repository
 
         private static readonly HashSet<string> InternalWideAccessProfiles = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
         {
-            "Admin", "Finance", "SupportAdmin", "SeniorInterviewerManagement"
+            "Admin", "Finance", "Finance Support", "SupportAdmin", "SeniorInterviewerManagement"
         };
 
         private static readonly HashSet<string> SqlFallbackProfiles = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
