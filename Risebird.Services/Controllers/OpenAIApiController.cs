@@ -89,6 +89,9 @@ namespace Risebird.Services.Controllers
                     if (runResult == null || string.IsNullOrWhiteSpace(responseId))
                         return StatusCode(500, "AI interviewer returned an empty response.");
 
+                    List<string> responseReplies;
+                    (responseReplies, responseId) = await GetSpokenTurnAsync(runResult, responseId, input.SessionId, primaryPromptId, isOpening: true);
+
                     await _aiInterviewerRepository.CreateSession(new InterviewSession
                     {
                         SessionId = input.SessionId,
@@ -97,7 +100,6 @@ namespace Risebird.Services.Controllers
                         CandidateEmail = ""
                     });
 
-                    var responseReplies = await SanitizeSpokenRepliesAsync(ExtractRunResultReplies(runResult), input.SessionId);
                     if (responseReplies != null && responseReplies.Count > 0)
                         await _aiInterviewerRepository.LogTranscript(input.SessionId, "assistant", responseReplies.FirstOrDefault());
 
@@ -155,6 +157,9 @@ namespace Risebird.Services.Controllers
                 if (runResult == null || string.IsNullOrWhiteSpace(responseId))
                     return StatusCode(500, "AI interviewer returned an empty response.");
 
+                List<string> responseReplies;
+                (responseReplies, responseId) = await GetSpokenTurnAsync(runResult, responseId, input.SessionId, primaryPromptId, isOpening: false);
+
                 await _aiInterviewerRepository.CreateSession(new InterviewSession
                 {
                     SessionId = input.SessionId,
@@ -163,7 +168,6 @@ namespace Risebird.Services.Controllers
                     CandidateEmail = ""
                 });
 
-                var responseReplies = await SanitizeSpokenRepliesAsync(ExtractRunResultReplies(runResult), input.SessionId);
                 if (responseReplies != null && responseReplies.Count > 0)
                     await _aiInterviewerRepository.LogTranscript(input.SessionId, "assistant", responseReplies.FirstOrDefault());
 
@@ -209,6 +213,9 @@ namespace Risebird.Services.Controllers
                 if (runResult == null || string.IsNullOrWhiteSpace(responseId))
                     return StatusCode(500, "AI interviewer returned an empty response.");
 
+                List<string> responseReplies;
+                (responseReplies, responseId) = await GetSpokenTurnAsync(runResult, responseId, input.SessionId, primaryPromptId, isOpening: false);
+
                 await _aiInterviewerRepository.CreateSession(new InterviewSession
                 {
                     SessionId = input.SessionId,
@@ -217,7 +224,6 @@ namespace Risebird.Services.Controllers
                     CandidateEmail = ""
                 });
 
-                var responseReplies = await SanitizeSpokenRepliesAsync(ExtractRunResultReplies(runResult), input.SessionId);
                 if (responseReplies != null && responseReplies.Count > 0)
                     await _aiInterviewerRepository.LogTranscript(input.SessionId, "assistant", responseReplies.FirstOrDefault());
 
@@ -599,6 +605,46 @@ namespace Risebird.Services.Controllers
             }
 
             return sanitized;
+        }
+
+        private const string OpeningTurnNudge =
+            "The candidate has joined and the interview has started. Greet the candidate and ask your first question now.";
+        private const string NextQuestionNudge =
+            "Continue the interview: ask the candidate your next question now.";
+
+        /// <summary>
+        /// The interviewer's turn as the candidate should hear it. A prompt sometimes answers with a
+        /// turn that gives the candidate nothing to answer - "The interview has not started yet." for
+        /// the opening, or <c>{"skipped": true}</c> when the candidate asks to skip - and the candidate
+        /// is left staring at it. Such a turn is not shown: the prompt is asked once, on the same
+        /// conversation, for the question, and that turn is used instead.
+        /// </summary>
+        private async Task<(List<string> Replies, string ResponseId)> GetSpokenTurnAsync(
+            RunResult runResult, string responseId, Guid sessionId, string primaryPromptId, bool isOpening)
+        {
+            var replies = await SanitizeSpokenRepliesAsync(ExtractRunResultReplies(runResult), sessionId);
+            var firstReply = replies?.FirstOrDefault();
+            if (!AIInterviewCompletionDetector.NeedsNextQuestion(firstReply))
+                return (replies, responseId);
+
+            await _applicationErrorLogger.LogMessage(
+                LogLevelInfo.Warning,
+                $"AI interview session {sessionId}: the interviewer's {(isOpening ? "opening " : "")}turn asked the " +
+                $"candidate nothing (\"{firstReply}\"); asking the prompt again for the question.");
+
+            var (retryResult, retryId) = await _assistantServiceHelper.GenerateAIInterviewerMessage(
+                isOpening ? OpeningTurnNudge : NextQuestionNudge, responseId, primaryPromptId);
+            var retryReplies = retryResult == null || string.IsNullOrWhiteSpace(retryId)
+                ? null
+                : await SanitizeSpokenRepliesAsync(ExtractRunResultReplies(retryResult), sessionId);
+
+            if (retryReplies != null && retryReplies.Count > 0)
+                return (retryReplies, retryId);
+
+            // An empty turn reads to the interview page as the interview ending, so keep it talking.
+            return (replies != null && replies.Count > 0
+                ? replies
+                : new List<string> { AIInterviewReplySanitizer.FallbackReply }, responseId);
         }
 
         private AIInterviewEvaluation TryParseEvaluation(string raw)

@@ -4052,6 +4052,11 @@ namespace Risebird.Web.Controllers
         {
             if (string.IsNullOrWhiteSpace(input)) return "";
 
+            // Turns saved before the API unwrapped JSON replies ({"question":"...","question_number":2})
+            // would otherwise be shown and spoken raw on a reload. One with nothing to speak is kept as is.
+            var spoken = AIInterviewReplySanitizer.UnwrapSpokenJson(input);
+            if (!string.IsNullOrWhiteSpace(spoken)) input = spoken;
+
             return input
                 .Replace(AdaptiveInterviewCompletionMarker, "", StringComparison.OrdinalIgnoreCase) // Strip the internal completion marker so it is never shown/spoken to the candidate
                 .Replace("#", "")        // Remove Markdown headers
