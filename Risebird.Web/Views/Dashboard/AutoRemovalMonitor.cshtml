@@ -2189,9 +2189,9 @@
         // ---- High-Risk Interviewers overview (additive; does not alter channel-tab behavior) ----
         var ovListUrl = '@Url.Action("InterviewerRiskOverview", "Dashboard")';
         // Exposure link to the Interviewer QC View coaching brief, only for profiles that can open that page.
-        var ovExposureUrl = '@(Array.IndexOf(new[] { "Admin", "SupportAdmin", "SeniorHR", "SeniorInterviewerManagement", "InterviewerManagement", "Quality Controller" }, (ViewBag.Profile as string ?? "").Trim()) >= 0 ? Url.Action("Interviewers", "QCActivity") : "")';
+        var ovExposureUrl = '@(Array.IndexOf(new[] { "Admin", "SupportAdmin", "Finance Support", "SeniorHR", "SeniorInterviewerManagement", "InterviewerManagement", "Quality Controller" }, (ViewBag.Profile as string ?? "").Trim()) >= 0 ? Url.Action("Interviewers", "QCActivity") : "")';
         // Review queue link, only for profiles that can open QC Activity (same list as QCActivityController.CanOpen).
-        var ovReviewQueueUrl = '@(Array.IndexOf(new[] { "Admin", "SupportAdmin", "SeniorHR", "SeniorInterviewerManagement", "InterviewerManagement", "Quality Controller" }, (ViewBag.Profile as string ?? "").Trim()) >= 0 ? Url.Action("ReviewRequests", "QCActivity") : "")';
+        var ovReviewQueueUrl = '@(Array.IndexOf(new[] { "Admin", "SupportAdmin", "Finance Support", "SeniorHR", "SeniorInterviewerManagement", "InterviewerManagement", "Quality Controller" }, (ViewBag.Profile as string ?? "").Trim()) >= 0 ? Url.Action("ReviewRequests", "QCActivity") : "")';
         var ovChannelsUrl = '@Url.Action("InterviewerRiskOverviewChannels", "Dashboard")';
         var ovExportUrl = '@Url.Action("InterviewerRiskOverviewExport", "Dashboard")';
         var expandIrfIdOnLoad = @(expandIrfId.HasValue ? expandIrfId.Value.ToString() : "null");
