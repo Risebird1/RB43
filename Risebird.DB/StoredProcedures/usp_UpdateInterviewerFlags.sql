@@ -50,6 +50,15 @@ and interviewDate>DateAdd(Minute,330,GetDate())
 Update TransInterviewer set IsActive=0,IsAvailable=0 where UserId in(Select id from UserList where  EmailId=@Emailid)
 end
 
+-- Call opt-out / MAG: a Risebird user switching access off removes the interviewer from every MAG;
+-- switching it back on restores the groups removed for that reason (merged with any added since).
+DECLARE @MagNow datetime = DATEADD(MINUTE, 330, GETUTCDATE())
+DECLARE @MagBy varchar(200) = ISNULL(NULLIF(LTRIM(RTRIM(@ModifiedBy)), ''), 'Admin')
+IF @LogUserId IS NOT NULL AND @IsInterviewerAccess = 0 AND ISNULL(@OldAccess, 1) = 1
+    EXEC usp_ExcludeInterviewerFromMAG @LogUserId, 'ManualInactive', @MagBy, @MagNow
+IF @LogUserId IS NOT NULL AND @IsInterviewerAccess = 1 AND ISNULL(@OldAccess, 1) = 0
+    EXEC usp_RestoreInterviewerToMAG @LogUserId, 'ManualInactive', @MagBy, @MagNow
+
 IF @LogUserId IS NOT NULL AND OBJECT_ID(N'dbo.InterviewerActionLog', N'U') IS NOT NULL
 BEGIN
     DECLARE @LogBlock varchar(40) =

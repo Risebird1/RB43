@@ -50,7 +50,7 @@ BEGIN
               WHERE ulEmail.EmailId = ea.SenderEmail
                 AND ISNULL(ulEmail.IsActive, 1) = 0
           )
-          AND (ip.Id IS NULL OR (ISNULL(ip.IsDeleted, 0) = 0 AND ISNULL(ip.Isavailable, 0) <> 4))
+          AND (ip.Id IS NULL OR (ISNULL(ip.IsDeleted, 0) = 0 AND ISNULL(ip.Isavailable, 0) NOT IN (4, 5) AND ISNULL(ip.CallConsent, 1) <> 0))
           AND NOT EXISTS (
               SELECT 1 FROM RecentlyAvailable ra
               WHERE (ea.InterviewerProfileId IS NOT NULL AND ra.InterviewerProfileId = ea.InterviewerProfileId)
@@ -84,7 +84,7 @@ BEGIN
         INNER JOIN UserList ul ON ul.Id = ip.UserId
         WHERE agi.AssessmentGroupId = @AgId
           AND ISNULL(ip.IsDeleted, 0) = 0
-          AND ISNULL(ip.Isavailable, 0) <> 4
+          AND ISNULL(ip.Isavailable, 0) NOT IN (4, 5) AND ISNULL(ip.CallConsent, 1) <> 0
           AND ul.IsActive = 1
           AND LEN(ISNULL(ul.MobileNumber, '')) >= 10
           AND NOT EXISTS (SELECT 1 FROM EAProfileIds ep WHERE ep.InterviewerProfileId = ip.Id)

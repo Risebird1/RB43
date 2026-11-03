@@ -37,6 +37,7 @@ namespace Risebird.Web.Controllers
         private readonly IElevenLabsAgentService _elevenLabsAgentService;
         private readonly IConfiguration _configuration;
         private readonly IApplicationErrorLogger _applicationErrorLogger;
+        private readonly ICallPreferenceRepository _callPreferenceRepository;
         // ElevenLabs posts every post-call webhook of the workspace here, campaign calls included.
         private readonly Risebird.Web.Services.PlivoCXCallOutcomeProcessor _campaignOutcomeProcessor;
 
@@ -54,8 +55,10 @@ namespace Risebird.Web.Controllers
             IElevenLabsAgentService elevenLabsAgentService,
             IConfiguration configuration,
             IApplicationErrorLogger applicationErrorLogger,
-            Risebird.Web.Services.PlivoCXCallOutcomeProcessor campaignOutcomeProcessor)
+            Risebird.Web.Services.PlivoCXCallOutcomeProcessor campaignOutcomeProcessor,
+            ICallPreferenceRepository callPreferenceRepository)
         {
+            _callPreferenceRepository = callPreferenceRepository;
             _campaignOutcomeProcessor = campaignOutcomeProcessor;
             _phoneScreenRepository = phoneScreenRepository;
             _irfService = irfService;
@@ -211,6 +214,19 @@ namespace Risebird.Web.Controllers
 
                 if (string.IsNullOrWhiteSpace(candidate.Phone))
                     return Json(new { success = false, message = "Candidate has no phone number on file." });
+
+                // Pre-dial check: the trigger goes through TriggerByUrlAsync, which the guarded IPlivoCXService can't
+                // check. A failed check lets the call through, as before this check existed.
+                try
+                {
+                    var canCall = await _callPreferenceRepository.CanCallContact("Candidate", candidate.Phone, irfId);
+                    if (canCall != null && !canCall.CanCall)
+                        return Json(new { success = false, message = "Not called: " + canCall.Reason });
+                }
+                catch (Exception cex)
+                {
+                    await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, cex);
+                }
 
                 var callerId = _configuration["PlivoCX:PhoneScreenerCallerId"]
                                ?? _configuration["PlivoCX:AvailabilityCallerId"]

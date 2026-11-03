@@ -166,6 +166,7 @@ builder.Services.AddSingleton<AIInterviewReportQueue>();
 builder.Services.AddHostedService<AIInterviewReportWorker>();
 builder.Services.AddScoped<IQcInterviewAIMergeJobService, QcInterviewAIMergeJobService>();
 builder.Services.AddScoped<ITransInterviewerAuditRepository, TransInterviewerAuditRepository>();
+builder.Services.AddScoped<ICallPreferenceRepository, CallPreferenceRepository>();
 builder.Services.AddScoped<IDmIvAutoQcRemovalService, DmIvAutoQcRemovalService>();
 builder.Services.AddScoped<IDmIvAutoQcFlagService, DmIvAutoQcFlagService>();
 builder.Services.AddScoped<IDmIvChannelDeactivationService, DmIvChannelDeactivationService>();
@@ -341,7 +342,10 @@ builder.Services.AddScoped<IVapiInterviewService, VapiInterviewService>();
 builder.Services.AddScoped<IPlivoService, PlivoService>();
 builder.Services.AddScoped<IPlivoCallRepository, PlivoCallRepository>();
 builder.Services.AddScoped<IPlivoInterviewService, PlivoInterviewService>();
-builder.Services.AddScoped<IPlivoCXService, PlivoCXService>();
+// Call opt-out: every Plivo CX call started from the portal goes through the pre-dial check (usp_CanCallContact).
+builder.Services.AddScoped<PlivoCXService>();
+builder.Services.AddScoped<IPlivoCXService>(sp => new Risebird.Business.CallPreference.CallPreferenceGuardedPlivoCXService(
+    sp.GetRequiredService<PlivoCXService>(), sp.GetRequiredService<ICallPreferenceRepository>(), sp.GetRequiredService<IApplicationErrorLogger>()));
 builder.Services.AddScoped<IPlivoCXCallRepository, PlivoCXCallRepository>();
 builder.Services.AddScoped<IPlivoCXCampaignRepository, PlivoCXCampaignRepository>();
 builder.Services.AddScoped<IPlivoCXCampaignService, Risebird.Business.PlivoCX.PlivoCXCampaignService>();

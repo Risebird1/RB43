@@ -38,6 +38,7 @@
             <th> Interviewer Access</th>
             <th> Blocked</th>
             <th> Interested</th>
+            <th> Calls</th>
         </tr>
     </thead>
 
@@ -70,6 +71,22 @@
                 </div>
             </td>
             <td> @Model.IsInterested</td>
+            <td>
+                <div class="custom-select">
+                    <select id="CallsOptedOut" class="text-box single-line" onchange="changeCallPreference()" data-userid="@Model.UserId">
+                        <option value="false" selected="@(!Model.IsCallOptedOut)">Allowed</option>
+                        <option value="true" selected="@Model.IsCallOptedOut">Opted out</option>
+                    </select>
+                </div>
+                @if (Model.IsCallOptedOut)
+                {
+                    <div style="color:#c62828;font-size:12px;">@(Model.CallOptOutSource == "HumanCall" ? "Human call" : "AI call")</div>
+                }
+                else if (Model.CallConsent == true)
+                {
+                    <div style="color:forestgreen;font-size:12px;">Consent given</div>
+                }
+            </td>
         </tr>
     </tbody>
 </table>
@@ -113,6 +130,34 @@
                 }
             }
         });
+    }
+    // Calls: Opted out = the interviewer said "don't call me" on a human call (churn, removed from every MAG);
+    // Allowed = undo (back in MAG, call consent reset to unknown).
+    function changeCallPreference() {
+        var $sel = $("#CallsOptedOut");
+        var optedOut = $sel.val() === 'true';
+        var previous = optedOut ? 'false' : 'true';
+        var text = optedOut
+            ? "The interviewer won't be called again, moves to Interviewer Churn and is removed from every MAG."
+            : "The interviewer can be called again and is put back in their MAGs.";
+        swal.fire({ title: optedOut ? 'Mark as opted out of calls?' : 'Allow calls again?', text: text, showCancelButton: true, confirmButtonText: 'Yes' })
+            .then(function (r) {
+                if (!(r.isConfirmed || r.value)) { $sel.val(previous); return; }
+                $.ajax({
+                    url: '/Interviewer/InterviewerCallPreferenceUpdate',
+                    type: 'POST',
+                    data: { 'userId': $sel.data('userid'), 'optedOut': optedOut },
+                    success: function (data) {
+                        if (data && data.success) {
+                            swal.fire(optedOut ? "Interviewer marked as opted out of calls." : "Calls allowed again.");
+                        } else {
+                            $sel.val(previous);
+                            swal.fire((data && data.message) || "Nothing changed.");
+                        }
+                    },
+                    error: function () { $sel.val(previous); swal.fire("Could not update call preference."); }
+                });
+            });
     }
     function changeIsBlocked() {
         var Emailid = $("#EmailId").val();

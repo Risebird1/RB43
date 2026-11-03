@@ -91,7 +91,7 @@ namespace Risebird.Repository.Interface
         Task<IEnumerable<MailRecipientActivityDetailsVM>> GetOpenClickCampaignMailRepository(int campaignId);
         Task<List<PQIDetails>> GetInterviewerIRFDetails(string type, string uniqueid, string Email);
         Task<List<MeetingVM>> GetColdCandidatesRepository(int ColdCandidateValue, string EmailId, DateTime? startDate = null, DateTime? endDate = null);
-        Task<List<InterviewUsersDetails>> MarkedColdCandidate(int CandidateId, string Email, int InterviewId, int type);
+        Task<List<InterviewUsersDetails>> MarkedColdCandidate(int CandidateId, string Email, int InterviewId, int type, string coldSource = null, string coldReason = null, bool logCallOptOut = false);
         Task<List<PQIDetails>> InterviewerIRFLogisticDetails(string type, string EmailId);
         /// <summary>Latest QC decision per interviewer (and channel) on a QC page: PLI | PotentialRisk | HighRisk.</summary>
         Task<List<QcPageStatusVM>> GetQcPageStatus(string type, IEnumerable<int> userIds);

@@ -376,6 +376,11 @@ namespace Risebird.Entities.ViewModel
         public bool IsColdCandidate { get; set; }
         public string ColdMarkedBY { get; set; }
         public DateTime? ColdMarkedDate { get; set; }
+        // Call opt-out: ColdSource AICall | HumanCall | Manual (badge on the cold lists), ColdReason the quote / popup reason.
+        public string ColdSource { get; set; }
+        public string ColdReason { get; set; }
+        // Interviewer Churn: AICall | HumanCall when Isavailable = 5 (opted out of calls).
+        public string CallOptOutSource { get; set; }
         public int TotalCandidate { get; set; }
 
         public DateTime? RescheduleDate { get; set; }

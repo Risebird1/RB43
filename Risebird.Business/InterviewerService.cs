@@ -313,7 +313,7 @@ namespace Risebird.Business
                         {
                         try
                         {
-                            string yesButton = "https://portal.risebird.io/Interviewer/InterviewerAcknowledgementResponse?status=1&user=" + userId.ToString();
+                            string yesButton = "https://portal.risebird.io/Interviewer/InterviewerAcknowledgementResponse?status=1&callConsent=1&user=" + userId.ToString();
                             string dropProfileButton = "";
                             
                             // Shoot acknowledgement email to the interviewer along with a custom button that, upon click, activates the Interviewer

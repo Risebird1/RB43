@@ -43,6 +43,7 @@ namespace Risebird.Business.PlivoCX
         private readonly IPhoneNumberHelper         _phoneNumberHelper;
         private readonly IApplicationErrorLogger    _logger;
         private readonly IElevenLabsAgentService    _elevenLabs;
+        private readonly ICallPreferenceRepository  _callPreferenceRepository;
 
         // ElevenLabs runs its own concurrency limit (set by the ElevenLabs plan), separate from
         // Plivo's 50 lines: ElevenLabs:Campaigns:ConcurrencyBudget (default 10).
@@ -55,8 +56,10 @@ namespace Risebird.Business.PlivoCX
             IPlivoCXCampaignRepository campaignRepository,
             IPhoneNumberHelper         phoneNumberHelper,
             IApplicationErrorLogger    logger,
-            IElevenLabsAgentService    elevenLabs)
+            IElevenLabsAgentService    elevenLabs,
+            ICallPreferenceRepository  callPreferenceRepository = null)
         {
+            _callPreferenceRepository = callPreferenceRepository;
             _configuration      = configuration;
             _plivoCX            = plivoCX;
             _callRepository     = callRepository;
@@ -481,6 +484,23 @@ namespace Risebird.Business.PlivoCX
         private async Task<PlivoCXTriggerResponse> TriggerAsync(PlivoCXAgent agent, PlivoCXTriggerRequest request, int logId)
         {
             PlivoCXTriggerResponse response;
+
+            // Pre-dial check (both providers): never call a candidate who opted out of calls or is cold in this
+            // skill channel. A failed check lets the call through, as before this check existed.
+            if (_callPreferenceRepository != null && int.TryParse(request.IrfId, out var irfIntId) && irfIntId > 0)
+            {
+                try
+                {
+                    var canCall = await _callPreferenceRepository.CanCallContact("Candidate", request.PhoneNumber, irfIntId);
+                    if (canCall != null && !canCall.CanCall)
+                        return new PlivoCXTriggerResponse { Error = "Not called: " + canCall.Reason };
+                }
+                catch (Exception ex)
+                {
+                    await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                }
+            }
+
             try
             {
                 response = PlivoCXCampaignProvider.Normalize(agent.Provider) == PlivoCXCampaignProvider.ElevenLabs

@@ -1351,7 +1351,7 @@ namespace Risebird.Web.Controllers
                 bool ackSent = false;
                 try
                 {
-                    string yesButton = $"https://{Request.Host}/Interviewer/InterviewerAcknowledgementResponse?status=1&user={userId}";
+                    string yesButton = $"https://{Request.Host}/Interviewer/InterviewerAcknowledgementResponse?status=1&callConsent=1&user={userId}";
                     string dropButton = $"https://{Request.Host}/Interviewer/InterviewerAcknowledgementResponse?status=4&user={userId}";
                     string agNames = record.AssessmentGroupName ?? record.MagName ?? "";
 
@@ -1435,7 +1435,7 @@ namespace Risebird.Web.Controllers
                     return Json(new { success = false, error = "Interviewer not yet onboarded." });
 
                 int userId = record.OnboardedUserId.Value;
-                string yesButton = $"https://{Request.Host}/Interviewer/InterviewerAcknowledgementResponse?status=1&user={userId}";
+                string yesButton = $"https://{Request.Host}/Interviewer/InterviewerAcknowledgementResponse?status=1&callConsent=1&user={userId}";
                 string dropButton = $"https://{Request.Host}/Interviewer/InterviewerAcknowledgementResponse?status=4&user={userId}";
                 string agNames = record.AssessmentGroupName ?? record.MagName ?? "";
 

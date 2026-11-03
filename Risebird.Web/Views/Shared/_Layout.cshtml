@@ -232,6 +232,14 @@
     //}
     });
     </script>*@
+    @{
+        // Call opt-out: the Mark cold popup asks "Opted out on call / Other reason" only for Risebird staff
+        // (markcoldcandidate.js); client users keep the plain confirmation.
+        var coldReasonProfile = HttpContextAccessor.HttpContext.Session.GetString("profileName")?.Trim('"');
+        var isRisebirdStaff = coldReasonProfile == "Admin" || coldReasonProfile == "HR" || coldReasonProfile == "SeniorHR"
+            || coldReasonProfile == "SupportAdmin" || coldReasonProfile == "InterviewerManagement" || coldReasonProfile == "SeniorInterviewerManagement";
+    }
+    <script>window.rbIsRisebirdStaff = @(isRisebirdStaff ? "true" : "false");</script>
 </head>
 <body class="sidebar-mini" style="padding-right:0px!important;">
 

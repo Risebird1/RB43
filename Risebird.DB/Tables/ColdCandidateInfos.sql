@@ -57,6 +57,8 @@ GO
 -- "WhatsApp unsubscribe button (Schedule Interview)" or "WhatsApp Stop reply", and the reason the candidate picked.
 -- NULL for a cold mark set by a person in the portal. The role is the candidate row itself (FKCandidateId ->
 -- Candidate.IRFId -> IRF): one cold row per candidate per role.
+-- Call opt-out uses the same columns: ColdSource = AICall (AI calling agent) | HumanCall (Mark cold popup "Opted out
+-- on call"), shown as the "Opted out: AI call / Human call" badge; ColdReason = the opt-out quote or popup reason.
 IF COL_LENGTH('dbo.ColdCandidateInfos', 'ColdSource') IS NULL
     ALTER TABLE dbo.ColdCandidateInfos ADD ColdSource varchar(150) NULL;
 GO
