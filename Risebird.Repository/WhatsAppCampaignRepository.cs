@@ -361,7 +361,7 @@ namespace Risebird.Repository
                     active.Name AS ActiveCampaignName
                 FROM OPENJSON(@Keys) WITH (CandidateId INT '$.c', Email NVARCHAR(256) '$.e', IRFId INT '$.i') j
                 OUTER APPLY (
-                    SELECT TOP (1) ISNULL(u.WhatsappNumber, u.MobileNumber) AS WhatsAppNumber
+                    SELECT TOP (1) ISNULL(NULLIF(LTRIM(RTRIM(u.WhatsappNumber)), ''), u.MobileNumber) AS WhatsAppNumber
                     FROM dbo.UserList u WHERE u.Emailid = LTRIM(RTRIM(j.Email))
                 ) num
                 OUTER APPLY (

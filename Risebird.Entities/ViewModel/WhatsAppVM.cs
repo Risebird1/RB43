@@ -33,6 +33,8 @@ namespace Risebird.Entities.ViewModel
         // Naukri applicants are not in UserList: the phone and prospect id come from the prospect record.
         public string Phone { get; set; }
         public int ProspectId { get; set; }
+        // Why the last send to this VM failed (Interakt's reply, the empty template variable, ...); not saved.
+        public string FailureReason { get; set; }
     }
     public class WhatsAppVMResponse
     {

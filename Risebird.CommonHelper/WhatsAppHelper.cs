@@ -264,6 +264,7 @@ namespace Risebird.CommonHelper
             }
             catch (Exception ex)
             {
+                if (vm != null) vm.FailureReason = ex.GetType().Name + ": " + ex.Message;
                 await _errorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return FailedMessage;
             }
@@ -340,7 +341,8 @@ namespace Risebird.CommonHelper
                 var message = BuildTemplateMessage(template, traits, recipientName, phone, vm.Event, out var missing);
                 if (missing != null)
                 {
-                    await _errorLogger.LogMessage(LogLevelInfo.Error, "WhatsApp '" + vm.Event + "' to " + email + " not sent: template " + template.Name + " has no value for " + missing);
+                    vm.FailureReason = "template " + template.Name + " has no value for " + missing;
+                    await _errorLogger.LogMessage(LogLevelInfo.Error, "WhatsApp '" + vm.Event + "' to " + email + " not sent: " + vm.FailureReason);
                     await SaveAttempt(vm, "Failed");
                     return FailedMessage;
                 }
@@ -364,6 +366,8 @@ namespace Risebird.CommonHelper
                 return SentMessage;
             }
 
+            vm.FailureReason = "Interakt replied " + (int?)response?.StatusCode + " to +" + phone.CountryCode.TrimStart('+') + " " + phone.Number + ": "
+                + (string.IsNullOrWhiteSpace(response?.Content) ? response?.ErrorMessage ?? "no response" : response.Content);
             await _errorLogger.LogMessage(LogLevelInfo.Error, "Interakt event '" + vm.Event + "' failed for " + email + ": " + (response?.Content ?? response?.ErrorMessage ?? "no response"));
             await SaveAttempt(vm, "Failed");
             return FailedMessage;
