@@ -1,0 +1,104 @@
+@model List<Risebird.Entities.Data.WhatsAppOptOutRow>
+@{
+    ViewData["Title"] = "WhatsApp Opt-outs";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    string search = ViewBag.Search as string;
+    bool history = (ViewBag.History as bool?) == true;
+    Func<DateTime?, string> ist = d => d.HasValue ? d.Value.AddMinutes(330).ToString("dd MMM yyyy HH:mm") : "";
+}
+@await Html.PartialAsync("~/Views/PlivoCXCampaign/_CampaignStyles.cshtml")
+
+@* Standard portal page frame (main-panel), so the page sits beside the side menu like the rest of the app. *@
+<div class="main-panel" id="main-panel">
+<div class="pt30">
+<div class="content client">
+<div class="pcx-page">
+    <div class="pcx-wrap">
+        <div class="pcx-head">
+            <div>
+                <p class="pcx-eyebrow">WhatsApp · Interakt</p>
+                <h3>WhatsApp opt-outs</h3>
+                <p class="pcx-sub">Who unsubscribed from WhatsApp, from which message, and why. Re-enable lets WhatsApp messages reach them again (emails were never affected) and undoes the cold mark the unsubscribe made. Re-enabled opt-outs stay as history. <a href="@Url.Action("Index", "WhatsAppCampaign")">WhatsApp campaigns &rarr;</a></p>
+            </div>
+        </div>
+
+        <div class="pcx-card">
+            @Html.AntiForgeryToken()
+            <div class="pcx-card-b" style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;">
+                <form method="get" action="@Url.Action("Index", "WhatsAppOptOut")" style="flex:1;max-width:560px;display:flex;gap:10px;align-items:center;">
+                    <input class="pcx-input" type="search" name="search" value="@search" placeholder="Search email, IRF id or prospect id…" aria-label="Search opt-outs" />
+                    <label style="margin:0;white-space:nowrap;font-weight:600;"><input type="checkbox" name="history" value="true" @(history ? "checked" : "") onchange="this.form.submit()" /> Show re-enabled</label>
+                </form>
+                <span class="pcx-muted">@(Model.Count == 200 ? "Latest 200 shown - search to narrow" : Model.Count + (Model.Count == 1 ? " opt-out" : " opt-outs"))</span>
+            </div>
+            <div id="wooMsg" class="pcx-alert" style="display:none;margin:0 20px 12px;"></div>
+            <div class="pcx-table-wrap">
+                <table class="pcx-table">
+                    <thead>
+                        <tr><th>Who</th><th>Audience</th><th>Scope</th><th>Message</th><th>Reason</th><th>Source</th><th>Opted out (IST)</th><th>Status</th><th></th></tr>
+                    </thead>
+                    <tbody>
+                        @if (Model.Count == 0)
+                        {
+                            <tr><td colspan="9" class="pcx-empty">@(string.IsNullOrWhiteSpace(search) ? "Nobody has opted out of WhatsApp." : "No opt-out matches \"" + search + "\".")</td></tr>
+                        }
+                        @foreach (var o in Model)
+                        {
+                            <tr>
+                                <td class="strong">@(o.EmailId ?? ("Prospect #" + o.ProspectId))</td>
+                                <td>@o.Audience</td>
+                                <td>@(o.IRFId.HasValue ? "IRF " + (o.IRFName ?? o.IRFId.ToString()) : "All roles")</td>
+                                <td>@(o.TemplateEvent ?? "—")</td>
+                                <td>@(o.Reason ?? "—")</td>
+                                <td>@o.Source</td>
+                                <td style="white-space:nowrap;">@ist(o.CreatedAt)</td>
+                                <td>
+                                    @if (o.IsActive)
+                                    {
+                                        <span class="pcx-chip Paused">Opted out</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="pcx-chip Running">Re-enabled</span>
+                                        <div class="pcx-muted pcx-small">@ist(o.ReEnabledAt) · @o.ReEnabledBy</div>
+                                    }
+                                </td>
+                                <td>
+                                    @if (o.IsActive)
+                                    {
+                                        <button type="button" class="pcx-btn sm js-reenable" data-id="@o.Id" data-who="@(o.EmailId ?? ("prospect " + o.ProspectId))">Re-enable</button>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+</div>
+</div>
+
+<script>
+(function () {
+    function say(msg, ok) { $('#wooMsg').removeClass('ok err').addClass(ok ? 'ok' : 'err').text(msg).show(); }
+    $('.js-reenable').on('click', function () {
+        var btn = $(this);
+        if (!confirm('Re-enable WhatsApp for ' + btn.data('who') + '? They will receive WhatsApp messages again.')) return;
+        btn.prop('disabled', true);
+        $.post('@Url.Action("ReEnable", "WhatsAppOptOut")', {
+            id: btn.data('id'),
+            __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val()
+        }).done(function (res) {
+            say(res && res.message || 'Done.', res && res.ok);
+            if (res && res.ok) setTimeout(function () { location.reload(); }, 1500);
+            else btn.prop('disabled', false);
+        }).fail(function () {
+            say('The request failed. Try again.', false);
+            btn.prop('disabled', false);
+        });
+    });
+})();
+</script>

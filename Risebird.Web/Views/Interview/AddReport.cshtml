@@ -3118,3 +3118,194 @@
 
 </script>
 @await Html.PartialAsync("~/Views/Common/_ProxyForm.cshtml")
+
+@* Questions Discussed: readable question dropdowns. Placed last so it wins over Bootstrap 3 (loaded above) and the
+   portal themes, which clipped the select (fixed height vs. padding) and gave its options a near-black background
+   (dark theme) behind dark text. A dropdown shows one line only, so the full chosen question is shown wrapped below.
+   The question lists use Select2: a native <select> list cannot wrap long questions or be styled reliably. *@
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" />
+@* The full build: dropdownCssClass (used below) is not in the basic build. *@
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.full.min.js"></script>
+<style>
+    /* One scrollbar: on Windows the layout gives .main-panel its own scroll area (PerfectScrollbar), and this long
+       report also scrolled the page, so two scrollbars showed. Here the panel grows with the report and only the
+       browser's scrollbar is used; the side menu keeps its own. */
+    html.perfect-scrollbar-on .main-panel,
+    .main-panel.ps {
+        height: auto !important;
+        max-height: none !important;
+        overflow: visible !important;
+    }
+    .main-panel > .ps__rail-x,
+    .main-panel > .ps__rail-y { display: none !important; }
+
+    #QuestionsTable, #QuestionsTableTwo { table-layout: fixed; width: 100%; }
+    #QuestionsTable > thead > tr > th:nth-child(1), #QuestionsTableTwo > thead > tr > th:nth-child(1) { width: 55%; }
+    #QuestionsTable > thead > tr > th:nth-child(2), #QuestionsTableTwo > thead > tr > th:nth-child(2) { width: 18%; }
+    #QuestionsTable > thead > tr > th:nth-child(3), #QuestionsTableTwo > thead > tr > th:nth-child(3) { width: 17%; }
+    #QuestionsTable > thead > tr > th:last-child, #QuestionsTableTwo > thead > tr > th:last-child { width: 10%; }
+
+    #QuestionsTable > tbody > tr > td, #QuestionsTableTwo > tbody > tr > td {
+        padding: 10px 8px !important;
+        vertical-align: top !important;
+        overflow: visible;
+    }
+
+    #QuestionsTable select:not(.select2-hidden-accessible), #QuestionsTableTwo select:not(.select2-hidden-accessible),
+    #QuestionsTable input[type=text], #QuestionsTableTwo input[type=text] {
+        display: block;
+        width: 100% !important;
+        max-width: 100%;
+        height: auto !important;
+        min-height: 40px;
+        margin: 0 !important;
+        padding: 9px 34px 9px 12px !important;
+        text-indent: 0 !important;
+        line-height: 1.4 !important;
+        font-size: 14px !important;
+        color: #1f2937 !important;
+        background-color: #fff !important;
+        border: 1px solid #cbd5e1 !important;
+        border-radius: 6px !important;
+        box-sizing: border-box;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    #QuestionsTable input[type=text], #QuestionsTableTwo input[type=text] { padding-right: 12px !important; }
+    /* Skill name (read-only): beats the themes' ".addreport #QuestionsTable [readonly]" grey. */
+    #QuestionsTable tbody td input[type=text][readonly], #QuestionsTableTwo tbody td input[type=text][readonly] {
+        color: #334155 !important;
+        -webkit-text-fill-color: #334155;
+        background-color: #f1f5f9 !important;
+    }
+
+    /* The opened list: dark text on white in every theme. */
+    #QuestionsTable select option, #QuestionsTableTwo select option {
+        color: #1f2937 !important;
+        background-color: #fff !important;
+        padding: 6px 8px;
+        white-space: normal;
+    }
+
+    #QuestionsTable select:focus, #QuestionsTableTwo select:focus {
+        border-color: #1565c0 !important;
+        box-shadow: 0 0 0 2px rgba(21, 101, 192, .15) !important;
+        outline: none;
+    }
+
+    /* A light box so the full question reads the same in the light and dark themes. */
+    .question-full-text {
+        margin-top: 6px;
+        padding: 7px 10px;
+        font-size: 12.5px;
+        line-height: 1.45;
+        color: #334155;
+        background: #f1f5f9;
+        border-left: 3px solid #1565c0;
+        border-radius: 4px;
+        white-space: normal;
+        word-break: break-word;
+    }
+    .question-full-text:empty { display: none; }
+
+    #QuestionsTable td.action, #QuestionsTableTwo td.action { vertical-align: middle !important; white-space: nowrap; }
+
+    /* Select2 box for the question dropdowns: same look as the other fields. */
+    .question-select2 + .select2-container { width: 100% !important; }
+    .question-select2 + .select2-container .select2-selection--single {
+        height: 40px;
+        border: 1px solid #cbd5e1;
+        border-radius: 6px;
+        background: #fff;
+    }
+    .question-select2 + .select2-container .select2-selection__rendered {
+        line-height: 38px !important;
+        padding-left: 12px !important;
+        padding-right: 30px !important;
+        color: #1f2937 !important;
+        font-size: 14px;
+    }
+    .question-select2 + .select2-container .select2-selection__placeholder { color: #64748b !important; }
+    .question-select2 + .select2-container .select2-selection__arrow { height: 38px !important; right: 6px !important; }
+    .question-select2 + .select2-container--focus .select2-selection--single,
+    .question-select2 + .select2-container--open .select2-selection--single { border-color: #1565c0; box-shadow: 0 0 0 2px rgba(21, 101, 192, .15); }
+
+    /* The opened list: every question wrapped in full, dark on white, one per row with a divider. */
+    .question-select2-list.select2-dropdown { border: 1px solid #cbd5e1; border-radius: 6px; background: #fff; box-shadow: 0 8px 24px rgba(15, 23, 42, .15); z-index: 2000; }
+    .question-select2-list .select2-search__field { border: 1px solid #cbd5e1 !important; border-radius: 4px; padding: 6px 8px; color: #1f2937; background: #fff; }
+    /* Short enough that the open list never runs past the end of the page and adds a page scrollbar; the list
+       scrolls inside itself instead, and never sideways. Select2 opens it upwards when there is no room below. */
+    .question-select2-list .select2-results__options { max-height: 200px !important; overflow-x: hidden !important; }
+    .question-select2-list .select2-results__option {
+        white-space: normal;
+        word-break: break-word;
+        line-height: 1.4;
+        padding: 7px 12px;
+        font-size: 13px;
+        color: #1f2937;
+        background: #fff;
+        border-bottom: 1px solid #f1f5f9;
+    }
+    .question-select2-list .select2-results__option--highlighted[aria-selected] { background: #1565c0 !important; color: #fff !important; }
+    .question-select2-list .select2-results__option[aria-selected=true] { background: #e0ecff; color: #1e3a8a; }
+</style>
+<script>
+    (function () {
+        // The full text of the chosen question, wrapped under its dropdown (the dropdown itself shows one line).
+        var selector = '#QuestionsTable select[id$="__Comment"], #QuestionsTableTwo select[id$="__Comment"]';
+
+        var hasSelect2 = !!($.fn && $.fn.select2);
+
+        function showFullText(select) {
+            var $select = $(select);
+            var $cell = $select.closest('td');
+            var $note = $cell.children('.question-full-text');
+            if (!$note.length) {
+                // At the end of the cell, so it sits below the dropdown (and below the Select2 box).
+                $note = $('<div class="question-full-text"></div>').appendTo($cell);
+            }
+            var text = $.trim($select.find('option:selected').text());
+            var placeholder = !$select.val() || $select.val() === '0';
+            $note.text(placeholder ? '' : text);
+            $select.attr('title', placeholder ? '' : text);
+        }
+
+        // Select2 renders the list itself, so long questions wrap in full and read the same in every theme.
+        // Its change event is the select's own, so the inline onchange (QuestionChanged) still runs.
+        function enhance(select) {
+            if (!hasSelect2 || $(select).hasClass('select2-hidden-accessible')) return;
+            try {
+                $(select).addClass('question-select2').select2({
+                    width: '100%',
+                    dropdownCssClass: 'question-select2-list',
+                    dropdownAutoWidth: false
+                });
+            } catch (e) {
+                // Without Select2 the styled native dropdown still works.
+                $(select).removeClass('question-select2');
+            }
+        }
+
+        function refreshAll() {
+            $(selector).each(function () { enhance(this); showFullText(this); });
+        }
+
+        $(document).on('change', selector, function () { showFullText(this); });
+
+        // New rows are clones of the last one. A Select2 box cannot be cloned, so it is removed before the copy
+        // and rebuilt after; the copied note is reset so it never shows the previous row's question.
+        ['AddRow', 'AddRowTwo'].forEach(function (name) {
+            var original = window[name];
+            if (typeof original !== 'function') return;
+            window[name] = function () {
+                if (hasSelect2) $(selector).filter('.select2-hidden-accessible').select2('destroy');
+                var result = original.apply(this, arguments);
+                refreshAll();
+                return result;
+            };
+        });
+
+        $(refreshAll);
+    })();
+</script>

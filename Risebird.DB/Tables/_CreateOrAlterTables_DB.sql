@@ -13,6 +13,10 @@ PRINT 'Table SentWhatsAppMessageDetails...'
 :r $(path)\Tables\SentWhatsAppMessageDetails.sql
 PRINT 'Table WhatsAppOptOut...'
 :r $(path)\Tables\WhatsAppOptOut.sql
+PRINT 'Table WhatsAppCampaign...'
+:r $(path)\Tables\WhatsAppCampaign.sql
+PRINT 'Table WhatsAppCampaignCandidate...'
+:r $(path)\Tables\WhatsAppCampaignCandidate.sql
 
 PRINT 'End: Updating tables...'
 GO

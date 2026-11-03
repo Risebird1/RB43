@@ -76,6 +76,10 @@
                         <a style="visibility:hidden" data-toggle="chardinjs" data-position="left"></a>
                         <h4 class="card-title"></h4>
                         <div class="mobile-view"> <h4 class="card-title">Not Scheduled Candidates</h4></div>
+                        @if (new[] { "Admin", "SupportAdmin", "SeniorHR", "HR" }.Contains(HttpContextAccessor.HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "")))
+                        {
+                            <a href="@Url.Action("Create", "WhatsAppCampaign", new { source = "NotScheduled" })" class="btn btn-sm btn-outline-success" style="margin-top:6px;" title="Send the schedule invite (C1) over WhatsApp to candidates on this list"><i class="fab fa-whatsapp"></i> WhatsApp campaign</a>
+                        }
                     </div>
                     <div class="pull-right client-ms">
                         <div style="float:left">
@@ -577,11 +581,21 @@ top:-1px;
                                                                                         <span title="Edit"><i class="fa fa-edit" style="left:1px; top:-2px;font-size:12px; position: relative;"></i></span>
                                                                                     </a>
 
-                                                                                    <a target="_blank" class="btn shadow btn-invite btn-xs sharp me-1 item4" href="@Url.Action("SendInvite", "Candidate", new { IRFName = item.IRFId, irfId = item.imid, emailId = item.candidateEmail, endDate = DateTime.Now.AddDays(5), communicationMedium = (int)CommunicationMedium.Whatsapp, pageUrl="https://portal.risebird.io/Client/NotScheduledMeetings"  })" title="Send Invite over Whatsapp" style="top: 0px;position: relative;cursor: pointer; width:23px!important;height:23px!important;background: #2c8d2cb8!important;">
-                                                                                        <span title="Send Invite Over Whatsapp">
-                                                                                            <img src="~/img/whatsapp.png" style="top:-3px;left:-3px;max-width:18px; position: relative;" />
+                                                                                    @{ var waLimit = (ViewBag.WhatsAppLimit as int?) ?? 3; var waTip = Risebird.Web.Services.WhatsAppSendButtons.Tooltip(item.WhatsAppOptedOut, item.WhatsAppSendsUsed, waLimit); }
+                                                                                    @if (Risebird.Web.Services.WhatsAppSendButtons.Disabled(item.WhatsAppOptedOut, item.WhatsAppSendsUsed, waLimit))
+                                                                                    {
+                                                                                        <span class="btn shadow btn-invite btn-xs sharp me-1 item4" aria-disabled="true" title="@waTip" style="top: 0px;position: relative;cursor: not-allowed; width:23px!important;height:23px!important;background: #9ca3af!important;opacity:.6;">
+                                                                                            <img src="~/img/whatsapp.png" alt="@waTip" style="top:-3px;left:-3px;max-width:18px; position: relative;filter:grayscale(1);" />
                                                                                         </span>
-                                                                                    </a>
+                                                                                    }
+                                                                                    else
+                                                                                    {
+                                                                                        <a target="_blank" class="btn shadow btn-invite btn-xs sharp me-1 item4" href="@Url.Action("SendInvite", "Candidate", new { IRFName = item.IRFId, irfId = item.imid, emailId = item.candidateEmail, endDate = DateTime.Now.AddDays(5), communicationMedium = (int)CommunicationMedium.Whatsapp, pageUrl="https://portal.risebird.io/Client/NotScheduledMeetings"  })" title="Send Invite over Whatsapp · @waTip" style="top: 0px;position: relative;cursor: pointer; width:23px!important;height:23px!important;background: #2c8d2cb8!important;">
+                                                                                            <span title="Send Invite Over Whatsapp · @waTip">
+                                                                                                <img src="~/img/whatsapp.png" style="top:-3px;left:-3px;max-width:18px; position: relative;" />
+                                                                                            </span>
+                                                                                        </a>
+                                                                                    }
 
                                                                                     @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
                                                                                     {
@@ -896,191 +910,16 @@ top:-1px;
 <script src="~/js/filtervalidation.js"></script>
 <loading></loading>
 
-<!-- Add this new modal before the end of the main-panel div -->
-<div class="modal fade" id="shareInviteModal" tabindex="-1" role="dialog" aria-labelledby="shareInviteModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg" role="document">
-        <div class="modal-content">
-            <div class="filheader">
-                <div class="filavatar">
-                    <span class="fas fa-share"></span>
-                </div>
-                <h5 class="modal-title pull-left" id="shareInviteModalLabel">Share Invite</h5>
-            </div>
-            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-            </button>
-            <div class="modal-body">
-                <div class="loader text-center" style="display:none;">
-                    <img src="~/Newassets/img/lazyload.gif" />
-                </div>
-                <div class="share-invite-form">
-                    <div class="row">
-                        <div class="col-md-6 col-sm-6 border-rv">
-                            <div class="form-group">
-                                <label class="control-label col-md-12 col-sm-12 desp-label" for="BulkStartDate">
-                                    Start Date
-                                </label>
-                                <div class="col-md-12 col-sm-12">
-                                    <input id="BulkStartDate" name="BulkStartDate" type="date" class="form-control">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6 col-sm-6">
-                            <div class="form-group">
-                                <label class="control-label col-md-12 col-sm-12 desp-label" for="BulkEndDate">
-                                    End Date
-                                </label>
-                                <div class="col-md-12 col-sm-12">
-                                    <input id="BulkEndDate" name="BulkEndDate" type="date" class="form-control">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-12 col-sm-12">
-                            <div class="form-group">
-                                <label class="control-label col-md-12 col-sm-12 desp-label" for="BulkRFID">
-                                    Skill Channel Id
-                                </label>
-                                <div class="col-md-12 col-sm-12">
-                                    <select id="BulkRFID" name="BulkRFID" class="form-control multiselect" multiple="multiple" data-placeholder="None Selected">
-                                        @foreach (var item in Model.Select(x => x.IRFId).Distinct().ToList())
-                                        {
-                                            @if (item != null && item != "")
-                                            {
-                                                <option value="@item">@item</option>
-                                            }
-                                        }
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-12 col-sm-12">
-                            <div class="form-group">
-                                <label class="control-label col-md-12 col-sm-12 desp-label">
-                                    Communication Method
-                                </label>
-                                <div class="col-md-12 col-sm-12">
-                                    <div class="form-check form-check-inline">
-                                        <input type="radio" name="Communicationmethod" id="cmmemail" /> Email
-                                      @*   <input class="form-check-input" type="checkbox" id="emailCheckbox" value="email" checked>
-                                        <label class="form-check-label" for="emailCheckbox">Email</label> *@
-                                    </div>
-                                    <div class="form-check form-check-inline">
-                                        <input type="radio" name="Communicationmethod" id="cmmwhatapp" /> WhatsApp
-                                      @*   <input class="form-check-input" type="checkbox" id="whatsappCheckbox" value="whatsapp">
-                                        <label class="form-check-label" for="whatsappCheckbox">WhatsApp</label> *@
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row mt-3">
-                        <div class="col-md-12 text-right">
-                            <button type="button" id="shareBulkInvite" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="background-color: #28a745;">
-                                <font style="font-size:12px;"> Share Invite</font>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Update the JavaScript for handling the loader -->
-<script>
-$(document).ready(function() {
-    $("#shareBulkInvite").click(function() {
-        var startDate = $("#BulkStartDate").val();
-        var endDate = $("#BulkEndDate").val();
-        var rfids = $("#BulkRFID").val();
-        var communicationMethods = [];
-        
-        if($("#cmmemail").is(":checked")) {
-            communicationMethods.push("email");
-        }
-        if($("#cmmwhatapp").is(":checked")) {
-            communicationMethods.push("whatsapp");
-        }
-
-        if(!startDate || !endDate) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Validation Error',
-                text: 'Please select both Start Date and End Date'
-            });
-            return;
-        }
-
-        if(communicationMethods.length === 0) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Validation Error',
-                text: 'Please select at least one communication method'
-            });
-            return;
-        }
-
-        Swal.fire({
-            title: 'Share Invites',
-            text: "Are you sure you want to share invites with all filtered candidates?",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#28a745',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes, share invites!'
-        }).then((result) => {
-            if (result.dismiss !== 'cancel') {
-                // Show loader and hide form
-                $("#shareInviteModal .loader").show();
-                $("#shareInviteModal .share-invite-form").hide();
-                
-                $.ajax({
-                        url: '/Client/ShareNotScheduleBulkInvites',
-                    type: 'POST',
-                    data: {
-                        startDate: startDate,
-                        endDate: endDate,
-                        rfids: rfids,
-                        communicationMethods: communicationMethods
-                    },
-                    success: function(response) {
-                        // Hide loader and show form
-                        $("#shareInviteModal .loader").hide();
-                        $("#shareInviteModal .share-invite-form").show();
-                        
-                        if(response.success) {
-                            Swal.fire({
-                                icon: 'success',
-                                title: 'Success!',
-                                text: response.message
-                            }).then(() => {
-                                $("#shareInviteModal").modal('hide');
-                                location.reload();
-                            });
-                        } else {
-                            Swal.fire({
-                                icon: 'error',
-                                title: 'Error!',
-                                text: response.message
-                            });
-                        }
-                    },
-                    error: function() {
-                        // Hide loader and show form
-                        $("#shareInviteModal .loader").hide();
-                        $("#shareInviteModal .share-invite-form").show();
-                        
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Error!',
-                            text: 'An error occurred while sharing invites.'
-                        });
-                    }
-                });
-            }
-        });
-    });
-});
-</script>
+@* Bulk send (C1 by email and / or WhatsApp) - shared modal, opened by the Share Invite button above. *@
+@await Html.PartialAsync("~/Views/Shared/_BulkSendModal.cshtml", new Risebird.Entities.ViewModel.BulkSendModalVM
+{
+    ModalId = "shareInviteModal",
+    Title = "Share Invite",
+    DateLabel = "Added",
+    ButtonText = "Share Invite",
+    ConfirmText = "Send the schedule invite to every candidate matching these filters?",
+    Endpoint = Url.Action("ShareNotScheduleBulkInvites", "Client"),
+    SkillChannelIds = Model.Select(x => x.IRFId).Where(x => !string.IsNullOrEmpty(x)).Distinct().ToList()
+})
 
 

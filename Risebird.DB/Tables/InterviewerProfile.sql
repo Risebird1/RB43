@@ -570,3 +570,17 @@ BEGIN
     ALTER TABLE InterviewerProfile Add ReportPolicyAcknowledged bit null
 END
 GO
+
+-- WhatsApp unsubscribe -> Interviewer Churn Data (dashboard ribbon). Where it came from, e.g.
+-- "WhatsApp unsubscribe button (Interviewer Common Interview)" or "WhatsApp Stop reply", the reason the
+-- interviewer picked, and when. Availability (Isavailable) and the account are not changed. Cleared when an
+-- admin re-enables WhatsApp (/WhatsAppOptOut).
+IF COL_LENGTH('dbo.InterviewerProfile', 'ChurnSource') IS NULL
+    ALTER TABLE dbo.InterviewerProfile ADD ChurnSource varchar(150) NULL;
+GO
+IF COL_LENGTH('dbo.InterviewerProfile', 'ChurnReason') IS NULL
+    ALTER TABLE dbo.InterviewerProfile ADD ChurnReason nvarchar(300) NULL;
+GO
+IF COL_LENGTH('dbo.InterviewerProfile', 'ChurnDate') IS NULL
+    ALTER TABLE dbo.InterviewerProfile ADD ChurnDate datetime NULL;
+GO

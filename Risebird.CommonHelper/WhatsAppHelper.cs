@@ -67,8 +67,8 @@ namespace Risebird.CommonHelper
         public const string SkippedOptedOut = "Skipped: opted out";
         public const string SkippedLimitReached = "Skipped: limit reached";
         public const string SkippedNoNumber = "Skipped: no WhatsApp number";
-        private const string SentMessage = "Message sent successfully.";
-        private const string FailedMessage = "Failed to send message. Please check all fields and try again.";
+        public const string SentMessage = "Message sent successfully.";
+        public const string FailedMessage = "Failed to send message. Please check all fields and try again.";
 
         private readonly IApplicationErrorLogger _errorLogger;
         private readonly IAzureStorageHelper _azureStorageHelper;
@@ -169,10 +169,19 @@ namespace Risebird.CommonHelper
             return value.ToString(DateFormat, CultureInfo.InvariantCulture);
         }
 
-        public static string CandidateUnsubscribeLink(string email, int irfId)
+        /// <param name="eventName">The message the link is in; saved with the opt-out as WhatsAppOptOut.TemplateEvent.</param>
+        public static string CandidateUnsubscribeLink(string email, int irfId, string eventName = null)
         {
-            return "Candidate/Unsubscribe?emailid=" + Uri.EscapeDataString(email ?? "") + "&irfid=" + irfId;
+            return "Candidate/Unsubscribe?emailid=" + Uri.EscapeDataString(email ?? "") + "&irfid=" + irfId + SourceParam(eventName);
         }
+
+        public static string InterviewerUnsubscribeLink(string uniqueId, string eventName = null)
+        {
+            return "Interviewer/Unsubscribe?id=" + Uri.EscapeDataString(uniqueId ?? "") + SourceParam(eventName);
+        }
+
+        private static string SourceParam(string eventName) =>
+            string.IsNullOrWhiteSpace(eventName) ? "" : "&src=" + Uri.EscapeDataString(eventName.Trim());
 
         public static string FirstName(string name)
         {
@@ -306,20 +315,20 @@ namespace Risebird.CommonHelper
             {
                 if (audience == AudienceCandidate && vm.irfId > 0)
                 {
-                    traits["UnsubscribeLink"] = CandidateUnsubscribeLink(email, vm.irfId);
+                    traits["UnsubscribeLink"] = CandidateUnsubscribeLink(email, vm.irfId, vm.Event);
                 }
                 else if (audience == AudienceInterviewer)
                 {
                     var uniqueId = await _whatsappRepository.FetchUniqueIdByEmailAsync(email);
                     if (!string.IsNullOrEmpty(uniqueId))
-                        traits["UnsubscribeLink"] = "Interviewer/Unsubscribe?id=" + uniqueId;
+                        traits["UnsubscribeLink"] = InterviewerUnsubscribeLink(uniqueId, vm.Event);
                 }
             }
 
             // Buttons need a non-empty value: fall back to the unsubscribe page, which explains an incomplete link.
             if (!traits.ContainsKey("UnsubscribeLink"))
             {
-                traits["UnsubscribeLink"] = audience == AudienceInterviewer ? "Interviewer/Unsubscribe?id=" : CandidateUnsubscribeLink(email, vm.irfId);
+                traits["UnsubscribeLink"] = audience == AudienceInterviewer ? "Interviewer/Unsubscribe?id=" : CandidateUnsubscribeLink(email, vm.irfId, vm.Event);
             }
 
             await TrackUser(phone.Number, phone.CountryCode, recipientName, email);

@@ -241,11 +241,11 @@
                         type: 'POST',
                         data: { 'irfId': irfId },
                         success: function (result) {
-                            if (result == "Success") {
+                            if (typeof result === 'string' && result.indexOf('Success') === 0) {
                                 swal.fire({
                                     title: 'Sent!',
                                     type: 'success',
-                                    html: '<p>Mails sent successfully.</p>',
+                                    html: '<p>' + $('<div>').text(result.replace(/^Success:?\s*/, '') || 'Mails sent successfully.').html() + '</p>',
                                     showCancelButton: false,
                                     confirmButtonColor: '#3085d6',
                                     confirmButtonText: 'Close!',
