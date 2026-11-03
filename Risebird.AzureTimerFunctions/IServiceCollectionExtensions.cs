@@ -71,6 +71,8 @@ namespace Risebird.AzureFunctions
             services.AddScoped<IPlivoCXCallRepository, PlivoCXCallRepository>();
             services.AddScoped<IPlivoCXCampaignRepository, PlivoCXCampaignRepository>();
             services.AddScoped<IPlivoCXCampaignService, Risebird.Business.PlivoCX.PlivoCXCampaignService>();
+            services.AddScoped<IWhatsAppCampaignRepository, WhatsAppCampaignRepository>();
+            services.AddScoped<IWhatsAppCampaignService, Risebird.Business.WhatsAppCampaigns.WhatsAppCampaignService>();
             // ElevenLabs campaigns: the scheduler places their calls through the ElevenLabs Agents API.
             services.AddScoped<IElevenLabsAgentService, ElevenLabsAgentService>();
             services.AddScoped<INaukriOnboardingRepository, NaukriOnboardingRepository>();

@@ -6054,6 +6054,27 @@ namespace Risebird.Repository
                 return null;
             }
         }
+        // C3 sent by hand (Not Confirmed bulk send, WhatsApp campaigns): the reminder columns for the meetings asked
+        // for that are still booked, unconfirmed and upcoming.
+        public async Task<List<UnassignedInterviewVM>> FetchCandidateMeetingsForManualReminder(List<int> meetingIds)
+        {
+            var ids = meetingIds?.Where(i => i > 0).Distinct().ToList() ?? new List<int>();
+            if (ids.Count == 0) return new List<UnassignedInterviewVM>();
+            try
+            {
+                using (SqlConnection con = new SqlConnection(connectionString))
+                {
+                    var result = await SqlMapper.QueryAsync<UnassignedInterviewVM>(con, "usp_FetchCandidateMeetingsForManualReminder",
+                        new { MeetingIds = string.Join(",", ids) }, commandType: CommandType.StoredProcedure);
+                    return result.ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return new List<UnassignedInterviewVM>();
+            }
+        }
         public async Task<string> UpdateCandidateMeetingsStatus(int meetingid, int status, string uniqueid, bool response, string cancellationreason)
         {
             try

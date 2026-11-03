@@ -147,8 +147,8 @@ Select @Profile=pr.Name from UserList ul join Profile pr on pr.id=ul.idProfile w
 	begin
 		select distinct ipr.Id, ipr.UserId, ul.EmailId as InterviewerEmailId, ul.MobileNumber as InterviewerMobileNumber, 
 		(ul.FirstName +' '+ ul.LastName) as InterviewerName, ul.WhatsappNumber as InterviewerWhatsappNumber, ipr.ResumeLink as InterviewerResume, 
-		ipr.EmploymentComment, ipr.CompanyName, ipr.Isavailable, ipr.AvailabilityResponseDate, ipr.IsEmployed from InterviewerProfile ipr join UserList ul on ul.id = ipr.UserId
-		where ipr.Isavailable in (3,4) order by ipr.AvailabilityResponseDate desc--and ul.IsActive = 1
+		ipr.EmploymentComment, ipr.CompanyName, ipr.Isavailable, ipr.AvailabilityResponseDate, ipr.IsEmployed, ipr.ChurnSource, ipr.ChurnReason, ipr.ChurnDate from InterviewerProfile ipr join UserList ul on ul.id = ipr.UserId
+		where ipr.Isavailable in (3,4) or ipr.ChurnSource is not null order by ipr.AvailabilityResponseDate desc, ipr.ChurnDate desc--and ul.IsActive = 1
 
 	end
 	else If(@actionstatus ='ZoomLink')

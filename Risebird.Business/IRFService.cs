@@ -1430,6 +1430,68 @@ namespace Risebird.Business
             }
         }
 
+        /// <summary>
+        /// C1 / C2 over WhatsApp only (WhatsApp campaigns): a fresh one-time scheduling link, the send - opt-out
+        /// and the 3-per-IRF limit apply inside the helper - and, once sent, the invite counts and the
+        /// "Invitation sent" timeline entry, as SendInvite does. Returns the helper's result
+        /// (WhatsAppHelper.SentMessage, a "Skipped: ..." reason, or the failure text).
+        /// <paramref name="recordInvite"/> false leaves the counts and timeline to an email invite sent alongside.
+        /// </summary>
+        public async Task<string> SendWhatsAppInvite(int irfId, string email, string whatsAppEvent, string sentBy, bool recordInvite = true)
+        {
+            try
+            {
+                var irf = _irfRepository.GetIRFbyId(irfId);
+                if (irf == null || string.IsNullOrWhiteSpace(email))
+                    return "Skipped: candidate or IRF not found";
+                var candidate = (await _irfRepository.GetIRFCandidates(irfId)).FirstOrDefault(x => x.EmailId == email);
+                if (candidate == null)
+                    return "Skipped: candidate not on the IRF";
+                if (string.IsNullOrWhiteSpace(irf.CalendlyLink))
+                    return "Skipped: no scheduling link";
+
+                var client = await _clientService.GetClient(irf.ClientId);
+                string primarySkill = irf.SkillSetsevaluate > 1 ? irf.JDTiltle + " and " + irf.JDTitleTwo : irf.JDTiltle.Split("|")[0];
+
+                string stepfirst = irf.CalendlyLink.Split("?")[irf.CalendlyLink.Split("?").Length - 1];
+                var olduniqueid = stepfirst.Split("=")[stepfirst.Split("=").Length - 1];
+                var oneTimeEventId = await _interviewSchedulerRepository.GenerateOneTimeEvent(olduniqueid, email);
+                if (string.IsNullOrEmpty(oneTimeEventId))
+                {
+                    oneTimeEventId = await _interviewSchedulerRepository.GenerateOneTimeEvent(olduniqueid, email);
+                }
+                if (string.IsNullOrEmpty(oneTimeEventId))
+                    return "Skipped: no scheduling link";
+
+                WhatsAppVM _whatsapp = new WhatsAppVM();
+                _whatsapp.Emailid = email;
+                _whatsapp.Header = client?.Name;
+                _whatsapp.Event = string.IsNullOrWhiteSpace(whatsAppEvent) ? "Schedule Interview" : whatsAppEvent;
+                _whatsapp.MessageValue = ((JobLevels)(irf.JobLevel)).GetDescription();
+                _whatsapp.ClientName = client?.Name;
+                _whatsapp.PrimarySkill = primarySkill;
+                _whatsapp.buttonlink = "InterviewScheduler/CandidateScheduleEvent?id=" + oneTimeEventId + "&CandidateEmail=" + Uri.EscapeDataString(email);
+                _whatsapp.irfId = irfId;
+                _whatsapp.SentBy = sentBy;
+                var result = await _whatsAppHelper.WhatsAppSendScheduling(_whatsapp);
+                if (result == WhatsAppHelper.SentMessage && recordInvite)
+                {
+                    if (candidate.TotalInvites == 0)
+                    {
+                        _irfRepository.UpdateIRFInvites(irfId, (irf.TotalInvites + 1));
+                    }
+                    _irfRepository.UpdateCandidateInvites(candidate.id, (candidate.TotalInvites + 1));
+                    await AddCandidateStatus(sentBy, candidate.CandidateMasterId, irfId, "Invitation sent", (int)CandidateStatusOptions.InvitationSent);
+                }
+                return result;
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return WhatsAppHelper.FailedMessage;
+            }
+        }
+
         public async Task<bool> CancelInvite(int irfId, string email)
         {
             try
