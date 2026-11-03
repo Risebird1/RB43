@@ -98,5 +98,26 @@ namespace Risebird.Business.Tests.AIScreeningTests
 
             Assert.Equal("Thanks for your time. " + AIInterviewCompletionDetector.Marker, spoken);
         }
+
+        [Theory]
+        [InlineData("The interview has not started yet.")]
+        [InlineData("")]
+        [InlineData(null)]
+        [InlineData("Thanks, that's helpful. Let's move on.")]
+        public void A_turn_that_asks_nothing_needs_the_next_question(string reply)
+        {
+            Assert.True(AIInterviewCompletionDetector.NeedsNextQuestion(reply));
+        }
+
+        [Theory]
+        [InlineData("Could you walk me through a recent deal?")]
+        [InlineData("Walk me through a B2B institute subscription deal you worked on at PrepLadder.")]
+        [InlineData("Tell me about a time a decision-maker objected to your price.")]
+        [InlineData("Thank you, goodbye, take care.")]
+        [InlineData("Thanks for your time. " + AIInterviewCompletionDetector.Marker)]
+        public void A_question_or_a_sign_off_does_not(string reply)
+        {
+            Assert.False(AIInterviewCompletionDetector.NeedsNextQuestion(reply));
+        }
     }
 }

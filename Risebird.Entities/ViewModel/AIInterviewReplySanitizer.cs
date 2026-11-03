@@ -83,7 +83,7 @@ namespace Risebird.Entities.ViewModel
             var spoken = UnwrapSpokenJson(cleaned);
             if (signalsCompletion && spoken != cleaned
                 && spoken.IndexOf(AIInterviewCompletionDetector.Marker, StringComparison.OrdinalIgnoreCase) < 0)
-                spoken += " " + AIInterviewCompletionDetector.Marker;
+                spoken = (spoken + " " + AIInterviewCompletionDetector.Marker).Trim();
             return spoken;
         }
 
@@ -91,10 +91,12 @@ namespace Risebird.Entities.ViewModel
 
         /// <summary>
         /// Interviewer turns are requested as json_object, so a prompt may return its turn as
-        /// <c>{"greeting":"...","question":"..."}</c> rather than as prose. Shown as-is, the candidate
-        /// sees and hears the raw JSON. A flat object of strings (and boolean flags) is joined, in
-        /// order, into the line to speak; flags, status fields and "true"/"false" strings are not
-        /// spoken. Anything else (nested, numeric, not JSON) is left alone.
+        /// <c>{"question":"...","question_number":2,"is_follow_up":false}</c> rather than as prose.
+        /// Shown as-is, the candidate sees and hears the raw JSON. A flat object of scalars is joined,
+        /// in order, into the line to speak; numbers, flags, status fields and "true"/"false" strings
+        /// are not spoken. An object with nothing to speak (<c>{"skipped": true}</c>) becomes an empty
+        /// turn, which the API answers by asking the prompt again. Nested objects and non-JSON text
+        /// are left alone.
         /// </summary>
         public static string UnwrapSpokenJson(string reply)
         {
@@ -108,7 +110,7 @@ namespace Risebird.Entities.ViewModel
             catch (JsonReaderException) { return reply; }
 
             var props = obj.Properties().ToList();
-            if (props.Count == 0 || props.Any(p => p.Value.Type != JTokenType.String && p.Value.Type != JTokenType.Boolean))
+            if (props.Count == 0 || props.Any(p => p.Value is JContainer))
                 return reply;
 
             var spoken = string.Join(" ", props
@@ -119,7 +121,7 @@ namespace Risebird.Entities.ViewModel
                     && !v.Equals("true", StringComparison.OrdinalIgnoreCase)
                     && !v.Equals("false", StringComparison.OrdinalIgnoreCase)));
 
-            return string.IsNullOrWhiteSpace(spoken) ? reply : spoken;
+            return spoken;
         }
 
         private static int FindMatchingBrace(string text, int start)

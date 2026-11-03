@@ -1847,6 +1847,9 @@ WHERE si.SuspiciousStatus = 1",
 
                     SqlCommand cmdCreateIRF = new SqlCommand("usp_AddIRFDetails", con);
                     cmdCreateIRF.CommandType = CommandType.StoredProcedure;
+                    // The first channel on a new MAG also builds the MAG's template inside this proc,
+                    // which can outlast the 30s default and roll the whole channel back.
+                    cmdCreateIRF.CommandTimeout = 180;
 
 
                     cmdCreateIRF.Parameters.Add(new SqlParameter("@IRFId", SqlDbType.NVarChar));

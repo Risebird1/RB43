@@ -1885,6 +1885,15 @@ namespace Risebird.Web.Controllers
                             return await CompleteAdaptiveInterviewAsync(model);
                         }
 
+                        // The phone UI numbers the current question by counting the Bot lines in ChatLog, so
+                        // the questions already asked must be in it too - otherwise every answer renders as Q1.
+                        foreach (var asked in transcript
+                            .Where(x => string.Equals(x.Role, "assistant", StringComparison.OrdinalIgnoreCase))
+                            .OrderBy(x => x.Timestamp).ThenBy(x => x.Id))
+                        {
+                            model.ChatLog.Add(new ChatLine { Role = "Bot", Message = CleanMessage(asked.Message) });
+                        }
+
                         model.ChatLog.Add(new ChatLine { Role = "User", Message = userMessage });
 
                         if (replies != null)
@@ -2751,6 +2760,18 @@ namespace Risebird.Web.Controllers
             // on the way to a NEW question, and this render is the same question again. Without
             // this the candidate is returned to a blank conversation and cannot see what they were
             // asked. The earlier turns are not rebuilt; the question they have to answer is.
+            // Adaptive interviews number the question from the Bot lines in ChatLog, so they need
+            // every question asked so far (the last of which is the one being retried), not just one.
+            if (model.IsAdaptive == true && (model.ChatLog == null || model.ChatLog.Count == 0))
+            {
+                var transcript = await _aiinterviewerService.GetAIInterviewTranscriptBySessionId(model.SessionId);
+                model.ChatLog = (transcript ?? Enumerable.Empty<TranscriptConv>())
+                    .Where(x => string.Equals(x.Role, "assistant", StringComparison.OrdinalIgnoreCase))
+                    .OrderBy(x => x.Timestamp).ThenBy(x => x.Id)
+                    .Select(x => new ChatLine { Role = "Bot", Message = CleanMessage(x.Message) })
+                    .ToList();
+            }
+
             if ((model.ChatLog == null || model.ChatLog.Count == 0)
                 && !string.IsNullOrWhiteSpace(model.CurrentQuestion))
             {
@@ -4030,6 +4051,11 @@ namespace Risebird.Web.Controllers
         private string CleanMessage(string input)
         {
             if (string.IsNullOrWhiteSpace(input)) return "";
+
+            // Turns saved before the API unwrapped JSON replies ({"question":"...","question_number":2})
+            // would otherwise be shown and spoken raw on a reload. One with nothing to speak is kept as is.
+            var spoken = AIInterviewReplySanitizer.UnwrapSpokenJson(input);
+            if (!string.IsNullOrWhiteSpace(spoken)) input = spoken;
 
             return input
                 .Replace(AdaptiveInterviewCompletionMarker, "", StringComparison.OrdinalIgnoreCase) // Strip the internal completion marker so it is never shown/spoken to the candidate
