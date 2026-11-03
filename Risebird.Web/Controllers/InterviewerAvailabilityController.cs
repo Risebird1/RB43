@@ -796,6 +796,9 @@ namespace Risebird.Web.Controllers
             if (HttpContext.Session.GetString("email") == null)
                 return Json(new { success = false, error = "Not signed in." });
 
+            if (!InterviewerAvailabilityCalls.Enabled)
+                return Json(new { success = false, error = InterviewerAvailabilityCalls.DisabledMessage });
+
             try
             {
                 var record = await _repository.GetEmailAvailabilityByIdAsync(id);
@@ -1334,6 +1337,9 @@ namespace Risebird.Web.Controllers
         {
             if (HttpContext.Session.GetString("email") == null)
                 return Json(new { success = false, error = "Not signed in." });
+
+            if (!InterviewerAvailabilityCalls.Enabled)
+                return Json(new { success = false, error = InterviewerAvailabilityCalls.DisabledMessage });
 
             try
             {

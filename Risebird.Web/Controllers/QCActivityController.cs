@@ -25,7 +25,7 @@ namespace Risebird.Web.Controllers
     {
         private static readonly string[] ManagerProfiles =
         {
-            "Admin", "SupportAdmin", "SeniorHR", "SeniorInterviewerManagement", "InterviewerManagement"
+            "Admin", "SupportAdmin", "SeniorHR", "SeniorInterviewerManagement", "InterviewerManagement", "Finance Support"
         };
 
         private static readonly string[] DiagnosticsProfiles = { "Admin", "SupportAdmin" };

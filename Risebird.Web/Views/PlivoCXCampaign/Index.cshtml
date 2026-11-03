@@ -17,7 +17,10 @@
                 <h3>Campaigns</h3>
                 <p class="pcx-sub">PlivoCX calling campaigns for scheduling, rescheduling and attendance confirmation. <a href="@Url.Action("Index", "PlivoCXInterviewCall")">All PlivoCX call logs &rarr;</a></p>
             </div>
-            <a class="pcx-btn primary" href="@Url.Action("Create", "PlivoCXCampaign")">+ Create campaign</a>
+            <div class="pcx-actions">
+                <a class="pcx-btn" href="@Url.Action("Index", "WhatsAppCampaign")"><i class="fab fa-whatsapp"></i> WhatsApp campaigns</a>
+                <a class="pcx-btn primary" href="@Url.Action("Create", "PlivoCXCampaign")">+ Create campaign</a>
+            </div>
         </div>
 
         <div class="pcx-card">

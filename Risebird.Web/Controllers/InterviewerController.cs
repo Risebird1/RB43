@@ -5064,6 +5064,8 @@ namespace Risebird.Web.Controllers
         public async Task<JsonResult> SendOpenURLNotification(int? irfId = null)
         {
             var _AllInterviewerInterview = await _interviewerService.FetchAllInterviewerallUpcomingInterview("Verified", irfId);
+            // Reported back to the button: WhatsApp skips opted-out interviewers (and those with no number).
+            int emailed = 0, whatsAppSent = 0, optedOut = 0, noNumber = 0;
             foreach (var item in _AllInterviewerInterview)
             {
                 if (!string.IsNullOrEmpty(item.EmailId))
@@ -5092,6 +5094,7 @@ namespace Risebird.Web.Controllers
                             Subject = "New interviews have come up! Please assign."
                         };
                         var emailsend1 = await _notificationHelper.SendInterviewerCommonInterviewNotification(_mail1, sendreporturl, item.Total, item.uniqueid, irfId);
+                        emailed++;
                         //What's App Message Send
                         WhatsAppVM _whatsAppVM = new WhatsAppVM();
                         _whatsAppVM.Emailid = item.EmailId;
@@ -5099,7 +5102,10 @@ namespace Risebird.Web.Controllers
                         _whatsAppVM.buttonlink = !string.IsNullOrEmpty(sendreporturl) ? sendreporturl.Replace("https://portal.risebird.io/", "") : "";
                         _whatsAppVM.Event = "Interviewer Common Interview";
                         _whatsAppVM.irfId = irfId.HasValue ? irfId.Value : 0;
-                        await _whatsAppHelper.WhatsAppSendInterviewerCommonInterviewDetails(_whatsAppVM);
+                        var whatsAppResult = await _whatsAppHelper.WhatsAppSendInterviewerCommonInterviewDetails(_whatsAppVM);
+                        if (whatsAppResult == WhatsAppHelper.SentMessage) whatsAppSent++;
+                        else if (whatsAppResult == WhatsAppHelper.SkippedOptedOut) optedOut++;
+                        else if (whatsAppResult == WhatsAppHelper.SkippedNoNumber) noNumber++;
                     }
                     catch (Exception ex)
                     {
@@ -5107,7 +5113,8 @@ namespace Risebird.Web.Controllers
                     }
                 }
             }
-            return Json("Success");
+            // Callers check the "Success" prefix and show the rest.
+            return Json("Success: emailed " + emailed + " · WhatsApp sent " + whatsAppSent + " · skipped " + optedOut + " opted out" + (noNumber > 0 ? " · " + noNumber + " no number" : ""));
         }
         #endregion
         #region Interviewer Video Confirmation
@@ -5209,7 +5216,7 @@ namespace Risebird.Web.Controllers
         // so nobody can unsubscribe someone else. Stops all interviewer WhatsApp messages; emails are not affected.
         [AllowAnonymous]
         [HttpGet]
-        public async Task<IActionResult> Unsubscribe(string id, [FromServices] IWhatsappRepository whatsappRepository)
+        public async Task<IActionResult> Unsubscribe(string id, [FromServices] IWhatsappRepository whatsappRepository, string src = null)
         {
             ViewBag.Title = "WhatsApp unsubscribe";
             var email = string.IsNullOrWhiteSpace(id) ? null : await whatsappRepository.FetchEmailByUniqueIdAsync(id);
@@ -5218,19 +5225,51 @@ namespace Risebird.Web.Controllers
                 ViewBag.Message = "This unsubscribe link is not valid. Please write to support@risebird.io.";
                 return View("~/Views/Shared/WhatsAppUnsubscribed.cshtml");
             }
-            var saved = await whatsappRepository.SaveOptOutAsync(WhatsAppHelper.AudienceInterviewer, email, null, null, "UnsubscribeButton");
+            // src: the message the button was in (WhatsAppOptOut.TemplateEvent).
+            var saved = await whatsappRepository.SaveOptOutAsync(WhatsAppHelper.AudienceInterviewer, email, null, null, "UnsubscribeButton", src);
+            // Also listed in Interviewer Churn Data with the source; availability and the account are unchanged.
+            if (saved)
+                await whatsappRepository.MarkInterviewerChurnAsync(email,
+                    "WhatsApp unsubscribe button" + (string.IsNullOrWhiteSpace(src) ? "" : " (" + src.Trim() + ")"));
             ViewBag.Message = saved
                 ? "You won't receive WhatsApp messages from Risebird. Emails are not affected."
                 : "We could not record your request. Please try again or write to support@risebird.io.";
+            if (saved)
+            {
+                ViewBag.ReasonAction = Url.Action(nameof(UnsubscribeReason), "Interviewer");
+                ViewBag.ReasonFields = new Dictionary<string, string> { ["id"] = id };
+                ViewBag.Reasons = WhatsAppOptOutReasons.Interviewer;
+            }
+            return View("~/Views/Shared/WhatsAppUnsubscribed.cshtml");
+        }
+
+        /// <summary>The optional reason from the interviewer unsubscribe page.</summary>
+        [AllowAnonymous]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UnsubscribeReason(string id, string reason, string otherReason, [FromServices] IWhatsappRepository whatsappRepository)
+        {
+            ViewBag.Title = "WhatsApp unsubscribe";
+            var email = string.IsNullOrWhiteSpace(id) ? null : await whatsappRepository.FetchEmailByUniqueIdAsync(id);
+            var text = CandidateController.ReasonText(reason, otherReason, WhatsAppOptOutReasons.Interviewer);
+            if (!string.IsNullOrEmpty(email) && text != null
+                && await whatsappRepository.SetOptOutReasonAsync(WhatsAppHelper.AudienceInterviewer, email, null, text))
+                await whatsappRepository.SetInterviewerChurnReasonAsync(email, text);
+            ViewBag.Message = "Thank you. You won't receive WhatsApp messages from Risebird. Emails are not affected.";
             return View("~/Views/Shared/WhatsAppUnsubscribed.cshtml");
         }
 
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> MyQuality([FromServices] IInterviewerMyQualityService myQualityService)
+        public async Task<IActionResult> MyQuality([FromServices] IInterviewerMyQualityService myQualityService,
+            [FromServices] Risebird.Web.Services.IRisebirdSessionBootstrapService sessionBootstrap)
         {
             try
             {
+                // Opened from the WhatsApp QC message (I8) on a phone or a new tab: the login cookie is valid but the
+                // portal session may be empty. Rebuild it instead of signing the interviewer out; a signed-out user
+                // never gets here - [Authorize] sends them to login and back to this page.
+                await sessionBootstrap.EnsureSessionAsync(HttpContext);
                 var (email, profile) = MyQualitySession();
                 if (email == null || profile == null)
                     return RedirectToAction("SignOut", "Session");

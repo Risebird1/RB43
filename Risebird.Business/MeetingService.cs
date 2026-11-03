@@ -3598,6 +3598,56 @@ namespace Risebird.Business
             }
         }
 
+        /// <summary>
+        /// Not Confirmed bulk send: the confirmation reminder email and / or C3 WhatsApp for the chosen meetings,
+        /// with the same links as the CandidateMeetingReminder timer. Meetings no longer booked, upcoming and
+        /// unconfirmed are left out (usp_FetchCandidateMeetingsForManualReminder).
+        /// </summary>
+        public async Task<BulkSendResult> SendCandidateConfirmationReminders(List<int> meetingIds, bool sendEmail, bool sendWhatsApp, string sentBy)
+        {
+            var result = new BulkSendResult();
+            var meetings = await _meetingRespository.FetchCandidateMeetingsForManualReminder(meetingIds);
+            result.Found = meetings.Count;
+            foreach (var item in meetings)
+            {
+                try
+                {
+                    var links = CandidateReminderLinks.For(item);
+                    if (sendEmail)
+                    {
+                        Mail _mail = new Mail
+                        {
+                            TO = item.CandidateEmail,
+                            Subject = item.ClientName + ": For Skill :" + item.PrimarySkillInvite + ": Interview Reminder Confirm Your Availability"
+                        };
+                        await _notificationHelper.SendInterviewReminder(_mail, item.FirstName, links.InterviewDate, item.ClientName, links.Dashboard,
+                            links.Yes, links.No, links.Reschedule, links.NeedClarity, links.TimeZone, links.Dashboard, item.Irfid, item.Interviewid, item.CompanyLink, item.LogoLink);
+                        result.EmailSent++;
+                    }
+                    if (sendWhatsApp)
+                    {
+                        CountWhatsApp(result, await _whatsAppHelper.WhatsAppSendInterviewReminder(links.WhatsApp(item, sentBy)));
+                    }
+                }
+                catch (Exception ex)
+                {
+                    result.Failed++;
+                    await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                }
+            }
+            return result;
+        }
+
+        /// <summary>Adds one WhatsApp send result to a bulk send's counts.</summary>
+        public static void CountWhatsApp(BulkSendResult result, string sendResult)
+        {
+            if (sendResult == WhatsAppHelper.SentMessage) result.WhatsAppSent++;
+            else if (sendResult == WhatsAppHelper.SkippedOptedOut) result.SkippedOptedOut++;
+            else if (sendResult == WhatsAppHelper.SkippedLimitReached) result.SkippedAtLimit++;
+            else if (sendResult != null && sendResult.StartsWith("Skipped", StringComparison.OrdinalIgnoreCase)) result.SkippedOther++;
+            else result.Failed++;
+        }
+
         public async Task<string> CandidateMeetingsStatus(int meetingid, int status, string uniqueid, int Irfid, int candidateId, string cancellationreason)
         {
             if ((status == 1 || status == 2 || status == 4) && await CheckInterviewCancellable(meetingid))

@@ -1,0 +1,24 @@
+@*
+    The WhatsApp campaign screens use the PlivoCX campaign styles, plus chips and tiles for the WhatsApp
+    states. Chips differ in lightness as well as hue and always carry their text, so they read without colour.
+*@
+@await Html.PartialAsync("~/Views/PlivoCXCampaign/_CampaignStyles.cshtml")
+<style>
+    .pcx-chip.Sent { background: #e0ecff; color: #1e3a8a; border-color: #a5c4f7; }
+    .pcx-chip.Converted { background: #dcfce7; color: #14532d; border-color: #86efac; }
+    .pcx-chip.Declined, .pcx-chip.Failed { background: #fee2e2; color: #7f1d1d; border-color: #fca5a5; }
+    .pcx-chip.NoResponse { background: #e2e8f0; color: #1e293b; border-color: #94a3b8; }
+    .pcx-chip.NoNumber { background: #fef3c7; color: #78350f; border-color: #fcd34d; }
+    .pcx-tiles.wac { grid-template-columns: repeat(7, 1fr); }
+    @@media (max-width: 900px) { .pcx-tiles.wac { grid-template-columns: repeat(4, 1fr); } }
+    .pcx-tile.wac-converted b { color: #15803d; } .pcx-tile.wac-sent b { color: #1d4ed8; }
+    .pcx-tile.wac-pending b { color: #b45309; } .pcx-tile.wac-bad b { color: #dc2626; }
+    .pcx-tile.wac-grey b { color: #64748b; }
+    .pcx-bar .wac-converted, .pcx-key .wac-converted { background: #22c55e; }
+    .pcx-bar .wac-sent, .pcx-key .wac-sent { background: #60a5fa; }
+    .pcx-bar .wac-pending, .pcx-key .wac-pending { background: #fcd34d; }
+    .pcx-bar .wac-bad, .pcx-key .wac-bad { background: #f87171; }
+    .pcx-bar .wac-grey, .pcx-key .wac-grey { background: #94a3b8; }
+    .wac-template { background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 10px; padding: 10px 14px; white-space: pre-wrap; font-size: 12.5px; color: #14532d; margin: 0; }
+    .wac-used { font-variant-numeric: tabular-nums; }
+</style>

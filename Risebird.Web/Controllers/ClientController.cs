@@ -3362,6 +3362,8 @@ namespace Risebird.Web.Controllers
                             DateTime EndDate = DateTime.Now.AddDays(1);
                             meetings = meetings.Where(t => t.dtCreatedOn >= StartDate && t.dtCreatedOn <= EndDate).ToList();
                         }
+                        // Grey WhatsApp icon for opted-out / at-limit candidates (C1).
+                        ViewBag.WhatsAppLimit = await Risebird.Web.Services.WhatsAppSendButtons.PrepareAsync(HttpContext.RequestServices, meetings, Risebird.Web.Services.WhatsAppSendButtons.ScheduleEvent);
                         return View(meetings);
                     }
                     else
@@ -3535,6 +3537,8 @@ namespace Risebird.Web.Controllers
                                                     && ((filter.RFID != null && filter.RFID.Count() > 0) ? filter.RFID.Contains(c.IRFId) : c.IRFId == null)
                                                     && ((filter.ClientName != null && filter.ClientName.Count() > 0) ? filter.ClientName.Contains(c.ClientName) : c.ClientName == null)).ToList();
                         }
+                        // Grey WhatsApp icon for opted-out / at-limit candidates (C2).
+                        ViewBag.WhatsAppLimit = await Risebird.Web.Services.WhatsAppSendButtons.PrepareAsync(HttpContext.RequestServices, meetings, Risebird.Web.Services.WhatsAppSendButtons.RescheduleEvent);
                         return View(meetings);
                     }
                     else
@@ -4907,112 +4911,120 @@ namespace Risebird.Web.Controllers
             }
         }
 
+        // ── Bulk sends (Not Scheduled → C1, Reschedule → C2) ─────────────────────────────
+
+        // Above this many recipients a bulk send asks for narrower filters and sends nothing.
+        private const int BulkSendCap = 200;
+
+        /// <summary>Not Scheduled page: the schedule invite (C1) by email and / or WhatsApp to every matching candidate.</summary>
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> ShareNotScheduleBulkInvites(DateTime? startDate, DateTime? endDate, string[] rfids, string[] communicationMethods)
         {
             try
             {
-                if (HttpContext.Session.GetString("email") != null && HttpContext.Session.GetString("profileName") != null)
-                {
-                    var emailid = HttpContext.Session.GetString("email")?.Trim();
-                    emailid = emailid.Replace("\"", "");
-                    var meetings = await _meetingService.GetClientNotScheduledMeetingList(0, emailid);
-                    if (startDate != null && endDate != null)
-                    {
-                        meetings = meetings.Where(t => t.dtCreatedOn >= startDate && t.dtCreatedOn <= endDate).ToList();
-                    }
-                    meetings = meetings.Where(x => rfids != null && rfids.Count() > 0 ? rfids.Contains(x.IRFId) : x.IRFId == null).ToList();
-                    if (communicationMethods.FirstOrDefault() == "email")
-                    {
-                        //Send mail
-                    }
-                    else
-                    {
-                        //send whatsApp
-                    }
-                }
+                var user = await GetBulkInviteUser("Client", "Admin", "HR", "SeniorHR", "SupportAdmin");
+                if (user == null) return Json(new { success = false, message = "You do not have access to send invites." });
+                if (startDate == null || endDate == null || startDate > endDate) return Json(new { success = false, message = "Pick a valid date range." });
 
-                //var query = _context.MeetingVM
-                //    .Where(m => m.dtCreatedOn >= startDate && m.dtCreatedOn <= endDate);
-
-                //if (rfids != null && rfids.Length > 0)
-                //{
-                //    query = query.Where(m => rfids.Contains(m.IRFId));
-                //}
-
-                //var candidates = await query
-                //    .Select(m => new { 
-                //        m.candidateEmail, 
-                //        m.candidateName, 
-                //        m.IRFId, 
-                //        m.imid,
-                //        m.MobileNumber 
-                //    })
-                //    .ToListAsync();
-
-                //if (!candidates.Any())
-                //{
-                //    return Json(new { success = false, message = "No candidates found matching the criteria." });
-                //}
-
-                //int invitesSent = 0;
-                //var errors = new List<string>();
-
-                //foreach (var candidate in candidates)
-                //{
-                //    try
-                //    {
-                //        if (communicationMethods.Contains("email"))
-                //        {
-                //            // Send email invite
-                //            await _emailService.SendInvitationEmail(
-                //                candidate.candidateEmail,
-                //                candidate.candidateName,
-                //                candidate.IRFId
-                //            );
-                //        }
-
-                //        if (communicationMethods.Contains("whatsapp") && !string.IsNullOrEmpty(candidate.MobileNumber))
-                //        {
-                //            // Send WhatsApp invite
-                //            var endDate = DateTime.Now.AddDays(5);
-                //            await SendWhatsAppInvite(
-                //                candidate.IRFId,
-                //                candidate.imid,
-                //                candidate.candidateEmail,
-                //                endDate,
-                //                "https://portal.risebird.io/Client/NotScheduledMeetings"
-                //            );
-                //        }
-
-                //        invitesSent++;
-                //    }
-                //    catch (Exception ex)
-                //    {
-                //        var errorMessage = $"Error sending invite to {candidate.candidateName} ({candidate.candidateEmail}): {ex.Message}";
-                //        _logger.LogError(errorMessage);
-                //        errors.Add(errorMessage);
-                //    }
-                //}
-
-                //var message = $"Successfully sent {invitesSent} invites out of {candidates.Count} candidates.";
-                //if (errors.Any())
-                //{
-                //    message += $"\nFailed for {errors.Count} candidates.";
-                //}
-
-                //return Json(new { 
-                //    success = true, 
-                //    message = message,
-                //    details = errors
-                //});
-                return Json(new { success = true, message = "Success" });
+                var meetings = await _meetingService.GetClientNotScheduledMeetingList(user.Value.ClientId, user.Value.Email) ?? new List<MeetingVM>();
+                var end = endDate.Value.Date.AddDays(1);
+                meetings = meetings.Where(t => t.dtCreatedOn >= startDate.Value.Date && t.dtCreatedOn < end).ToList();
+                return await SendBulkInvites(meetings, rfids, communicationMethods, "Schedule Interview", user.Value.Email);
             }
             catch (Exception ex)
             {
-                //_logger.LogError($"Error in ShareBulkInvites: {ex.Message}");
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
                 return Json(new { success = false, message = "An error occurred while processing bulk invites." });
             }
+        }
+
+        /// <summary>Reschedule page: the reschedule invite (C2) by email and / or WhatsApp to every matching candidate.</summary>
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> ShareRescheduleBulkInvites(DateTime? startDate, DateTime? endDate, string[] rfids, string[] communicationMethods)
+        {
+            try
+            {
+                var user = await GetBulkInviteUser("SeniorHR", "Admin", "SupportAdmin", "Client");
+                if (user == null) return Json(new { success = false, message = "You do not have access to send invites." });
+                if (startDate == null || endDate == null || startDate > endDate) return Json(new { success = false, message = "Pick a valid date range." });
+
+                // Same window as the page: meetings between the two dates, the end date inclusive.
+                var meetings = await _meetingService.GetClientReScheduledMeetingList(user.Value.ClientId, user.Value.Email, startDate.Value.Date, endDate.Value.Date.AddDays(1)) ?? new List<MeetingVM>();
+                return await SendBulkInvites(meetings, rfids, communicationMethods, "Reschedule Interview", user.Value.Email);
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, message = "An error occurred while processing bulk invites." });
+            }
+        }
+
+        /// <summary>The signed-in sender of a bulk send, when their profile may send from the page; otherwise null.</summary>
+        private async Task<(string Email, int ClientId)?> GetBulkInviteUser(params string[] allowedProfiles)
+        {
+            var email = HttpContext.Session.GetString("email")?.Trim().Replace("\"", "");
+            var profileName = HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "");
+            if (string.IsNullOrEmpty(email) || !allowedProfiles.Contains(profileName)) return null;
+            int clientId = 0;
+            if (profileName == "Client")
+            {
+                // A client user sends to their own client's candidates only, as the list pages show them.
+                var client = await _userRepository.GetClientUserDetails(email);
+                if (client == null || client.ClientId <= 0) return null;
+                clientId = client.ClientId;
+            }
+            return (email, clientId);
+        }
+
+        /// <summary>
+        /// Sends one invite per candidate of the filtered list (skill channels: none = all), at most
+        /// <see cref="BulkSendCap"/>. Email goes through IRFService.SendInvite; WhatsApp through
+        /// SendWhatsAppInvite, which skips opted-out and at-limit candidates and reports why.
+        /// </summary>
+        private async Task<IActionResult> SendBulkInvites(List<MeetingVM> meetings, string[] rfids, string[] communicationMethods, string whatsAppEvent, string sentBy)
+        {
+            bool sendEmail = communicationMethods != null && communicationMethods.Contains("email");
+            bool sendWhatsApp = communicationMethods != null && communicationMethods.Contains("whatsapp");
+            if (!sendEmail && !sendWhatsApp) return Json(new { success = false, message = "Tick Email, WhatsApp or both." });
+
+            if (rfids != null && rfids.Length > 0)
+                meetings = meetings.Where(m => rfids.Contains(m.IRFId)).ToList();
+            // On these lists imid is the IRF id; a candidate is listed once per meeting, so send once per candidate per IRF.
+            var recipients = meetings
+                .Select(m => new { IrfId = m.imid, Email = (m.candidateEmail ?? m.EmailId)?.Trim() })
+                .Where(r => r.IrfId > 0 && !string.IsNullOrEmpty(r.Email))
+                .GroupBy(r => r.IrfId + "|" + r.Email.ToLowerInvariant()).Select(g => g.First()).ToList();
+
+            if (recipients.Count == 0) return Json(new { success = false, message = "No candidates match these filters." });
+            if (recipients.Count > BulkSendCap)
+                return Json(new { success = false, message = recipients.Count + " candidates match. Narrow the dates or skill channels to " + BulkSendCap + " or fewer - nothing was sent." });
+
+            var linkurl = "https://" + Request.Host.ToString();
+            var result = new BulkSendResult { Found = recipients.Count };
+            foreach (var r in recipients)
+            {
+                try
+                {
+                    if (sendEmail)
+                    {
+                        if (await _irfService.SendInvite(r.IrfId, r.Email, sentBy, linkurl, (int)CommunicationMedium.Email, whatsAppEvent)) result.EmailSent++;
+                        else result.Failed++;
+                    }
+                    if (sendWhatsApp)
+                    {
+                        // With an email alongside, the email has already counted the invite and written the timeline entry.
+                        Risebird.Business.MeetingService.CountWhatsApp(result, await _irfService.SendWhatsAppInvite(r.IrfId, r.Email, whatsAppEvent, sentBy, recordInvite: !sendEmail));
+                    }
+                }
+                catch (Exception ex)
+                {
+                    result.Failed++;
+                    await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                }
+            }
+            return Json(new { success = true, message = result.Summary(sendEmail, sendWhatsApp) });
         }
         private async Task SendNotSchdeuledMailInvite(int irfId, string CandidateemailId, string loggedInUserEmail)
         {

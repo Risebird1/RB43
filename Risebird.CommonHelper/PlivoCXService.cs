@@ -3,6 +3,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data.PlivoCXModels;
+using Risebird.Entities.Helpers;
 using System;
 using System.Linq;
 using System.Net.Http;
@@ -77,10 +78,21 @@ namespace Risebird.CommonHelper
             => PostTriggerAsync(_onboardingTriggerEndpointUrl, request, "PlivoCX:OnboardingTriggerEndpointUrl");
 
         public Task<PlivoCXTriggerResponse> TriggerAvailabilityCallAsync(PlivoCXAvailabilityTriggerRequest request)
-            => PostTriggerAsync(_availabilityTriggerEndpointUrl, request, "PlivoCX:AvailabilityTriggerEndpointUrl");
+        {
+            // Backstop for InterviewerAvailabilityCalls: callers check the flag first, this catches any that don't.
+            if (!InterviewerAvailabilityCalls.Enabled)
+                return Task.FromResult(new PlivoCXTriggerResponse { Error = InterviewerAvailabilityCalls.DisabledMessage });
+            return PostTriggerAsync(_availabilityTriggerEndpointUrl, request, "PlivoCX:AvailabilityTriggerEndpointUrl");
+        }
 
         public Task<PlivoCXTriggerResponse> TriggerByUrlAsync(string triggerUrl, object request)
-            => PostTriggerAsync(triggerUrl, request, "PlivoAssistantUrl (skill channel)");
+        {
+            // A campaign built on the "Interviewer availability" agent dials the availability flow through here.
+            if (!InterviewerAvailabilityCalls.Enabled && !string.IsNullOrWhiteSpace(_availabilityTriggerEndpointUrl)
+                && string.Equals(triggerUrl?.Trim(), _availabilityTriggerEndpointUrl.Trim(), StringComparison.OrdinalIgnoreCase))
+                return Task.FromResult(new PlivoCXTriggerResponse { Error = InterviewerAvailabilityCalls.DisabledMessage });
+            return PostTriggerAsync(triggerUrl, request, "PlivoAssistantUrl (skill channel)");
+        }
 
         /// <summary>
         /// Resolves recording URL + transcript for a call via Plivo's Voice REST APIs.

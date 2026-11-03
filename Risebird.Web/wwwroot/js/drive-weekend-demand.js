@@ -245,8 +245,8 @@
                 return $.post('/Interviewer/SendOpenURLNotification', { irfId: irfIntId });
             }
         }).then(function (result) {
-            if (result.value === 'Success') {
-                swal.fire('Sent!', 'Open interview notification sent.', 'success');
+            if (typeof result.value === 'string' && result.value.indexOf('Success') === 0) {
+                swal.fire('Sent!', result.value.replace(/^Success:?\s*/, '') || 'Open interview notification sent.', 'success');
             } else if (result.value) {
                 swal.fire('Failed', result.value, 'error');
             }
