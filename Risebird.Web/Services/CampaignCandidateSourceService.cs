@@ -28,7 +28,6 @@ namespace Risebird.Web.Services
     public class CampaignCandidateSourceService : ICampaignCandidateSourceService
     {
         private readonly IPlivoCXCampaignRepository _campaignRepository;
-        private readonly IMeetingService            _meetingService;
         private readonly IDashboardService          _dashboardService;
         private readonly IMemoryCache               _cache;
 
@@ -39,12 +38,10 @@ namespace Risebird.Web.Services
 
         public CampaignCandidateSourceService(
             IPlivoCXCampaignRepository campaignRepository,
-            IMeetingService            meetingService,
             IDashboardService          dashboardService,
             IMemoryCache               cache)
         {
             _campaignRepository = campaignRepository;
-            _meetingService     = meetingService;
             _dashboardService   = dashboardService;
             _cache              = cache;
         }
@@ -82,10 +79,23 @@ namespace Risebird.Web.Services
             var end = (endDate ?? DateTime.Now).Date.AddDays(1); // the list pages make the end date inclusive this way
             return CachedListAsync(cachePrefix, $"Reschedule|{email}|{start:yyyyMMdd}|{end:yyyyMMdd}", refresh, async () =>
             {
-                var rows = await _meetingService.GetClientReScheduledMeetingList(0, email, start, end) ?? new List<MeetingVM>();
-                // dtCreatedOn is MAX(interviewDate) here - the meeting being rescheduled.
-                return Dedupe(rows.Select(m => ToPickerItem(m, m.imid > 0 ? m.imid : m.irfIntId, null,
-                    m.dtCreatedOn > DateTime.MinValue ? m.dtCreatedOn.ToString("dd MMM yyyy", CultureInfo.InvariantCulture) : null, m.ClientName)));
+                // Same list as /Client/ReScheduleMeetings, from a lean procedure: the page's own query
+                // (usp_GetClientReScheduledMeetings) runs past the request timeout across every channel.
+                var rows = await _campaignRepository.GetRescheduleAsync(email, start, end);
+                return Dedupe(rows.Select(r => new PlivoCXCampaignPickerItem
+                {
+                    CandidateId  = r.CandidateId,
+                    Name         = r.CandidateName,
+                    Email        = r.CandidateEmail,
+                    Phone        = r.CandidatePhone,
+                    IrfId        = r.IRFId > 0 ? r.IRFId : (int?)null,
+                    IrfName      = r.IRFName,
+                    JobTitle     = r.JobTitle,
+                    ClientName   = r.ClientName,
+                    OriginalDate = r.LastInterviewDate,   // the meeting being rescheduled
+                    Eligibility  = string.IsNullOrWhiteSpace(r.CandidatePhone) ? "no-number" : "eligible",
+                    Selected     = !string.IsNullOrWhiteSpace(r.CandidatePhone)
+                }));
             });
         }
 
