@@ -1199,6 +1199,10 @@ namespace Risebird.Web.Controllers
 
         private async Task FireAndForgetRequestToSendAvailabilityMails(string assessmentGroupId, int irfId, int flatRate, string primarySkillInvite, string irfName, string jdTitle)
         {
+            // Despite the name, this only places Plivo availability calls to the MAG's interviewers.
+            if (!InterviewerAvailabilityCalls.Enabled)
+                return;
+
             _ = System.Threading.Tasks.Task.Run(async () =>
             {
                 try
@@ -11324,6 +11328,9 @@ namespace Risebird.Web.Controllers
         {
             if (HttpContext.Session.GetString("email") == null)
                 return Json(new { success = false, error = "Not signed in." });
+
+            if (!InterviewerAvailabilityCalls.Enabled)
+                return Json(new { success = false, error = InterviewerAvailabilityCalls.DisabledMessage });
 
             try
             {

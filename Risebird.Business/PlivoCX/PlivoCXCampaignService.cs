@@ -6,6 +6,7 @@ using Risebird.Business.Interface;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data.PlivoCXModels;
 using Risebird.Entities.Enum;
+using Risebird.Entities.Helpers;
 using Risebird.Repository.Interface;
 using System;
 using System.Collections.Generic;
@@ -81,6 +82,10 @@ namespace Risebird.Business.PlivoCX
         private string AgentProblem(PlivoCXAgent agent)
         {
             if (agent == null) return "The campaign's agent was not found.";
+            if (!InterviewerAvailabilityCalls.Enabled
+                && string.Equals(agent.Purpose, "availability", StringComparison.OrdinalIgnoreCase)
+                && string.Equals(agent.TargetType, "Interviewer", StringComparison.OrdinalIgnoreCase))
+                return InterviewerAvailabilityCalls.DisabledMessage;
             switch (PlivoCXCampaignProvider.Normalize(agent.Provider))
             {
                 case PlivoCXCampaignProvider.ElevenLabs:
