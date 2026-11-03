@@ -54,6 +54,13 @@ namespace Risebird.AzureTimerFunctions
         public async Task<HttpResponseData> Run(
             [HttpTrigger(AuthorizationLevel.Function, "post", Route = null)] HttpRequestData req)
         {
+            if (!InterviewerAvailabilityCalls.Enabled)
+            {
+                _log.LogInformation("[CampaignBatchCall] Availability calls to interviewers are disabled. Skipping.");
+                return await JsonResponse(req, HttpStatusCode.OK,
+                    new { success = false, started = false, message = InterviewerAvailabilityCalls.DisabledMessage });
+            }
+
             CampaignBatchCallRequestDTO dto = null;
             try
             {
