@@ -109,13 +109,32 @@ namespace Risebird.Entities.ViewModel
         public static bool IsClosingStatement(string reply)
         {
             var text = Normalize(reply);
-            if (text.Length == 0 || reply.Contains("?")) return false;
+            if (text.Length == 0 || AsksSomething(reply)) return false;
 
             var padded = " " + text + " ";
-            if (PromptingPhrases.Any(p => padded.Contains(" " + p))) return false;
-
             return FarewellPhrases.Any(p => padded.Contains(" " + p + " "));
         }
+
+        /// <summary>
+        /// True when the turn puts something to the candidate - a question, or a prompt such as
+        /// "Tell me about...". A turn that does neither ("The interview has not started yet.") leaves
+        /// the candidate with nothing to answer.
+        /// </summary>
+        public static bool AsksSomething(string reply)
+        {
+            if (string.IsNullOrWhiteSpace(reply)) return false;
+            if (reply.Contains("?")) return true;
+
+            var padded = " " + Normalize(reply) + " ";
+            return PromptingPhrases.Any(p => padded.Contains(" " + p));
+        }
+
+        /// <summary>
+        /// True when the candidate would be left with nothing to answer and the interview is not
+        /// ending: an empty turn, or one that neither asks anything nor signs off.
+        /// </summary>
+        public static bool NeedsNextQuestion(string reply) =>
+            !SignalsCompletion(reply) && !AsksSomething(reply) && !IsClosingStatement(reply);
 
         private static bool IsTrue(JToken value) =>
             value.Type == JTokenType.Boolean ? (bool)value
