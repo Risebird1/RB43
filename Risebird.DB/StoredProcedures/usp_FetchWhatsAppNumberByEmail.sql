@@ -12,6 +12,7 @@ Create Procedure usp_FetchWhatsAppNumberByEmail
 @Emailid varchar(150)
 AS
 BEGIN
-Select Isnull(WhatsappNumber,MobileNumber) as WhatsappNumber,FirstName,LastName from UserList Where Emailid=@Emailid
+-- A blank WhatsappNumber ('') falls back to MobileNumber, like NULL does.
+Select Isnull(NullIf(LTrim(RTrim(WhatsappNumber)),''),MobileNumber) as WhatsappNumber,FirstName,LastName from UserList Where Emailid=@Emailid
 END
 GO

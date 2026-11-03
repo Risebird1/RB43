@@ -171,36 +171,57 @@ namespace Risebird.Business.WhatsAppCampaigns
         {
             if (string.IsNullOrWhiteSpace(email)) return "Enter the email of a team member whose WhatsApp number is on their Risebird profile.";
             var sample = (await _campaignRepository.GetCampaignCandidatesAsync(campaign.Id)).FirstOrDefault();
+            // Every template variable must be non-empty or the send fails, so a blank client or role falls back too.
+            var clientName = FirstNonBlank(sample?.ClientName, campaign.ClientName, "Test client");
+            var jobTitle   = FirstNonBlank(sample?.JobTitle, "Test role");
 
             // No IRF and no interview on a test: it does not count toward anyone's limit, and its buttons open a
             // harmless page instead of booking or confirming a real interview.
+            WhatsAppVM vm;
+            string result;
             if (campaign.Purpose == WhatsAppCampaignPurpose.Confirm)
             {
-                return await _whatsAppHelper.WhatsAppSendInterviewReminder(new WhatsAppVM
+                vm = new WhatsAppVM
                 {
                     Emailid       = email.Trim(),
                     InterviewDate = DateTime.Now.AddDays(1).Date.AddHours(11).ToString(),
                     buttonlink    = "Candidate/VerifiedInterviewDetails/test",
                     DashboardLink = "Candidate/VerifiedInterviewDetails/test",
                     Event         = campaign.EventName,
-                    PrimarySkill  = sample?.JobTitle ?? "Test role",
-                    ClientName    = sample?.ClientName ?? "Test client",
+                    PrimarySkill  = jobTitle,
+                    ClientName    = clientName,
                     timezone      = "IST",
                     Header        = "Test send",
                     SentBy        = actor
-                });
+                };
+                result = await _whatsAppHelper.WhatsAppSendInterviewReminder(vm);
             }
-            return await _whatsAppHelper.WhatsAppSendScheduling(new WhatsAppVM
+            else
             {
-                Emailid      = email.Trim(),
-                Event        = campaign.EventName,
-                ClientName   = sample?.ClientName ?? "Test client",
-                PrimarySkill = sample?.JobTitle ?? "Test role",
-                buttonlink   = "InterviewScheduler/CandidateScheduleEvent?id=test",
-                Header       = "Test send",
-                SentBy       = actor
-            });
+                vm = new WhatsAppVM
+                {
+                    Emailid      = email.Trim(),
+                    Event        = campaign.EventName,
+                    ClientName   = clientName,
+                    PrimarySkill = jobTitle,
+                    buttonlink   = "InterviewScheduler/CandidateScheduleEvent?id=test",
+                    Header       = "Test send",
+                    SentBy       = actor
+                };
+                result = await _whatsAppHelper.WhatsAppSendScheduling(vm);
+            }
+
+            // The generic "Failed to send message" hides why; a test is the place to see Interakt's actual reply.
+            if (result == WhatsAppHelper.FailedMessage && !string.IsNullOrWhiteSpace(vm.FailureReason))
+                return "Failed (" + campaign.EventName + "): " + Truncate(vm.FailureReason, 400);
+            return result;
         }
+
+        private static string Truncate(string text, int max) =>
+            text.Length <= max ? text : text.Substring(0, max) + "…";
+
+        private static string FirstNonBlank(params string[] values) =>
+            values.FirstOrDefault(v => !string.IsNullOrWhiteSpace(v))?.Trim();
 
         // ── Create picker ─────────────────────────────────────────────────────────
 
