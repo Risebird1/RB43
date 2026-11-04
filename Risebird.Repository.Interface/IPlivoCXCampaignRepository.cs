@@ -97,6 +97,13 @@ namespace Risebird.Repository.Interface
         /// </summary>
         Task<List<PlivoCXCampaignIRFPickerRow>> GetNotScheduledAsync(string email);
 
+        /// <summary>
+        /// The Reschedule source (usp_GetPlivoCXCampaignReschedule): the same candidates as
+        /// /Client/ReScheduleMeetings for <paramref name="email"/> and a meeting-date range, without
+        /// that page's slow query. LastInterviewDate is the meeting being rescheduled.
+        /// </summary>
+        Task<List<PlivoCXCampaignIRFPickerRow>> GetRescheduleAsync(string email, DateTime startDate, DateTime endDate);
+
         /// <summary>Writes PlivoCXCallLogs.CampaignId (a separate statement so a database without the column still logs calls).</summary>
         Task SetCallLogCampaignAsync(int callLogId, int campaignId);
     }
