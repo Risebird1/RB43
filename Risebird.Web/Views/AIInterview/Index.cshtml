@@ -6492,8 +6492,16 @@
     <style>
         .rb-cp-overlay { position: fixed; inset: 0; z-index: 10050; background: #F4F6F9; display: none; overflow: auto; font-family: "Public Sans", -apple-system, "Segoe UI", Roboto, Arial, sans-serif; color: #152033; font-size: 14px; line-height: 1.55; }
         .rb-cp-overlay.is-open { display: block; }
+        /* SweetAlert2 dialogs default to z-index 1060, which opened the "Submit your project?" confirm
+           underneath this overlay: Submit looked dead and only the timer's own submit went through. */
+        .swal2-container { z-index: 10100 !important; }
         .rb-cp-top { background: #16233A; color: #fff; display: flex; align-items: center; gap: 14px; padding: 0 20px; min-height: 56px; flex-wrap: wrap; }
         .rb-cp-top .brand { font-weight: 700; letter-spacing: .06em; font-size: 13px; text-transform: uppercase; }
+        .rb-cp-top .rb-cp-rec { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; color: #FFB4B4; }
+        .rb-cp-top .rb-cp-rec::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: #E5484D; animation: rbCpRecPulse 1.4s ease-in-out infinite; }
+        .rb-cp-top .rb-cp-rec[hidden] { display: none; }
+        @@keyframes rbCpRecPulse { 50% { opacity: .35; } }
+        @@media (prefers-reduced-motion: reduce) { .rb-cp-top .rb-cp-rec::before { animation: none; } }
         .rb-cp-main { padding: 20px; max-width: 1500px; margin: 0 auto; }
         .rb-cp-headrow { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; margin-bottom: 16px; }
         .rb-cp-headrow h1 { font-size: 19px; font-weight: 700; margin: 0; letter-spacing: -.01em; }
@@ -6559,6 +6567,7 @@
     <div class="rb-cp-overlay" id="codeProjectOverlay" role="dialog" aria-modal="true" aria-labelledby="cpTitle">
         <header class="rb-cp-top">
             <span class="brand">Code Project</span>
+            <span class="rb-cp-rec" id="cpRec" hidden title="Your camera is recorded while you work on the machine, as for the other questions.">Recording</span>
         </header>
         <main class="rb-cp-main">
             <div class="rb-cp-headrow">
@@ -6581,7 +6590,7 @@
                             <ul id="cpEditable"></ul>
                         </div>
                         <h3>Submit</h3>
-                        <p>Commit from the terminal on your machine. Commit as often as you like — we grade your last commit when you press <b>Submit</b> or when time runs out.</p>
+                        <p>Your files in <code>C:\workspace</code> are collected automatically when you press <b>Submit</b> or when time runs out — saved changes count even if you never commit. Committing is optional, but each commit shows the reviewer how you worked.</p>
                         <div class="rb-cp-tree" id="cpCommitHint">git add -A
 git commit -m "implement the requirements"</div>
                         <div class="rb-cp-note">Your work stays on the machine. If your connection drops, open it again and everything will be exactly as you left it. The timer keeps running.</div>
@@ -6758,6 +6767,8 @@ git commit -m "implement the requirements"</div>
                     stopPolling();
                     show('cpIdle', false); show('cpConnecting', false); show('cpIde', true); show('cpDone', true);
                     badge('Connected', 'ok');
+                    // The working time is recorded from handover (after a reload, from the reload).
+                    startProjectRecording();
                     if (env.connectUrl) {
                         $('cpOpenLink').href = env.connectUrl;
                         try { $('cpIdeUrl').textContent = new URL(env.connectUrl).host; } catch (e) { }
@@ -6869,19 +6880,101 @@ git commit -m "implement the requirements"</div>
                 var btn = $('cpSubmitBtn');
                 if (btn) { btn.disabled = true; btn.textContent = timeExpired ? 'Time is up — submitting…' : 'Submitting…'; }
 
-                // Grade first (reads the last commit off the machine), then advance the interview.
-                // If grading is slow or fails, the answer post grades again server-side.
-                post(submitUrl).then(advanceInterview, advanceInterview);
+                // Stop the camera recording, collect and grade the work off the machine, then advance
+                // the interview. If grading is slow or fails, the answer post grades again server-side.
+                stopProjectRecording().then(function () {
+                    post(submitUrl).then(advanceInterview, advanceInterview);
+                });
             }
 
-            // Posts the interview's answer form, which records the graded result and moves to the next question.
+            // ---- Camera recording while the candidate works on the machine -------------------------
+            // Recorded like every other answer and saved as this question's video (VideoFile), so the
+            // report's Video Responses show the candidate during the project. Low bitrate keeps a
+            // 15-minute slot around 30 MB. No camera means no video, never a blocked submission.
+            var projectRecorder = null, projectChunks = [], projectVideoFile = null;
+
+            function pickProjectVideoMime() {
+                if (typeof MediaRecorder === 'undefined' || !MediaRecorder.isTypeSupported) return '';
+                var types = ['video/webm;codecs=vp8,opus', 'video/webm;codecs=vp9,opus', 'video/webm', 'video/mp4'];
+                for (var i = 0; i < types.length; i++) if (MediaRecorder.isTypeSupported(types[i])) return types[i];
+                return '';
+            }
+
+            function cameraStream() {
+                var live = function (s) { return s && s.active && s.getVideoTracks().some(function (t) { return t.readyState === 'live'; }); };
+                // The interview page's own camera stream, so the browser is not asked twice.
+                if (live(window.stream)) return Promise.resolve(window.stream);
+                if (live(window._audioPhoneCandidateStream)) return Promise.resolve(window._audioPhoneCandidateStream);
+                if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) return Promise.resolve(null);
+                return navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+                    .then(function (s) { if (!live(window.stream)) window.stream = s; return s; })
+                    .catch(function () { return null; });
+            }
+
+            function startProjectRecording() {
+                if (projectRecorder || submitted || typeof MediaRecorder === 'undefined') return;
+                projectRecorder = 'starting';
+                cameraStream().then(function (source) {
+                    if (!source || submitted) { projectRecorder = null; return; }
+                    // Own copies of the tracks, so stopping this recorder never stops the page's camera.
+                    var tracks = source.getVideoTracks().concat(source.getAudioTracks())
+                        .filter(function (t) { return t.readyState === 'live'; })
+                        .map(function (t) { return t.clone(); });
+                    var stream = new MediaStream(tracks);
+                    var mime = pickProjectVideoMime();
+                    var options = { videoBitsPerSecond: 250000, audioBitsPerSecond: 32000 };
+                    if (mime) options.mimeType = mime;
+                    try { projectRecorder = new MediaRecorder(stream, options); }
+                    catch (e) { try { projectRecorder = new MediaRecorder(stream); } catch (e2) { projectRecorder = null; return; } }
+                    projectChunks = [];
+                    projectRecorder.ondataavailable = function (ev) { if (ev.data && ev.data.size > 0) projectChunks.push(ev.data); };
+                    projectRecorder.start(1000);
+                    projectRecorder._stream = stream;
+                    var rec = $('cpRec'); if (rec) rec.hidden = false;
+                }).catch(function () { projectRecorder = null; });
+            }
+
+            /** Resolves once the recording is a file ready to attach (or there is none). Never rejects. */
+            function stopProjectRecording() {
+                return new Promise(function (resolve) {
+                    var rec = $('cpRec'); if (rec) rec.hidden = true;
+                    var r = projectRecorder;
+                    if (!r || typeof r === 'string' || r.state === 'inactive') { resolve(); return; }
+                    var done = false;
+                    var finish = function () {
+                        if (done) return;
+                        done = true;
+                        var mime = r.mimeType || 'video/webm';
+                        if (projectChunks.length) {
+                            var blob = new Blob(projectChunks, { type: mime });
+                            if (blob.size > 1000) projectVideoFile = new File([blob], 'codeproject.' + (mime.indexOf('mp4') >= 0 ? 'mp4' : 'webm'), { type: mime });
+                        }
+                        try { (r._stream ? r._stream.getTracks() : []).forEach(function (t) { t.stop(); }); } catch (e) { }
+                        projectChunks = [];
+                        resolve();
+                    };
+                    r.onstop = finish;
+                    setTimeout(finish, 4000);   // a recorder that never fires onstop must not hold up the submission
+                    try { if (r.state === 'recording') r.requestData(); r.stop(); } catch (e) { finish(); }
+                });
+            }
+
+            // Posts the interview's answer form, which records the graded result (and the recording,
+            // when there is one) and moves to the next question.
             var advanced = false;
             function advanceInterview() {
                 if (advanced) return;
                 advanced = true;
                 var form = $('chatForm');
                 if (!form) { window.location.reload(); return; }
-                ['audioInput', 'videoInput'].forEach(function (id) { var el = $(id); if (el) el.value = ''; });
+                var audio = $('audioInput'); if (audio) audio.value = '';
+                var video = $('videoInput');
+                if (video) {
+                    video.value = '';
+                    if (projectVideoFile && typeof DataTransfer !== 'undefined') {
+                        try { var dt = new DataTransfer(); dt.items.add(projectVideoFile); video.files = dt.files; } catch (e) { video.value = ''; }
+                    }
+                }
                 if (typeof answerSubmitInFlight !== 'undefined') answerSubmitInFlight = true;
                 form.submit();
             }
@@ -6891,12 +6984,12 @@ git commit -m "implement the requirements"</div>
                 if (typeof Swal !== 'undefined') {
                     Swal.fire({
                         title: 'Submit your project?',
-                        text: 'We grade your last commit. Uncommitted changes are not included, and you cannot return to this question.',
+                        text: 'We collect your files in C:\\workspace as they are now (save them first in your editor). You cannot return to this question.',
                         icon: 'question', showCancelButton: true,
                         confirmButtonColor: '#2E9E5B', cancelButtonColor: '#d33',
                         confirmButtonText: 'Submit', cancelButtonText: 'Keep working'
                     }).then(function (r) { if (r.isConfirmed || r.value === true) go(); });
-                } else if (window.confirm('Submit your project? We grade your last commit.')) {
+                } else if (window.confirm('Submit your project? We collect your files as they are now.')) {
                     go();
                 }
             });

@@ -2896,12 +2896,18 @@ namespace Risebird.Web.Controllers
                         var blobExists = blob != null && await blob.ExistsAsync();
                         if (!blobExists || string.IsNullOrWhiteSpace(uploadedvideoFileURL) || string.IsNullOrWhiteSpace(sas))
                         {
-                            return false;
+                            // A code project's answer is the graded work; its recording is supporting
+                            // evidence, so losing the video must not lose the answer.
+                            if (!model.IsCodeProjectQuestion) return false;
+                            await _applicationErrorLogger.LogMessage(LogLevelInfo.Warning,
+                                new Exception($"Code project recording for session {model.SessionId} could not be stored; the answer is saved without it."));
                         }
-
-                        VideoLink = uploadedvideoFileURL + "?" + sas;
+                        else
+                        {
+                            VideoLink = uploadedvideoFileURL + "?" + sas;
+                        }
                     }
-                    else
+                    else if (!model.IsCodeProjectQuestion)
                     {
                         // Invalid video type: treat as a failure for the video-response workflow.
                         return false;
