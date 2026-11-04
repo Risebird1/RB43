@@ -16,7 +16,9 @@
                 </button>
 
             </div>
-            <div class="modal-body" id="addinterviewers_modal_body" style="max-height:400px;overflow-y:auto;overflow-x: hidden;">
+            @* overflow-x was hidden: one long unbroken email / skill list widened the table and clipped the
+               Add checkboxes off the right edge, so operators could not select anyone on that channel. *@
+            <div class="modal-body" id="addinterviewers_modal_body" style="max-height:400px;overflow-y:auto;overflow-x:auto;">
 
                 <form> @* asp-route-assessmentGroupName="@ViewBag.IRFId"; asp-action="AddIRFInterviewers" asp-route-irfId="@ViewBag.IRFId" *@
                     @Html.AntiForgeryToken()
@@ -33,6 +35,8 @@
                             <table class="table table-bordered table-striped" cellpadding="0" cellspacing="0" style="width:100%;">
                                 <thead>
                                     <tr>
+                                        @* First, so it stays visible however wide the other columns get. *@
+                                        <th>Add</th>
                                         <th>Email Id</th>
                                         <th>Primary Skills</th>
                                         <th>Resume</th>
@@ -44,7 +48,6 @@
                                                 <th>Surcharge</th>
                                             }
                                         }
-                                        <th>Add</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -53,8 +56,17 @@
                                         for (int i = 0; i <= Model.Count() - 1; i++)
                                         {
                                             <tr>
-                                                <td>@Model[i].EmailId</td>
-                                                <td style="width: 200px;white-space: break-spaces; display:block">@Model[i].PrimarySkill</td>
+                                                @* <td class="text-center select-checkbox-addInterviewerPopup">@Html.CheckBoxFor(m => m[i].IsSelectedForAdding)</td> *@
+                                                <td class="text-center">
+                                                    <input type="checkbox"
+                                                           class="select-checkbox-addInterviewerPopup"
+                                                           value="@Model[i].UserId"
+                                                           data-persuccessrate="@Model[i].PerSuccessRate"
+                                                           data-irfid="@ViewBag.IRFId"
+                                                           data-source="@ViewBag.LoggedEmail" />
+                                                </td>
+                                                <td style="overflow-wrap:anywhere;">@Model[i].EmailId</td>
+                                                <td style="width:200px;white-space:break-spaces;overflow-wrap:anywhere;">@Model[i].PrimarySkill</td>
                                                 
                                                 @if (!string.IsNullOrEmpty(Model[i].ResumeLink)) //CodedResumeLink
                                                 {
@@ -79,18 +91,7 @@
                                                     }
                                                 }
 
-                                                
-                                                @* <td class="text-center select-checkbox-addInterviewerPopup">@Html.CheckBoxFor(m => m[i].IsSelectedForAdding)</td> *@
-                                                <td class="text-center">
-                
-                                                    <input type="checkbox" 
-                                                           class="select-checkbox-addInterviewerPopup" 
-                                                           value="@Model[i].UserId" 
-                                                           data-persuccessrate="@Model[i].PerSuccessRate" 
-                                                           data-irfid="@ViewBag.IRFId" 
-                                                           data-source="@ViewBag.LoggedEmail" />
-                                                </td>
-                                                
+
                                                 @* @Html.HiddenFor(m =>m[i].UserId)
                                                 @Html.HiddenFor(m =>m[i].Source, new { Value = ViewBag.LoggedEmail })
                                                 @Html.HiddenFor(m =>m[i].IRFId)
