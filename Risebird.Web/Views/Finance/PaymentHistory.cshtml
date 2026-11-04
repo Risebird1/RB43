@@ -11,6 +11,8 @@
     string strtDte = string.Empty;
     string endDte = string.Empty;
     string[] HREmail = new string[] { };
+    // Finance Support gets a read-only view: no Action column, no Excel export
+    bool isFinanceSupport = (Context.Session.GetString("profileName") ?? "").Replace("\"", "").Trim() == "Finance Support";
     // Rows are bound client-side by DataTables (deferRender) instead of rendering
     // thousands of <tr> elements server-side; values are pre-formatted to match the old display.
     var paymentRows = Model.Select(item => new
@@ -80,9 +82,12 @@
                             <div class="mdc-button__ripple"></div>
                         </button>
                         @Html.ActionLink("Back", "FNPayment", "Finance", htmlAttributes: new { @class = "mdc-button mdc-button--raised mdc-ripple-upgraded", @role = "button" })
+                        @if (!isFinanceSupport)
+                        {
                         <button type="button" class="mdc-button mdc-button--raised mdc-ripple-upgraded">
                             <span class="far fa-file-excel" data-toggle="tooltip" data-placement="top" title="Export Excel" onclick="ExportFNDetails()" data-original-title="Tooltip on top"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Export Excel</font></span>
                         </button>
+                        }
                     </div>
                 </div>
             </div>
@@ -416,6 +421,7 @@
         applyDataTable();
     });
     var paymentRows = @Html.Raw(JsonConvert.SerializeObject(paymentRows, new JsonSerializerSettings { StringEscapeHandling = StringEscapeHandling.EscapeHtml }));
+    var isFinanceSupport = @(isFinanceSupport ? "true" : "false");
     var paymentEmailById = {};
     for (var r = 0; r < paymentRows.length; r++) {
         paymentEmailById[paymentRows[r].id] = paymentRows[r].email;
@@ -459,7 +465,7 @@
                 { data: 'transactionDate', render: textCol },
                 { data: 'cfTransferId', render: textCol },
                 { data: 'payoutStatus', render: textCol },
-                { data: null, orderable: false, searchable: false, render: renderActions }
+                { data: null, orderable: false, searchable: false, visible: !isFinanceSupport, render: renderActions }
             ],
             language: {
                 search: "_INPUT_",
