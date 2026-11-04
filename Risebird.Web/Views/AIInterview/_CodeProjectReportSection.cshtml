@@ -100,7 +100,7 @@
                         <span class="rb-cp-badge warn">@grade.IntegrityFlags.Count session note@(grade.IntegrityFlags.Count == 1 ? "" : "s") to review</span>
                     }
                 </div>
-                <div class="rb-cp-sub" style="margin-bottom:12px;">Graded on the diff between the baseline commit and what the candidate pushed.</div>
+                <div class="rb-cp-sub" style="margin-bottom:12px;">Graded on the candidate's final files: the diff against the starting project, including work saved automatically at submit.</div>
 
                 @if (grade.Excluded)
                 {

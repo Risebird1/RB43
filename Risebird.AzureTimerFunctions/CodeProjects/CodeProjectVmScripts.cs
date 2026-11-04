@@ -92,10 +92,29 @@ Set-ItemProperty -Path $ts -Name 'fDisableClip' -Value 1 -Type DWord
 Set-ItemProperty -Path $ts -Name 'fDisableCdm' -Value 1 -Type DWord
 Set-ItemProperty -Path 'HKLM:\SYSTEM\CurrentControlSet\Control\Terminal Server' -Name 'fSingleSessionPerUser' -Value 1 -Type DWord
 
-# 6. A shortcut so the candidate lands in the project.
-$lnk = (New-Object -ComObject WScript.Shell).CreateShortcut('C:\Users\Public\Desktop\workspace.lnk')
+# 6. The candidate lands in the project: VS Code opens on the workspace at sign-in (and from a
+#    desktop shortcut), and every PowerShell window starts there. A terminal outside the workspace
+#    is how a candidate ends up committing nowhere ('not a git repository').
+$shell = New-Object -ComObject WScript.Shell
+$lnk = $shell.CreateShortcut('C:\Users\Public\Desktop\workspace.lnk')
 $lnk.TargetPath = $WorkspacePath
 $lnk.Save()
+$code = @(""$env:ProgramFiles\Microsoft VS Code\Code.exe"", ""${env:ProgramFiles(x86)}\Microsoft VS Code\Code.exe"") | Where-Object { Test-Path $_ } | Select-Object -First 1
+if ($code) {
+    foreach ($path in @('C:\Users\Public\Desktop\Open project in VS Code.lnk',
+                        'C:\ProgramData\Microsoft\Windows\Start Menu\Programs\StartUp\Open project in VS Code.lnk')) {
+        $s = $shell.CreateShortcut($path)
+        $s.TargetPath = $code
+        $s.Arguments = '""' + $WorkspacePath + '""'
+        $s.WorkingDirectory = $WorkspacePath
+        $s.Save()
+    }
+}
+$profileDir = Join-Path $env:windir 'System32\WindowsPowerShell\v1.0'
+Set-Content -Path (Join-Path $profileDir 'profile.ps1') -Encoding ASCII -Value (""if (`$PWD.Path -eq `$HOME) { Set-Location '"" + $WorkspacePath + ""' }"")
+
+# Build output never belongs in the candidate's diff (and is not committed when work is saved at submit).
+Add-Content -Path (Join-Path $WorkspacePath '.git\info\exclude') -Encoding ASCII -Value @('bin/', 'obj/', 'node_modules/', '__pycache__/', '*.pyc', '.pytest_cache/', 'target/', 'TestResults/', 'test-results/', '.vs/', '.vscode/', '.idea/', 'dist/')
 
 Write-Output ('RB-SETUP-OK ' + $baseline)
 ";
@@ -127,8 +146,9 @@ Write-Output 'RB-LOCKED'
 
         /// <summary>
         /// Emits one line "RBJSON:{...}" with the baseline and head commits, the commit log with
-        /// shortstats, the unified diff and a zip of the tree at HEAD (base64). Only committed work
-        /// counts — the candidate is told so on screen.
+        /// shortstats, the unified diff and a zip of the tree at HEAD (base64). The candidate is signed
+        /// out first, so the files are final; anything they did not commit is then committed for them,
+        /// so work is never lost to a forgotten commit or a terminal opened outside the workspace.
         /// </summary>
         public const string Collect = @"
 param([string]$WorkspacePath = 'C:\workspace', [string]$CandidateUser = 'candidate')
@@ -138,6 +158,19 @@ $ErrorActionPreference = 'Stop'
 $git = (Get-Command git -ErrorAction Stop).Source
 Set-Location $WorkspacePath
 $baseline = (Get-Content '" + BaselineFile + @"' -Raw).Trim()
+
+# Save uncommitted work. Build output stays out (also for machines set up before this list existed).
+# git warnings go to stderr, which 'Stop' would turn into a failure, so this part runs relaxed.
+$ErrorActionPreference = 'Continue'
+$exclude = Join-Path $WorkspacePath '.git\info\exclude'
+$known = if (Test-Path $exclude) { Get-Content $exclude } else { @() }
+$missing = @('bin/', 'obj/', 'node_modules/', '__pycache__/', '*.pyc', '.pytest_cache/', 'target/', 'TestResults/', 'test-results/', '.vs/', '.vscode/', '.idea/', 'dist/') | Where-Object { $known -notcontains $_ }
+if ($missing) { Add-Content -Path $exclude -Encoding ASCII -Value $missing }
+& $git add -A *> $null
+if (& $git status --porcelain) {
+    & $git -c user.name=Candidate -c user.email=candidate@risebird.invalid commit --quiet --no-verify -m 'Uncommitted work saved automatically at submit' *> $null
+}
+$ErrorActionPreference = 'Stop'
 $head = (& $git rev-parse HEAD).Trim()
 
 $commits = @()
