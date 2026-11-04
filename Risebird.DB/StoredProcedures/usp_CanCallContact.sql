@@ -34,13 +34,14 @@ BEGIN
     IF @PersonType = 'Interviewer'
     BEGIN
         -- Runs before every dial. Driven from the (small) opted-out set, matching the last 10 digits of
-        -- MobileNumber (bigint) whatever country code it is stored with, like usp_RecordInterviewerCallOptOut.
+        -- MobileNumber whatever country code or formatting it is stored with (the column is nvarchar in the live
+        -- databases although Tables/UserList.sql says bigint; fn_NormalizePhone handles both).
         -- CallConsent = 0 also blocks: availability emails and My Profile can overwrite Isavailable = 5.
         IF EXISTS (SELECT 1
                    FROM InterviewerProfile ip
                    JOIN UserList ul ON ul.id = ip.UserId
                    WHERE (ip.Isavailable = 5 OR ip.CallConsent = 0)
-                     AND ul.MobileNumber % 10000000000 = CAST(@NormPhone AS bigint))
+                     AND dbo.fn_NormalizePhone(ul.MobileNumber) = @NormPhone)
             SELECT CAST(0 AS bit) AS CanCall, CAST('Interviewer opted out of calls' AS varchar(200)) AS Reason
         ELSE
             SELECT CAST(1 AS bit) AS CanCall, CAST(NULL AS varchar(200)) AS Reason

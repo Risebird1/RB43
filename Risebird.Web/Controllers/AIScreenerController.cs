@@ -1116,7 +1116,8 @@ namespace Risebird.Web.Controllers
                     }
                     else
                     {
-                        return null;
+                        // An empty response reached the page as "Error processing. Please try again later."
+                        return Json(new { isfavourableVerdict = false, aiResponseHref = string.Empty, errorMessage = "The uploaded file could not be read as a PDF. Please save the resume as a PDF and upload it again." });
                     }
                 }
 
@@ -1140,10 +1141,21 @@ namespace Risebird.Web.Controllers
                 {
                     if (aiEvaluation.OpenAIResponse != null && aiEvaluation.IsAIScreeningAttempted == true)
                     {
-                        //var modal = JsonConvert.DeserializeObject<RunResult>(aiEvaluation.OpenAIResponse);
-                        //return View(modal);
-                        return View("PreOnboardingAIVerdictDetailsV2", aiEvaluation.OpenAIResponse);
-
+                        // Re-applying for the same MAG keeps the earlier verdict (usp_InsertApplicantsRenewed
+                        // does not reset it). The apply page expects JSON, so returning the verdict view here
+                        // showed "Error processing" and the applicant could never get past this step. Answer
+                        // from the stored verdict instead, and for a "yes" retry the profile creation that
+                        // failed last time (step 1 only lets them through when no account exists for the email).
+                        var storedResponseUrl = Url.Action("ApplicantAIEvaluation", "AIScreener", new { id = id }, Request.Scheme);
+                        if ((aiEvaluation.AIVerdict ?? string.Empty).ToLower().Contains("yes"))
+                        {
+                            if (aiEvaluation.IsEmployed && !await AddScreenedApplicantAsInterviewer(aiEvaluation))
+                            {
+                                return Json(new { isfavourableVerdict = false, aiResponseHref = storedResponseUrl, errorMessage = ScreenedApplicantProfileFailedMessage, aiAnalysisScore = aiEvaluation.AIAnalysisScore });
+                            }
+                            return Json(new { isfavourableVerdict = true, aiResponseHref = storedResponseUrl, errorMessage = string.Empty, aiAnalysisScore = aiEvaluation.AIAnalysisScore });
+                        }
+                        return Json(new { isfavourableVerdict = false, aiResponseHref = storedResponseUrl, errorMessage = string.Empty, aiAnalysisScore = aiEvaluation.AIAnalysisScore });
                     }
                     else
                     {
@@ -1176,38 +1188,11 @@ namespace Risebird.Web.Controllers
                                     }
                                     if (AIVerdict.ToLower().Contains("yes"))//== "yes"
                                     {
-                                        if (aiEvaluation.IsEmployed)
+                                        // As above: a false return means no interviewer profile was written, so the
+                                        // applicant must not be reported as successfully screened.
+                                        if (aiEvaluation.IsEmployed && !await AddScreenedApplicantAsInterviewer(aiEvaluation))
                                         {
-                                            //call method to add Interviewer here
-                                            var obj = new InterviewerProfileVM();
-                                            obj.EmailId = aiEvaluation.EmailId;
-                                            obj.MobileNumber = aiEvaluation.Phone;
-                                            obj.ResumeLink = aiEvaluation.ResumeLink;
-                                            obj.CompanyName = aiEvaluation.CompanyName;
-                                            obj.isVerified = aiEvaluation.isVerified;
-                                            obj.IsEmployed = aiEvaluation.IsEmployed;
-                                            obj.DOB = aiEvaluation.DOB.HasValue ? aiEvaluation.DOB.Value : DateTime.Now;
-                                            obj.FirstName = aiEvaluation.FirstName;
-                                            obj.LastName = aiEvaluation.LastName;
-                                            obj.TargetIrfId = aiEvaluation.IRFId;
-                                            obj.AssessmentGroupId = aiEvaluation.AssessmentGroupId.ToString();
-                                            obj.PrimarySpecializationForAIVerdict = aiEvaluation.JDTiltle;
-                                            obj.Country = "";
-                                            obj.PrimarySpecializationForAcknowledgement = aiEvaluation.JDTiltle;
-                                            obj.AIResponse = aiEvaluation.OpenAIResponse;
-                                            obj.AssessmentGroupArray = new string[] { aiEvaluation.AssessmentGroupId.ToString() };
-                                            int userId;
-                                            string agList;
-                                            string uniqueid;
-                                            // As above: a false return means no interviewer profile was written, so the
-                                            // applicant must not be reported as successfully screened.
-                                            if (!_interviewerService.AddInterviewerProfile(obj, aiEvaluation.EmailId, out agList, out userId, out uniqueid, true))
-                                            {
-                                                await _applicationErrorLogger.LogMessage(LogLevelInfo.Error,
-                                                    "AI screening passed but the interviewer profile could not be created, so the applicant was not onboarded.",
-                                                    aiEvaluation.EmailId);
-                                                return Json(new { isfavourableVerdict = false, aiResponseHref = aiResponseUrl, errorMessage = "The candidate passed screening, but their interviewer profile could not be created. Please retry, or add them manually.", aiAnalysisScore = aiEvaluation.AIAnalysisScore });
-                                            }
+                                            return Json(new { isfavourableVerdict = false, aiResponseHref = aiResponseUrl, errorMessage = ScreenedApplicantProfileFailedMessage, aiAnalysisScore = aiEvaluation.AIAnalysisScore });
                                         }
                                         return Json(new { isfavourableVerdict = true, aiResponseHref = aiResponseUrl, errorMessage = string.Empty, aiAnalysisScore = aiEvaluation.AIAnalysisScore });//, aiResponse = response.Data?.FirstOrDefault()?.Content?.Where(x=> x.Text.Value.Contains("Evaluate the resume")).FirstOrDefault()?.Text.Value
 
@@ -1256,6 +1241,51 @@ namespace Risebird.Web.Controllers
                 await _interviewerService.SaveApplicantErrorMessage(id, $"AI Screening (API) failure. Exception Message : {ex.Message}");
                 return Json(new { isfavourableVerdict = false, aiResponseHref = string.Empty, errorMessage = "Failed to generate verdict. Please try again." });
             }
+        }
+
+        private const string ScreenedApplicantProfileFailedMessage =
+            "The candidate passed screening, but their interviewer profile could not be created. Please retry, or add them manually.";
+
+        /// <summary>Creates the interviewer profile for an applicant whose AI screening verdict was "yes".</summary>
+        private async Task<bool> AddScreenedApplicantAsInterviewer(InterviewerDirectApplicationVM aiEvaluation)
+        {
+            // The EPFO name is missing or one word for many applicants; fall back to the name they typed.
+            string firstName = aiEvaluation.FirstName;
+            string lastName = aiEvaluation.LastName;
+            if (string.IsNullOrWhiteSpace(firstName) && !string.IsNullOrWhiteSpace(aiEvaluation.NameAsMentionedByApplicant))
+            {
+                var nameParts = aiEvaluation.NameAsMentionedByApplicant.Trim().Split(' ', 2);
+                firstName = nameParts[0];
+                lastName = nameParts.Length > 1 ? nameParts[1] : string.Empty;
+            }
+
+            var obj = new InterviewerProfileVM();
+            obj.EmailId = aiEvaluation.EmailId;
+            obj.MobileNumber = aiEvaluation.Phone;
+            obj.ResumeLink = aiEvaluation.ResumeLink;
+            obj.CompanyName = aiEvaluation.CompanyName;
+            obj.isVerified = aiEvaluation.isVerified;
+            obj.IsEmployed = aiEvaluation.IsEmployed;
+            obj.DOB = aiEvaluation.DOB.HasValue ? aiEvaluation.DOB.Value : DateTime.Now;
+            obj.FirstName = firstName;
+            obj.LastName = lastName;
+            obj.TargetIrfId = aiEvaluation.IRFId;
+            obj.AssessmentGroupId = aiEvaluation.AssessmentGroupId.ToString();
+            obj.PrimarySpecializationForAIVerdict = aiEvaluation.JDTiltle;
+            obj.Country = "";
+            obj.PrimarySpecializationForAcknowledgement = aiEvaluation.JDTiltle;
+            obj.AIResponse = aiEvaluation.OpenAIResponse;
+            obj.AssessmentGroupArray = new string[] { aiEvaluation.AssessmentGroupId.ToString() };
+            if (_interviewerService.AddInterviewerProfile(obj, aiEvaluation.EmailId, out _, out _, out _, true))
+            {
+                return true;
+            }
+
+            await _applicationErrorLogger.LogMessage(LogLevelInfo.Error,
+                "AI screening passed but the interviewer profile could not be created, so the applicant was not onboarded. Reason: "
+                + (_interviewerService.LastAddProfileException?.Message ?? "unknown"),
+                aiEvaluation.EmailId);
+            return false;
         }
 
         public async Task<IActionResult> ApplicantAIEvaluation(int id)
