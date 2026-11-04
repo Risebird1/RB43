@@ -994,6 +994,10 @@ namespace Risebird.Web.Controllers
         {
             try
             {
+                var retryProfile = (HttpContext.Session.GetString("profileName") ?? "").Replace("\"", "").Trim();
+                if (retryProfile == "Finance Support")
+                    return Json(new { success = false, message = "You do not have permission to retry payments." });
+
                 if (paymentHistoryId <= 0)
                     return Json(new { success = false, message = "Invalid payment history id." });
 
@@ -1810,7 +1814,8 @@ namespace Risebird.Web.Controllers
                 {
                     var profileName = HttpContext.Session.GetString("profileName")?.Trim();
                     profileName = profileName.Replace("\"", "");
-                    if (profileName == "Admin" || profileName == "Finance" || profileName == "Finance Support")
+                    // Finance Support: Payment History export is hidden/blocked
+                    if (profileName == "Admin" || profileName == "Finance")
                     {
                         var model = await _meetingService.FetchFNPaymentHistory();
                         //var AssessmentsGroups = _interviewerService.FetchAssessmentGroups();
