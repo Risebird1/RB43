@@ -11,13 +11,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Remove="wwwroot\js\MarkColdCandidate.js" />
     <Content Remove="wwwroot\js\multiselection.js" />
     <Content Remove="wwwroot\Newassets\css\chat.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <_ContentIncludedByDefault Remove="wwwroot\js\MarkColdCandidate.js" />
   </ItemGroup>
 
   <ItemGroup>
@@ -46,7 +41,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="wwwroot\js\MarkColdCandidate.js" />
     <None Include="wwwroot\js\pushengage-files\service-worker.js" />
     <None Include="wwwroot\Newassets\css\bootstrap.min.css.map" />
     <None Include="wwwroot\Newassets\css\now-ui-dashboard.css.map" />

@@ -36,6 +36,7 @@ namespace Risebird.AzureTimerFunctions
         private readonly IPlivoCXCallRepository   _repository;
         private readonly IApplicationErrorLogger  _applicationErrorLogger;
         private readonly IPhoneNumberHelper       _phoneNumberHelper;
+        private readonly ICallPreferenceRepository _callPreferenceRepository;
         private readonly ILogger                  _log;
 
         public PlivoCXRescheduleJob(
@@ -44,13 +45,15 @@ namespace Risebird.AzureTimerFunctions
             IPlivoCXService          plivoCXService,
             IPlivoCXCallRepository   repository,
             IApplicationErrorLogger  applicationErrorLogger,
-            IPhoneNumberHelper       phoneNumberHelper)
+            IPhoneNumberHelper       phoneNumberHelper,
+            ICallPreferenceRepository callPreferenceRepository)
         {
             _configuration          = configuration;
             _plivoCXService         = plivoCXService;
             _repository             = repository;
             _applicationErrorLogger = applicationErrorLogger;
             _phoneNumberHelper      = phoneNumberHelper;
+            _callPreferenceRepository = callPreferenceRepository;
             _log = loggerFactory.CreateLogger<PlivoCXRescheduleJob>();
         }
 
@@ -101,6 +104,14 @@ namespace Risebird.AzureTimerFunctions
                                 candidate.CandidatePhone, out var phoneNumber, out var phoneError))
                         {
                             _log.LogWarning($"[PlivoCX-Reschedule] Skipping {candidate.CandidateEmail} — invalid phone: {phoneError}");
+                            continue;
+                        }
+
+                        // Pre-dial check: never call a candidate who opted out of calls or was marked cold in this skill channel.
+                        var canCall = await _callPreferenceRepository.CanCallContact("Candidate", phoneNumber, candidate.IRFId);
+                        if (!canCall.CanCall)
+                        {
+                            _log.LogInformation($"[PlivoCX-Reschedule] Skipping {candidate.CandidateEmail} (IRF {candidate.IRFId}) — {canCall.Reason}");
                             continue;
                         }
 

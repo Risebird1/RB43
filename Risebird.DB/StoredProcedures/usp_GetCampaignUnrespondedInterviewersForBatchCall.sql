@@ -41,7 +41,8 @@ BEGIN
     WHERE s.value IN (SELECT CAST(id AS VARCHAR(20)) FROM @tbl_AllAssessmentGroups)
       AND ul.IsActive = 1
       AND ISNULL(ipr.IsDeleted, 0) = 0
-      AND ISNULL(ipr.Isavailable, 0) <> 4   -- not dropped
+      AND ISNULL(ipr.Isavailable, 0) NOT IN (4, 5)   -- not dropped, not opted out of calls
+      AND ISNULL(ipr.CallConsent, 1) <> 0
       AND LEN(ISNULL(ul.MobileNumber, '')) >= 10
       AND NOT EXISTS (
           SELECT 1 FROM TransInterviewer ti

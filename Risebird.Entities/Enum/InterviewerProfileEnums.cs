@@ -1274,7 +1274,9 @@ namespace Risebird.Entities.Enum
         [Description("Need clarity")]
         Needclarity = 3,
         [Description("No drop my profile")]
-        Nodropmyprofile = 4
+        Nodropmyprofile = 4,
+        [Description("Opted out of calls")]
+        Optedoutofcalls = 5
     }
 }
 

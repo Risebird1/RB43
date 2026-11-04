@@ -37,6 +37,7 @@ builder.Services.AddScoped<IQcInterviewAIMergeJobService, QcInterviewAIMergeJobS
 builder.Services.AddScoped<IDmIvAutoQcRemovalService, DmIvAutoQcRemovalService>();
 builder.Services.AddScoped<IDmIvAutoQcFlagService, DmIvAutoQcFlagService>();
 builder.Services.AddScoped<ITransInterviewerAuditRepository, TransInterviewerAuditRepository>();
+builder.Services.AddScoped<ICallPreferenceRepository, CallPreferenceRepository>();
 builder.Services.AddScoped<IAutoQcRemovalMonitorRepository, AutoQcRemovalMonitorRepository>();
 builder.Services.AddScoped<IDmIvAutoQcBackfillService, DmIvAutoQcBackfillService>();
 builder.Services.AddScoped<IAutoQcRemovalMonitorService, AutoQcRemovalMonitorService>();

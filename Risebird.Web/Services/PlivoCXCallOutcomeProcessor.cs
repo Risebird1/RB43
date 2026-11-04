@@ -31,17 +31,26 @@ namespace Risebird.Web.Services
         private readonly IPlivoCXCallRepository  _repository;
         private readonly IApplicationErrorLogger _logger;
         private readonly IPlivoCXCampaignService _campaignService;
+        private readonly ICallPreferenceRepository _callPreferenceRepository;
+        private readonly INotificationHelper     _notificationHelper;
+        private readonly ICandidateService       _candidateService;
 
         public PlivoCXCallOutcomeProcessor(
             IPlivoCXService         plivoCXService,
             IPlivoCXCallRepository  repository,
             IApplicationErrorLogger logger,
-            IPlivoCXCampaignService campaignService)
+            IPlivoCXCampaignService campaignService,
+            ICallPreferenceRepository callPreferenceRepository,
+            INotificationHelper     notificationHelper,
+            ICandidateService       candidateService)
         {
             _plivoCXService  = plivoCXService;
             _repository      = repository;
             _logger          = logger;
             _campaignService = campaignService;
+            _callPreferenceRepository = callPreferenceRepository;
+            _notificationHelper = notificationHelper;
+            _candidateService   = candidateService;
         }
 
         /// <summary>Applies a finished call. Never throws: webhooks must always be answered 200.</summary>
@@ -143,6 +152,17 @@ namespace Risebird.Web.Services
                 // The agent's LLM writes this value: accept "true", "\"true\"", "Yes", "true." etc.
                 bool candidateConfirmed = PlivoCXOutcomeParser.IsConfirmed(payload.CandidateConfirmed);
 
+                // Call opt-out: the agent's `unsubscribe` ("don't call me again"). Someone who opted out is never
+                // booked, even if the agent also extracted a slot; the opt-out is applied after the log is saved.
+                bool optedOut = PlivoCXOutcomeParser.IsConfirmed(payload.Unsubscribe);
+                if (optedOut)
+                {
+                    candidateConfirmed = false;
+                    await SaveCpAsync("opt_out_detected",
+                        $"Unsubscribe from the agent — reason: {payload.OptOutReason ?? "(none)"}",
+                        convId: payload.ConversationId, callLogId: callLog.Id);
+                }
+
                 // A campaign running a confirm-only agent (CollectsSlot = false) records the
                 // confirmation but never books a slot.
                 bool agentCollectsSlot = true;
@@ -205,6 +225,9 @@ namespace Risebird.Web.Services
                         convId: payload.ConversationId, callLogId: callLog.Id);
                 }
 
+                if (optedOut)
+                    await ApplyCandidateOptOutAsync(callLog, payload);
+
                 // PlivoCX campaign: advance the campaign candidate (Booked / NotBooked / retry / Cold).
                 if (callLog.CampaignId.HasValue)
                 {
@@ -232,6 +255,52 @@ namespace Risebird.Web.Services
                 await SaveCpAsync("hangup_exception", $"Unhandled exception: {ex.Message}",
                     convId: payload?.ConversationId,
                     extra: ex.ToString());
+            }
+        }
+
+        /// <summary>
+        /// Candidate said "don't call me again" on an AI call: mark them cold in this skill channel (usp_RecordCandidateCallOptOut:
+        /// upcoming interview there cancelled, "Opted out: AI call" badge, every pre-dial check skips them) and mail the
+        /// cancelled interviews' interviewers. Uses the call log's candidate and IRF, so the agent needs no extra ids.
+        /// Never throws: the rest of the outcome is already saved.
+        /// </summary>
+        private async Task ApplyCandidateOptOutAsync(PlivoCXCallLog callLog, PlivoCXHangupPayload payload)
+        {
+            try
+            {
+                int? irfId = callLog.IRFId;
+                if (!irfId.HasValue && int.TryParse(payload.IrfId, out var payloadIrf)) irfId = payloadIrf;
+                if (!callLog.CandidateId.HasValue && !irfId.HasValue)
+                {
+                    // e.g. a campaign test call to a number that isn't a candidate: nothing to mark.
+                    await SaveCpAsync("opt_out_skipped", "Unsubscribe but the call log has no candidate or IRF — nothing marked",
+                        convId: payload.ConversationId, callLogId: callLog.Id);
+                    return;
+                }
+
+                var result = await _callPreferenceRepository.RecordCandidateCallOptOut(new Risebird.Entities.Data.RbAPIDataModels.CandidateCallOptOutRequest
+                {
+                    CandidateId    = callLog.CandidateId,
+                    IRFId          = irfId,
+                    Phone          = callLog.RecipientPhone ?? payload.PhoneNumber,
+                    EmailId        = callLog.RecipientEmail ?? payload.CandidateEmail,
+                    Source         = payload.Provider ?? "PlivoCX",
+                    OptOutSource   = "AICall",
+                    ProviderCallId = payload.ConversationId,
+                    Reason         = payload.OptOutReason,
+                });
+                await SaveCpAsync("opt_out_applied",
+                    $"Candidate opt-out applied — {result.OptedOut} candidate row(s) cold in IRF {result.IRFId}, {result.CancelledInterviews.Count} interview(s) cancelled",
+                    convId: payload.ConversationId, callLogId: callLog.Id);
+
+                await Risebird.Business.CallPreference.CallOptOutCancellationMails.SendAsync(
+                    result.CancelledInterviews, _notificationHelper, _candidateService, _logger);
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                await SaveCpAsync("opt_out_failed", $"Candidate opt-out failed: {ex.Message}",
+                    convId: payload.ConversationId, callLogId: callLog.Id);
             }
         }
 

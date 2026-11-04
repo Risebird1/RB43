@@ -444,7 +444,13 @@
                                                                     <div>@item.StatusValue</div>
                                                                 }
                                                             </td>
-                                                            <td>@item.ColdMarkedBY</td>
+                                                            <td>
+                                                                @item.ColdMarkedBY
+                                                                @if (item.ColdSource == "AICall" || item.ColdSource == "HumanCall")
+                                                                {
+                                                                    <br /><span class="label label-danger" title="@item.ColdReason">Opted out: @(item.ColdSource == "AICall" ? "AI call" : "Human call")</span>
+                                                                }
+                                                            </td>
                                                             <td>@item.ColdMarkedDate</td>
                                                             <td class="text-center action-cell act-btns" style="display:table-cell!important;">
                                                                 <button type="button" class="btn-act" title="Candidate Status List" onclick="GetCandidateStatusListByList('@item.irfIntId','@item.CandidateMasterId', '@item.IRFId', '@item.candidateEmail')">

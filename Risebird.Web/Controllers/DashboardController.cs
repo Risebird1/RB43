@@ -7050,7 +7050,7 @@ NEVER:
             }
         }
         [HttpPost]
-        public async Task<JsonResult> MarkedColdCandidate(int CandidateId, string IRFId, string CandidateEmail, int InterviewId, int irfIntId)
+        public async Task<JsonResult> MarkedColdCandidate(int CandidateId, string IRFId, string CandidateEmail, int InterviewId, int irfIntId, string coldReasonType = null)
         {
             try
             {
@@ -7059,7 +7059,18 @@ NEVER:
                 //  var result = await _dashboardService.GetFutureDateInterviewSchedule(InterviewId);
                 var irfOwnersAndRestrictedIrfOwner = await _candidateService.GetCandidateStaffingAgencyAndClientHRByInterviewId(InterviewId);
 
-                var data = await _dashboardService.MarkedColdCandidate(CandidateId, emailId, InterviewId, 1);
+                // Mark cold popup reason: "Opted out on call" = the candidate told a Risebird caller not to call
+                // (HumanCall badge, CallPreferences row, Candidate/CanCall false for this IRF); otherwise a manual cold mark.
+                // Staff only (the popup asks only them); a client user's mark stays an ordinary manual cold mark.
+                var coldProfile = HttpContext.Session.GetString("profileName")?.Trim()?.Replace("\"", "");
+                bool isRisebirdStaff = new[] { "Admin", "HR", "SeniorHR", "SupportAdmin", "InterviewerManagement", "SeniorInterviewerManagement" }
+                    .Contains(coldProfile, StringComparer.OrdinalIgnoreCase);
+                if (!isRisebirdStaff) coldReasonType = null;
+                bool optedOutOnCall = string.Equals(coldReasonType, "OptedOutOnCall", StringComparison.OrdinalIgnoreCase);
+                var data = await _dashboardService.MarkedColdCandidate(CandidateId, emailId, InterviewId, 1,
+                    optedOutOnCall ? "HumanCall" : null,
+                    optedOutOnCall ? "Opted out on call" : (string.IsNullOrWhiteSpace(coldReasonType) ? null : "Other reason"),
+                    optedOutOnCall);
 
                 if (data != null)
                 {

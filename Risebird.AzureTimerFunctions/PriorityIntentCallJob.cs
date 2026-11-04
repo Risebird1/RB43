@@ -34,6 +34,7 @@ namespace Risebird.AzureTimerFunctions
         private readonly INaukriOnboardingRepository _repository;
         private readonly IPlivoCXService            _plivoCXService;
         private readonly IApplicationErrorLogger     _errorLogger;
+        private readonly ICallPreferenceRepository   _callPreferenceRepository;
         private readonly ILogger                     _log;
 
         // Aggressive defaults: cover as much of the pool as fast as possible. Both priority MAGs are
@@ -50,8 +51,10 @@ namespace Risebird.AzureTimerFunctions
             IConfiguration              configuration,
             INaukriOnboardingRepository repository,
             IPlivoCXService             plivoCXService,
-            IApplicationErrorLogger     errorLogger)
+            IApplicationErrorLogger     errorLogger,
+            ICallPreferenceRepository   callPreferenceRepository)
         {
+            _callPreferenceRepository = callPreferenceRepository;
             _configuration  = configuration;
             _repository     = repository;
             _plivoCXService = plivoCXService;
@@ -133,6 +136,17 @@ namespace Risebird.AzureTimerFunctions
                 phone = "+91" + phone;
             else if (phone.Length > 10 && !phone.StartsWith("+"))
                 phone = "+" + phone;
+
+            // Pre-dial check: never call a number whose interviewer opted out of calls.
+            var canCall = await _callPreferenceRepository.CanCallContact("Interviewer", phone);
+            if (!canCall.CanCall)
+            {
+                _log.LogInformation($"[PriorityIntent] #{p.Id} — skipped: {canCall.Reason}");
+                // Stamp PriorityCallLastAt so the prospect rotates to the back of the queue; otherwise it stays
+                // least-recently-called and takes a batch slot on every run.
+                await _repository.RecordPriorityCallAttemptAsync(p.Id);
+                return;
+            }
 
             // Mark in-flight + count the priority attempt up-front so a redial in the next tick
             // is blocked by both the call-status guard and the cooldown even if the call is slow.

@@ -64,8 +64,13 @@ BEGIN
         UPDATE TransInterviewer     
         SET IsActive = 0,    
             IsAvailable = 0    
-        WHERE UserId = @InterviewerId    
-       
+        WHERE UserId = @InterviewerId
+
+        -- Call opt-out / MAG: inactivated by a Risebird user (ManualBlock / ManualRemove / ManualFlag)
+        -- -> removed from every MAG. Automatic types (NoShow, Unsubscribe, ...) stay in MAG.
+        IF @RowsChanged > 0 AND @ResolvedType LIKE 'Manual%'
+            EXEC usp_ExcludeInterviewerFromMAG @InterviewerId, 'ManualInactive', @modifiedBy, @modifiedOn
+
   --Add Remove Comment for interviewer (CreatedOn in IST, like every other RedMarkerStatusDetails writer)
   IF @RowsChanged > 0
   Insert into RedMarkerStatusDetails (InterviewerUserid,IRFId,Comment,Type,CreatedOn,CreatedBy,Status)    

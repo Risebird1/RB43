@@ -221,6 +221,10 @@ namespace Risebird.Entities.ViewModel
         public string AvailableDetails { get; set; }
         public string uniqueid { get; set; }
         public bool IsInterested { get; set; }
+        // Call opt-out (flag panel "Calls" column): Isavailable = 5; source AICall | HumanCall; consent 1 / 0 / null.
+        public bool IsCallOptedOut { get; set; }
+        public string CallOptOutSource { get; set; }
+        public bool? CallConsent { get; set; }
         public string type { get; set; }
         public string ResourceUrl { get; set; }
         public bool isVerified { get; set; }
