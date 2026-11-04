@@ -42,21 +42,23 @@ BEGIN
 
     IF @UserId IS NOT NULL
         INSERT INTO @Matched (UserId, EmailId, Phone)
-        SELECT ul.id, ul.EmailId, RIGHT(CAST(ul.MobileNumber AS varchar(20)), 10)
+        SELECT ul.id, ul.EmailId, dbo.fn_NormalizePhone(ul.MobileNumber)
         FROM UserList ul
         WHERE ul.id = @UserId
           AND EXISTS (SELECT 1 FROM InterviewerProfile ip WHERE ip.UserId = ul.id)
 
     IF NOT EXISTS (SELECT 1 FROM @Matched) AND @NormPhone IS NOT NULL
         INSERT INTO @Matched (UserId, EmailId, Phone)
-        SELECT ul.id, ul.EmailId, @NormPhone
-        FROM UserList ul
-        WHERE RIGHT(CAST(ul.MobileNumber AS varchar(20)), 10) = @NormPhone
-          AND EXISTS (SELECT 1 FROM InterviewerProfile ip WHERE ip.UserId = ul.id)
+        -- From interviewers only, so the phone function runs on their rows, not every user (candidates included).
+        -- MobileNumber is nvarchar in the live databases (bigint in Tables/UserList.sql); the function handles both.
+        SELECT DISTINCT ul.id, ul.EmailId, @NormPhone
+        FROM InterviewerProfile ip
+        JOIN UserList ul ON ul.id = ip.UserId
+        WHERE dbo.fn_NormalizePhone(ul.MobileNumber) = @NormPhone
 
     IF NOT EXISTS (SELECT 1 FROM @Matched) AND @EmailId IS NOT NULL
         INSERT INTO @Matched (UserId, EmailId, Phone)
-        SELECT ul.id, ul.EmailId, RIGHT(CAST(ul.MobileNumber AS varchar(20)), 10)
+        SELECT ul.id, ul.EmailId, dbo.fn_NormalizePhone(ul.MobileNumber)
         FROM UserList ul
         WHERE ul.EmailId = @EmailId
           AND EXISTS (SELECT 1 FROM InterviewerProfile ip WHERE ip.UserId = ul.id)
