@@ -34,7 +34,7 @@ BEGIN
         LEFT JOIN InterviewerProfile ip ON ea.InterviewerProfileId = ip.Id
         WHERE ea.Status IN ('Open', 'InProgress', 'Verified')
           AND (ul.Id IS NULL OR ul.IsActive = 1)
-          AND (ip.Id IS NULL OR (ISNULL(ip.IsDeleted, 0) = 0 AND ISNULL(ip.Isavailable, 0) <> 4))
+          AND (ip.Id IS NULL OR (ISNULL(ip.IsDeleted, 0) = 0 AND ISNULL(ip.Isavailable, 0) NOT IN (4, 5) AND ISNULL(ip.CallConsent, 1) <> 0))
         GROUP BY ea.MagName
     ),
 
@@ -49,7 +49,7 @@ BEGIN
         INNER JOIN InterviewerProfile ip ON ip.Id = agi.InterviewerProfileId
         INNER JOIN UserList ul ON ul.Id = ip.UserId
         WHERE ISNULL(ip.IsDeleted, 0) = 0
-          AND ISNULL(ip.Isavailable, 0) <> 4
+          AND ISNULL(ip.Isavailable, 0) NOT IN (4, 5) AND ISNULL(ip.CallConsent, 1) <> 0
           AND ul.IsActive = 1
           AND NOT EXISTS (
               SELECT 1 FROM InterviewerEmailAvailability ea2

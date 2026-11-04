@@ -10,7 +10,7 @@ namespace Risebird.Entities.Helpers
     public static class InterviewerAvailabilityCalls
     {
         // static readonly rather than const, so the guarded code still compiles without unreachable-code warnings.
-        public static readonly bool Enabled = false;
+        public static readonly bool Enabled = true;
 
         public const string DisabledMessage = "Availability calls to interviewers are disabled. Interviewer availability is checked by email.";
     }

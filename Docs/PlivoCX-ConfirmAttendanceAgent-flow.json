@@ -1,492 +1,569 @@
 {
-  "name": "Outbound Interview Attendance Confirmation",
-  "nodes": [
-    {
-      "id": "a7c3e1f0-0001-4c0f-9a01-000000000001",
-      "type": "start",
-      "data": {
-        "meta": {
-          "name": "Start"
-        },
-        "config": {
-          "name": "Start",
-          "description": "",
-          "triggers": [
-            "http"
-          ],
-          "payload_format": {
-            "call_purpose": "string",
-            "candidate_email": "string",
-            "candidate_name": "string",
-            "client_name": "string",
-            "day_after_tomorrow_date": "string",
-            "irf_id": "string",
-            "job_title": "string",
-            "log_id": "string",
-            "original_interview_date": "string",
-            "phone_number": "string",
-            "today_date": "string",
-            "tomorrow_date": "string"
-          },
-          "enable_quick_responses": false,
-          "quick_response_questions": [],
-          "slack_channel_id": null,
-          "slack_workspace_id": null,
-          "slack_reply_in_thread": true,
-          "events": {
-            "hangup": {
-              "method": "POST",
-              "url": ""
-            }
-          },
-          "record_start": null,
-          "record_stop": null,
-          "slack_trigger_event": "on_direct_mention"
-        }
-      }
-    },
-    {
-      "id": "a7c3e1f0-0002-4c0f-9a01-000000000002",
-      "type": "initiate_call",
-      "data": {
-        "meta": {
-          "name": "Initiate call"
-        },
-        "config": {
-          "name": "Initiate Confirmation Call",
-          "description": "",
-          "from": "+918031136547",
-          "to": "{{Start.http.params.phone_number}}",
-          "send_digits": "",
-          "ring_timeout": 30,
-          "detect_voicemail": false,
-          "max_call_duration": 5
-        }
-      }
-    },
-    {
-      "id": "a7c3e1f0-0003-4c0f-9a01-000000000003",
-      "type": "ai_agent_v2",
-      "data": {
-        "meta": {
-          "name": "AI conversation"
-        },
-        "config": {
-          "name": "Outbound Attendance Confirmation",
-          "description": "Calls candidates to confirm they will attend an interview that is already scheduled. Does not collect or book a slot.",
-          "channel": "call",
-          "instructions": "You are a short, polite outbound assistant from Risebird Interviews, calling on behalf of {{Start.http.params.client_name}}. Your ONLY job is to find out whether the candidate will attend an interview that is ALREADY scheduled. You never schedule, move or cancel interviews.\n\nCONTEXT\n- Candidate: {{Start.http.params.candidate_name}}\n- Role: {{Start.http.params.job_title}} at {{Start.http.params.client_name}}\n- Interview: {{Start.http.params.original_interview_date}} (IST)\n- Today: {{Start.http.params.today_date}}; tomorrow: {{Start.http.params.tomorrow_date}}\n\nHOW THIS CALL ENDS - READ CAREFULLY\n- You cannot hang up by yourself. The call ends ONLY when you select one of your routes: 'Attendance Confirmed' or 'Attendance Not Confirmed'.\n- Selecting a route automatically says goodbye and hangs up. So NEVER say thank you / goodbye / all the best yourself - just select the route.\n- Select the route in the SAME turn in which the answer becomes clear. Do not keep talking after that.\n\nCALL FLOW\n1. Say: 'Hello, this is Risebird Interviews. Am I speaking with {{Start.http.params.candidate_name}}?'\n   - Yes / speaking / haan -> go to step 2.\n   - Wrong person -> select 'Attendance Not Confirmed'.\n2. Say: 'Your {{Start.http.params.job_title}} interview with {{Start.http.params.client_name}} is scheduled for {{Start.http.params.original_interview_date}}. Will you be able to attend?'\n   (If that date is today or tomorrow you may say 'today' or 'tomorrow'.)\n3. Decide on their FIRST answer:\n   - Any clear yes -> IMMEDIATELY select 'Attendance Confirmed'. Clear yes includes: yes, yeah, sure, ok, okay, confirmed, I will attend, I will be there, I will join, haan, haan ji, ji, bilkul. Do NOT ask them to confirm again. Do NOT repeat the date. Do NOT ask anything else.\n   - Any no -> IMMEDIATELY select 'Attendance Not Confirmed'. This includes: no, cannot make it, busy at that time, please reschedule, need another time, not interested, do not call.\n   - Only if the answer is genuinely unclear (for example 'I will try', 'maybe', or you could not hear) ask ONE short question: 'Sorry, just to be sure - will you attend the interview?' Ask this at most ONCE in the whole call. Whatever they say next, select a route: yes -> 'Attendance Confirmed'; anything else -> 'Attendance Not Confirmed'.\n\nRULES\n- Ask the attendance question at most twice in the entire call.\n- Never offer or accept a new date or time. If they want another time, select 'Attendance Not Confirmed' - the team will follow up.\n- Questions about salary, role or process: say 'The team will share details over email.' then ask the attendance question again (this counts toward the limit of two).\n- No joining link: say 'Please check your inbox and spam folder for the Risebird email.' then continue.\n- Keep every reply to one short sentence.",
-          "instruction_attachments": null,
-          "allow_greeting_interruption": true,
-          "intents": [
-            {
-              "id": "a7c3e1f0-1001-4c0f-9a01-000000001001",
-              "intent_instructions": "Select IMMEDIATELY - in the same turn - when the candidate gives any clear yes to attending the scheduled interview (yes, sure, ok, I will attend, I will be there, haan, ji). Do not ask them to confirm again first.",
-              "intent_name": "Attendance Confirmed",
-              "intent_speech": {
-                "intent_speech_text": "Thank you for confirming. Please join a few minutes early using the link in your email. All the best. Goodbye.",
-                "speech_enabled": true
-              }
-            },
-            {
-              "id": "a7c3e1f0-1002-4c0f-9a01-000000001002",
-              "intent_instructions": "Select IMMEDIATELY when the candidate says they cannot attend, wants a different time, is not interested, asks not to be called, when the person is not the candidate, or when the answer is still unclear after the one clarifying question.",
-              "intent_name": "Attendance Not Confirmed",
-              "intent_speech": {
-                "intent_speech_text": "Thank you for letting us know. The Risebird team will get in touch with you. Goodbye.",
-                "speech_enabled": true
-              }
-            },
-            {
-              "id": "a7c3e1f0-1003-4c0f-9a01-000000001003",
-              "intent_instructions": "When voicemail or an answering machine is detected.",
-              "intent_name": "Voicemail Detected",
-              "intent_speech": {
-                "intent_speech_text": "",
-                "speech_enabled": false
-              }
-            }
-          ],
-          "extract_variables": [
-            {
-              "id": "a7c3e1f0-2001-4c0f-9a01-000000002001",
-              "configure_data_format": true,
-              "variable_type": "enum",
-              "variable_enum_values": [
-                "true",
-                "false"
+    "name":  "Outbound Interview Attendance Confirmation",
+    "nodes":  [
+                  {
+                      "id":  "a7c3e1f0-0001-4c0f-9a01-000000000001",
+                      "type":  "start",
+                      "data":  {
+                                   "meta":  {
+                                                "name":  "Start"
+                                            },
+                                   "config":  {
+                                                  "name":  "Start",
+                                                  "description":  "",
+                                                  "triggers":  [
+                                                                   "http"
+                                                               ],
+                                                  "payload_format":  {
+                                                                         "call_purpose":  "string",
+                                                                         "candidate_email":  "string",
+                                                                         "candidate_name":  "string",
+                                                                         "client_name":  "string",
+                                                                         "day_after_tomorrow_date":  "string",
+                                                                         "irf_id":  "string",
+                                                                         "job_title":  "string",
+                                                                         "log_id":  "string",
+                                                                         "original_interview_date":  "string",
+                                                                         "phone_number":  "string",
+                                                                         "today_date":  "string",
+                                                                         "tomorrow_date":  "string"
+                                                                     },
+                                                  "enable_quick_responses":  false,
+                                                  "quick_response_questions":  [
+
+                                                                               ],
+                                                  "slack_channel_id":  null,
+                                                  "slack_workspace_id":  null,
+                                                  "slack_reply_in_thread":  true,
+                                                  "events":  {
+                                                                 "hangup":  {
+                                                                                "method":  "POST",
+                                                                                "url":  ""
+                                                                            }
+                                                             },
+                                                  "record_start":  null,
+                                                  "record_stop":  null,
+                                                  "slack_trigger_event":  "on_direct_mention"
+                                              }
+                               }
+                  },
+                  {
+                      "id":  "a7c3e1f0-0002-4c0f-9a01-000000000002",
+                      "type":  "initiate_call",
+                      "data":  {
+                                   "meta":  {
+                                                "name":  "Initiate call"
+                                            },
+                                   "config":  {
+                                                  "name":  "Initiate Confirmation Call",
+                                                  "description":  "",
+                                                  "from":  "+918031136547",
+                                                  "to":  "{{Start.http.params.phone_number}}",
+                                                  "send_digits":  "",
+                                                  "ring_timeout":  30,
+                                                  "detect_voicemail":  false,
+                                                  "max_call_duration":  5
+                                              }
+                               }
+                  },
+                  {
+                      "id":  "a7c3e1f0-0003-4c0f-9a01-000000000003",
+                      "type":  "ai_agent_v2",
+                      "data":  {
+                                   "meta":  {
+                                                "name":  "AI conversation"
+                                            },
+                                   "config":  {
+                                                  "name":  "Outbound Attendance Confirmation",
+                                                  "description":  "Calls candidates to confirm they will attend an interview that is already scheduled. Does not collect or book a slot.",
+                                                  "channel":  "call",
+                                                  "instructions":  "You are a short, polite outbound assistant from Risebird Interviews, calling on behalf of {{Start.http.params.client_name}}. Your ONLY job is to find out whether the candidate will attend an interview that is ALREADY scheduled. You never schedule, move or cancel interviews.\n\nCONTEXT\n- Candidate: {{Start.http.params.candidate_name}}\n- Role: {{Start.http.params.job_title}} at {{Start.http.params.client_name}}\n- Interview: {{Start.http.params.original_interview_date}} (IST)\n- Today: {{Start.http.params.today_date}}; tomorrow: {{Start.http.params.tomorrow_date}}\n\nHOW THIS CALL ENDS - READ CAREFULLY\n- You cannot hang up by yourself. The call ends ONLY when you select one of your routes: \u0027Attendance Confirmed\u0027 or \u0027Attendance Not Confirmed\u0027.\n- Selecting a route automatically says goodbye and hangs up. So NEVER say thank you / goodbye / all the best yourself - just select the route.\n- Select the route in the SAME turn in which the answer becomes clear. Do not keep talking after that.\n\nCALL FLOW\n1. Say: \u0027Hello, this is Risebird Interviews. Am I speaking with {{Start.http.params.candidate_name}}?\u0027\n   - Yes / speaking / haan -\u003e go to step 2.\n   - Wrong person -\u003e select \u0027Attendance Not Confirmed\u0027.\n2. Say: \u0027Your {{Start.http.params.job_title}} interview with {{Start.http.params.client_name}} is scheduled for {{Start.http.params.original_interview_date}}. Will you be able to attend?\u0027\n   (If that date is today or tomorrow you may say \u0027today\u0027 or \u0027tomorrow\u0027.)\n3. Decide on their FIRST answer:\n   - Any clear yes -\u003e IMMEDIATELY select \u0027Attendance Confirmed\u0027. Clear yes includes: yes, yeah, sure, ok, okay, confirmed, I will attend, I will be there, I will join, haan, haan ji, ji, bilkul. Do NOT ask them to confirm again. Do NOT repeat the date. Do NOT ask anything else.\n   - Any no -\u003e IMMEDIATELY select \u0027Attendance Not Confirmed\u0027. This includes: no, cannot make it, busy at that time, please reschedule, need another time. (Not interested / do not call -\u003e select \u0027Opted Out\u0027.)\n   - Only if the answer is genuinely unclear (for example \u0027I will try\u0027, \u0027maybe\u0027, or you could not hear) ask ONE short question: \u0027Sorry, just to be sure - will you attend the interview?\u0027 Ask this at most ONCE in the whole call. Whatever they say next, select a route: yes -\u003e \u0027Attendance Confirmed\u0027; anything else -\u003e \u0027Attendance Not Confirmed\u0027.\n\nRULES\n- Ask the attendance question at most twice in the entire call.\n- Never offer or accept a new date or time. If they want another time, select \u0027Attendance Not Confirmed\u0027 - the team will follow up.\n- Questions about salary, role or process: say \u0027The team will share details over email.\u0027 then ask the attendance question again (this counts toward the limit of two).\n- No joining link: say \u0027Please check your inbox and spam folder for the Risebird email.\u0027 then continue.\n- Keep every reply to one short sentence.\n\nOPT-OUT (DO NOT CALL AGAIN)\nIf the candidate says anything like \"don\u0027t call me again\", \"not interested\", \"remove my number\", \"stop calling\", \"unsubscribe\" or \"I\u0027m not looking for a job\":\n- Do not try to persuade them and do not continue the call flow.\n- IMMEDIATELY select the \u0027Opted Out\u0027 route. It apologises and ends the call, so do not say goodbye yourself.\n- \"Call me later\", \"not now\", \"I\u0027m busy\" or \"I\u0027m in a meeting\" is NOT an opt-out: handle it as described above.",
+                                                  "instruction_attachments":  null,
+                                                  "allow_greeting_interruption":  true,
+                                                  "intents":  [
+                                                                  {
+                                                                      "id":  "a7c3e1f0-1001-4c0f-9a01-000000001001",
+                                                                      "intent_instructions":  "Select IMMEDIATELY - in the same turn - when the candidate gives any clear yes to attending the scheduled interview (yes, sure, ok, I will attend, I will be there, haan, ji). Do not ask them to confirm again first.",
+                                                                      "intent_name":  "Attendance Confirmed",
+                                                                      "intent_speech":  {
+                                                                                            "intent_speech_text":  "Thank you for confirming. Please join a few minutes early using the link in your email. All the best. Goodbye.",
+                                                                                            "speech_enabled":  true
+                                                                                        }
+                                                                  },
+                                                                  {
+                                                                      "id":  "a7c3e1f0-1002-4c0f-9a01-000000001002",
+                                                                      "intent_instructions":  "Select IMMEDIATELY when the candidate says they cannot attend, wants a different time, when the person is not the candidate, or when the answer is still unclear after the one clarifying question. (A candidate who asks not to be called again or is not interested goes to \u0027Opted Out\u0027.)",
+                                                                      "intent_name":  "Attendance Not Confirmed",
+                                                                      "intent_speech":  {
+                                                                                            "intent_speech_text":  "Thank you for letting us know. The Risebird team will get in touch with you. Goodbye.",
+                                                                                            "speech_enabled":  true
+                                                                                        }
+                                                                  },
+                                                                  {
+                                                                      "id":  "a7c3e1f0-1003-4c0f-9a01-000000001003",
+                                                                      "intent_instructions":  "When voicemail or an answering machine is detected.",
+                                                                      "intent_name":  "Voicemail Detected",
+                                                                      "intent_speech":  {
+                                                                                            "intent_speech_text":  "",
+                                                                                            "speech_enabled":  false
+                                                                                        }
+                                                                  },
+                                                                  {
+                                                                      "id":  "9a1ced7e-f801-4a6d-bcb7-26f24c6454d9",
+                                                                      "intent_instructions":  "Select IMMEDIATELY when the candidate asks not to be called again, says they are not interested in this role, asks to remove their number, says stop calling or unsubscribe, or says they are not looking for a job. Never for \u0027call me later\u0027, \u0027not now\u0027, busy or in a meeting.",
+                                                                      "intent_name":  "Opted Out",
+                                                                      "intent_speech":  {
+                                                                                            "intent_speech_text":  "Understood. We won\u0027t call you again about this role. Sorry for the trouble. Goodbye.",
+                                                                                            "speech_enabled":  true
+                                                                                        }
+                                                                  }
+                                                              ],
+                                                  "extract_variables":  [
+                                                                            {
+                                                                                "id":  "a7c3e1f0-2001-4c0f-9a01-000000002001",
+                                                                                "configure_data_format":  true,
+                                                                                "variable_type":  "enum",
+                                                                                "variable_enum_values":  [
+                                                                                                             "true",
+                                                                                                             "false"
+                                                                                                         ],
+                                                                                "variable_format_instructions":  "Exactly one of the allowed values, lowercase, without quotes.",
+                                                                                "variable_instructions":  "true if the candidate said yes to attending the scheduled interview (any clear yes such as yes, sure, ok, I will be there, haan, ji). false in every other case: they said no, wanted another time, were not the candidate, the answer stayed unclear, or the call ended before they answered.",
+                                                                                "variable_name":  "candidate_confirmed"
+                                                                            },
+                                                                            {
+                                                                                "id":  "a7c3e1f0-2002-4c0f-9a01-000000002002",
+                                                                                "configure_data_format":  true,
+                                                                                "variable_type":  "enum",
+                                                                                "variable_enum_values":  [
+                                                                                                             "interested",
+                                                                                                             "uninterested",
+                                                                                                             "cant_say"
+                                                                                                         ],
+                                                                                "variable_format_instructions":  "Exactly one of the allowed values, lowercase, without quotes.",
+                                                                                "variable_instructions":  "interested when the candidate said yes to attending. uninterested when they no longer want the interview or asked not to be called. cant_say in every other case: cannot make it at that time, wants another time, wrong person, unclear, or the call dropped.",
+                                                                                "variable_name":  "candidate_disposition"
+                                                                            },
+                                                                            {
+                                                                                "id":  "a7c3e1f0-2003-4c0f-9a01-000000002003",
+                                                                                "configure_data_format":  true,
+                                                                                "variable_type":  "string",
+                                                                                "variable_enum_values":  [
+
+                                                                                                         ],
+                                                                                "variable_format_instructions":  "The name only, no other words. Empty if identity was not confirmed.",
+                                                                                "variable_instructions":  "The full name of the person who answered, as confirmed at the start of the call. Leave empty if identity was not confirmed.",
+                                                                                "variable_name":  "confirmed_candidate_name"
+                                                                            },
+                                                                            {
+                                                                                "id":  "d136cb91-8942-4d64-be2c-a2af2a04dff1",
+                                                                                "configure_data_format":  true,
+                                                                                "variable_type":  "enum",
+                                                                                "variable_enum_values":  [
+                                                                                                             "true",
+                                                                                                             "false"
+                                                                                                         ],
+                                                                                "variable_format_instructions":  "Exactly one of the allowed values, lowercase, without quotes.",
+                                                                                "variable_instructions":  "true only if the candidate asked not to be called again about this role, said they are not interested, asked to remove their number, said stop calling or unsubscribe, or said they are not looking for a job. false in every other case, including \u0027call me later\u0027, \u0027not now\u0027, busy, wrong person, unclear, or the call dropped.",
+                                                                                "variable_name":  "unsubscribe"
+                                                                            },
+                                                                            {
+                                                                                "id":  "d2e0dc1d-a8e3-444c-91df-3ac9da5dd608",
+                                                                                "configure_data_format":  true,
+                                                                                "variable_type":  "string",
+                                                                                "variable_enum_values":  [
+
+                                                                                                         ],
+                                                                                "variable_format_instructions":  "A short quote, at most 20 words. Empty when unsubscribe is false.",
+                                                                                "variable_instructions":  "If the candidate opted out: a short quote of what they said. Otherwise leave empty.",
+                                                                                "variable_name":  "opt_out_reason"
+                                                                            }
+                                                                        ],
+                                                  "actions":  null,
+                                                  "screening_name":  "Hi, this is Risebird Interviews calling",
+                                                  "screening_reason":  "Calling to confirm your upcoming interview",
+                                                  "initial_wait_time":  0
+                                              }
+                               }
+                  },
+                  {
+                      "id":  "a7c3e1f0-0004-4c0f-9a01-000000000004",
+                      "type":  "end_conversation",
+                      "data":  {
+                                   "meta":  {
+                                                "name":  "End conversation"
+                                            },
+                                   "config":  {
+                                                  "name":  "Hangup Confirmed",
+                                                  "description":  "",
+                                                  "end_message":  null
+                                              }
+                               }
+                  },
+                  {
+                      "id":  "a7c3e1f0-0005-4c0f-9a01-000000000005",
+                      "type":  "end_conversation",
+                      "data":  {
+                                   "meta":  {
+                                                "name":  "End conversation"
+                                            },
+                                   "config":  {
+                                                  "name":  "Hangup Not Confirmed",
+                                                  "description":  "",
+                                                  "end_message":  null
+                                              }
+                               }
+                  },
+                  {
+                      "id":  "a7c3e1f0-0006-4c0f-9a01-000000000006",
+                      "type":  "end_conversation",
+                      "data":  {
+                                   "meta":  {
+                                                "name":  "End conversation"
+                                            },
+                                   "config":  {
+                                                  "name":  "Hangup Voicemail",
+                                                  "description":  "",
+                                                  "end_message":  null
+                                              }
+                               }
+                  },
+                  {
+                      "id":  "a7c3e1f0-0007-4c0f-9a01-000000000007",
+                      "type":  "end_conversation",
+                      "data":  {
+                                   "meta":  {
+                                                "name":  "End conversation"
+                                            },
+                                   "config":  {
+                                                  "name":  "Hangup No Answer",
+                                                  "description":  "",
+                                                  "end_message":  null
+                                              }
+                               }
+                  },
+                  {
+                      "id":  "a7c3e1f0-0008-4c0f-9a01-000000000008",
+                      "type":  "end_conversation",
+                      "data":  {
+                                   "meta":  {
+                                                "name":  "End conversation"
+                                            },
+                                   "config":  {
+                                                  "name":  "Hangup Busy",
+                                                  "description":  "",
+                                                  "end_message":  null
+                                              }
+                               }
+                  },
+                  {
+                      "id":  "a7c3e1f0-0009-4c0f-9a01-000000000009",
+                      "type":  "end_conversation",
+                      "data":  {
+                                   "meta":  {
+                                                "name":  "End conversation"
+                                            },
+                                   "config":  {
+                                                  "name":  "Hangup Failed",
+                                                  "description":  "",
+                                                  "end_message":  null
+                                              }
+                               }
+                  },
+                  {
+                      "id":  "f9b8884f-3748-4b93-8b48-230b83c7396c",
+                      "type":  "end_conversation",
+                      "data":  {
+                                   "meta":  {
+                                                "name":  "End conversation"
+                                            },
+                                   "config":  {
+                                                  "name":  "Hangup Opted Out",
+                                                  "description":  "",
+                                                  "end_message":  null
+                                              }
+                               }
+                  }
               ],
-              "variable_format_instructions": "Exactly one of the allowed values, lowercase, without quotes.",
-              "variable_instructions": "true if the candidate said yes to attending the scheduled interview (any clear yes such as yes, sure, ok, I will be there, haan, ji). false in every other case: they said no, wanted another time, were not the candidate, the answer stayed unclear, or the call ended before they answered.",
-              "variable_name": "candidate_confirmed"
-            },
-            {
-              "id": "a7c3e1f0-2002-4c0f-9a01-000000002002",
-              "configure_data_format": true,
-              "variable_type": "enum",
-              "variable_enum_values": [
-                "interested",
-                "uninterested",
-                "cant_say"
+    "edges":  [
+                  {
+                      "id":  "a7c3e1f0-3001-4c0f-9a01-000000003001",
+                      "source":  "a7c3e1f0-0001-4c0f-9a01-000000000001",
+                      "target":  "a7c3e1f0-0002-4c0f-9a01-000000000002",
+                      "sourceHandle":  "http",
+                      "data":  {
+                                   "nodeVars":  [
+                                                    "{{Start.request_type}}",
+                                                    "{{Start.flow_run_id}}",
+                                                    "{{Start.http.params}}",
+                                                    "{{Start.http.params.call_purpose}}",
+                                                    "{{Start.http.params.candidate_email}}",
+                                                    "{{Start.http.params.candidate_name}}",
+                                                    "{{Start.http.params.client_name}}",
+                                                    "{{Start.http.params.day_after_tomorrow_date}}",
+                                                    "{{Start.http.params.irf_id}}",
+                                                    "{{Start.http.params.job_title}}",
+                                                    "{{Start.http.params.log_id}}",
+                                                    "{{Start.http.params.original_interview_date}}",
+                                                    "{{Start.http.params.phone_number}}",
+                                                    "{{Start.http.params.today_date}}",
+                                                    "{{Start.http.params.tomorrow_date}}"
+                                                ]
+                               }
+                  },
+                  {
+                      "id":  "a7c3e1f0-3002-4c0f-9a01-000000003002",
+                      "source":  "a7c3e1f0-0002-4c0f-9a01-000000000002",
+                      "target":  "a7c3e1f0-0003-4c0f-9a01-000000000003",
+                      "sourceHandle":  "answered",
+                      "data":  {
+                                   "nodeVars":  [
+                                                    "{{Initiate Confirmation Call.uuid}}",
+                                                    "{{Initiate Confirmation Call.to}}",
+                                                    "{{Initiate Confirmation Call.from}}",
+                                                    "{{Initiate Confirmation Call.direction}}",
+                                                    "{{Initiate Confirmation Call.from_iso2}}",
+                                                    "{{Initiate Confirmation Call.leg}}",
+                                                    "{{Initiate Confirmation Call.bill_rate}}",
+                                                    "{{Initiate Confirmation Call.from_country}}",
+                                                    "{{Initiate Confirmation Call.voicemail_detected}}",
+                                                    "{{Initiate Confirmation Call.call_status}}",
+                                                    "{{Initiate Confirmation Call.conversation_id}}"
+                                                ]
+                               }
+                  },
+                  {
+                      "id":  "a7c3e1f0-3003-4c0f-9a01-000000003003",
+                      "source":  "a7c3e1f0-0002-4c0f-9a01-000000000002",
+                      "target":  "a7c3e1f0-0007-4c0f-9a01-000000000007",
+                      "sourceHandle":  "no_answer",
+                      "data":  {
+                                   "nodeVars":  [
+                                                    "{{Initiate Confirmation Call.uuid}}",
+                                                    "{{Initiate Confirmation Call.to}}",
+                                                    "{{Initiate Confirmation Call.from}}",
+                                                    "{{Initiate Confirmation Call.direction}}",
+                                                    "{{Initiate Confirmation Call.from_iso2}}",
+                                                    "{{Initiate Confirmation Call.leg}}",
+                                                    "{{Initiate Confirmation Call.bill_rate}}",
+                                                    "{{Initiate Confirmation Call.from_country}}",
+                                                    "{{Initiate Confirmation Call.voicemail_detected}}",
+                                                    "{{Initiate Confirmation Call.call_status}}",
+                                                    "{{Initiate Confirmation Call.conversation_id}}"
+                                                ]
+                               }
+                  },
+                  {
+                      "id":  "a7c3e1f0-3004-4c0f-9a01-000000003004",
+                      "source":  "a7c3e1f0-0002-4c0f-9a01-000000000002",
+                      "target":  "a7c3e1f0-0008-4c0f-9a01-000000000008",
+                      "sourceHandle":  "busy_rejected",
+                      "data":  {
+                                   "nodeVars":  [
+                                                    "{{Initiate Confirmation Call.uuid}}",
+                                                    "{{Initiate Confirmation Call.to}}",
+                                                    "{{Initiate Confirmation Call.from}}",
+                                                    "{{Initiate Confirmation Call.direction}}",
+                                                    "{{Initiate Confirmation Call.from_iso2}}",
+                                                    "{{Initiate Confirmation Call.leg}}",
+                                                    "{{Initiate Confirmation Call.bill_rate}}",
+                                                    "{{Initiate Confirmation Call.from_country}}",
+                                                    "{{Initiate Confirmation Call.voicemail_detected}}",
+                                                    "{{Initiate Confirmation Call.call_status}}",
+                                                    "{{Initiate Confirmation Call.conversation_id}}"
+                                                ]
+                               }
+                  },
+                  {
+                      "id":  "a7c3e1f0-3005-4c0f-9a01-000000003005",
+                      "source":  "a7c3e1f0-0002-4c0f-9a01-000000000002",
+                      "target":  "a7c3e1f0-0009-4c0f-9a01-000000000009",
+                      "sourceHandle":  "failed",
+                      "data":  {
+                                   "nodeVars":  [
+                                                    "{{Initiate Confirmation Call.uuid}}",
+                                                    "{{Initiate Confirmation Call.to}}",
+                                                    "{{Initiate Confirmation Call.from}}",
+                                                    "{{Initiate Confirmation Call.direction}}",
+                                                    "{{Initiate Confirmation Call.from_iso2}}",
+                                                    "{{Initiate Confirmation Call.leg}}",
+                                                    "{{Initiate Confirmation Call.bill_rate}}",
+                                                    "{{Initiate Confirmation Call.from_country}}",
+                                                    "{{Initiate Confirmation Call.voicemail_detected}}",
+                                                    "{{Initiate Confirmation Call.call_status}}",
+                                                    "{{Initiate Confirmation Call.conversation_id}}"
+                                                ]
+                               }
+                  },
+                  {
+                      "id":  "a7c3e1f0-3006-4c0f-9a01-000000003006",
+                      "source":  "a7c3e1f0-0003-4c0f-9a01-000000000003",
+                      "target":  "a7c3e1f0-0004-4c0f-9a01-000000000004",
+                      "sourceHandle":  "a7c3e1f0-1001-4c0f-9a01-000000001001",
+                      "data":  {
+                                   "nodeVars":  [
+                                                    "{{Outbound Attendance Confirmation.candidate_confirmed}}",
+                                                    "{{Outbound Attendance Confirmation.candidate_disposition}}",
+                                                    "{{Outbound Attendance Confirmation.confirmed_candidate_name}}",
+                                                    "{{Outbound Attendance Confirmation.unsubscribe}}",
+                                                    "{{Outbound Attendance Confirmation.opt_out_reason}}"
+                                                ]
+                               }
+                  },
+                  {
+                      "id":  "a7c3e1f0-3007-4c0f-9a01-000000003007",
+                      "source":  "a7c3e1f0-0003-4c0f-9a01-000000000003",
+                      "target":  "a7c3e1f0-0005-4c0f-9a01-000000000005",
+                      "sourceHandle":  "a7c3e1f0-1002-4c0f-9a01-000000001002",
+                      "data":  {
+                                   "nodeVars":  [
+                                                    "{{Outbound Attendance Confirmation.candidate_confirmed}}",
+                                                    "{{Outbound Attendance Confirmation.candidate_disposition}}",
+                                                    "{{Outbound Attendance Confirmation.confirmed_candidate_name}}",
+                                                    "{{Outbound Attendance Confirmation.unsubscribe}}",
+                                                    "{{Outbound Attendance Confirmation.opt_out_reason}}"
+                                                ]
+                               }
+                  },
+                  {
+                      "id":  "a7c3e1f0-3008-4c0f-9a01-000000003008",
+                      "source":  "a7c3e1f0-0003-4c0f-9a01-000000000003",
+                      "target":  "a7c3e1f0-0006-4c0f-9a01-000000000006",
+                      "sourceHandle":  "a7c3e1f0-1003-4c0f-9a01-000000001003",
+                      "data":  {
+                                   "nodeVars":  [
+                                                    "{{Outbound Attendance Confirmation.candidate_confirmed}}",
+                                                    "{{Outbound Attendance Confirmation.candidate_disposition}}",
+                                                    "{{Outbound Attendance Confirmation.confirmed_candidate_name}}",
+                                                    "{{Outbound Attendance Confirmation.unsubscribe}}",
+                                                    "{{Outbound Attendance Confirmation.opt_out_reason}}"
+                                                ]
+                               }
+                  },
+                  {
+                      "id":  "15d980f4-6c45-4b2c-80a8-ea244a6f908d",
+                      "source":  "a7c3e1f0-0003-4c0f-9a01-000000000003",
+                      "target":  "f9b8884f-3748-4b93-8b48-230b83c7396c",
+                      "sourceHandle":  "9a1ced7e-f801-4a6d-bcb7-26f24c6454d9",
+                      "data":  {
+                                   "nodeVars":  [
+                                                    "{{Outbound Attendance Confirmation.candidate_confirmed}}",
+                                                    "{{Outbound Attendance Confirmation.candidate_disposition}}",
+                                                    "{{Outbound Attendance Confirmation.confirmed_candidate_name}}",
+                                                    "{{Outbound Attendance Confirmation.unsubscribe}}",
+                                                    "{{Outbound Attendance Confirmation.opt_out_reason}}"
+                                                ]
+                               }
+                  }
               ],
-              "variable_format_instructions": "Exactly one of the allowed values, lowercase, without quotes.",
-              "variable_instructions": "interested when the candidate said yes to attending. uninterested when they no longer want the interview or asked not to be called. cant_say in every other case: cannot make it at that time, wants another time, wrong person, unclear, or the call dropped.",
-              "variable_name": "candidate_disposition"
-            },
-            {
-              "id": "a7c3e1f0-2003-4c0f-9a01-000000002003",
-              "configure_data_format": true,
-              "variable_type": "string",
-              "variable_enum_values": [],
-              "variable_format_instructions": "The name only, no other words. Empty if identity was not confirmed.",
-              "variable_instructions": "The full name of the person who answered, as confirmed at the start of the call. Leave empty if identity was not confirmed.",
-              "variable_name": "confirmed_candidate_name"
-            }
-          ],
-          "actions": null,
-          "screening_name": "Hi, this is Risebird Interviews calling",
-          "screening_reason": "Calling to confirm your upcoming interview",
-          "initial_wait_time": 0
-        }
-      }
-    },
-    {
-      "id": "a7c3e1f0-0004-4c0f-9a01-000000000004",
-      "type": "end_conversation",
-      "data": {
-        "meta": {
-          "name": "End conversation"
-        },
-        "config": {
-          "name": "Hangup Confirmed",
-          "description": "",
-          "end_message": null
-        }
-      }
-    },
-    {
-      "id": "a7c3e1f0-0005-4c0f-9a01-000000000005",
-      "type": "end_conversation",
-      "data": {
-        "meta": {
-          "name": "End conversation"
-        },
-        "config": {
-          "name": "Hangup Not Confirmed",
-          "description": "",
-          "end_message": null
-        }
-      }
-    },
-    {
-      "id": "a7c3e1f0-0006-4c0f-9a01-000000000006",
-      "type": "end_conversation",
-      "data": {
-        "meta": {
-          "name": "End conversation"
-        },
-        "config": {
-          "name": "Hangup Voicemail",
-          "description": "",
-          "end_message": null
-        }
-      }
-    },
-    {
-      "id": "a7c3e1f0-0007-4c0f-9a01-000000000007",
-      "type": "end_conversation",
-      "data": {
-        "meta": {
-          "name": "End conversation"
-        },
-        "config": {
-          "name": "Hangup No Answer",
-          "description": "",
-          "end_message": null
-        }
-      }
-    },
-    {
-      "id": "a7c3e1f0-0008-4c0f-9a01-000000000008",
-      "type": "end_conversation",
-      "data": {
-        "meta": {
-          "name": "End conversation"
-        },
-        "config": {
-          "name": "Hangup Busy",
-          "description": "",
-          "end_message": null
-        }
-      }
-    },
-    {
-      "id": "a7c3e1f0-0009-4c0f-9a01-000000000009",
-      "type": "end_conversation",
-      "data": {
-        "meta": {
-          "name": "End conversation"
-        },
-        "config": {
-          "name": "Hangup Failed",
-          "description": "",
-          "end_message": null
-        }
-      }
-    }
-  ],
-  "edges": [
-    {
-      "id": "a7c3e1f0-3001-4c0f-9a01-000000003001",
-      "source": "a7c3e1f0-0001-4c0f-9a01-000000000001",
-      "target": "a7c3e1f0-0002-4c0f-9a01-000000000002",
-      "sourceHandle": "http",
-      "data": {
-        "nodeVars": [
-          "{{Start.request_type}}",
-          "{{Start.flow_run_id}}",
-          "{{Start.http.params}}",
-          "{{Start.http.params.call_purpose}}",
-          "{{Start.http.params.candidate_email}}",
-          "{{Start.http.params.candidate_name}}",
-          "{{Start.http.params.client_name}}",
-          "{{Start.http.params.day_after_tomorrow_date}}",
-          "{{Start.http.params.irf_id}}",
-          "{{Start.http.params.job_title}}",
-          "{{Start.http.params.log_id}}",
-          "{{Start.http.params.original_interview_date}}",
-          "{{Start.http.params.phone_number}}",
-          "{{Start.http.params.today_date}}",
-          "{{Start.http.params.tomorrow_date}}"
-        ]
-      }
-    },
-    {
-      "id": "a7c3e1f0-3002-4c0f-9a01-000000003002",
-      "source": "a7c3e1f0-0002-4c0f-9a01-000000000002",
-      "target": "a7c3e1f0-0003-4c0f-9a01-000000000003",
-      "sourceHandle": "answered",
-      "data": {
-        "nodeVars": [
-          "{{Initiate Confirmation Call.uuid}}",
-          "{{Initiate Confirmation Call.to}}",
-          "{{Initiate Confirmation Call.from}}",
-          "{{Initiate Confirmation Call.direction}}",
-          "{{Initiate Confirmation Call.from_iso2}}",
-          "{{Initiate Confirmation Call.leg}}",
-          "{{Initiate Confirmation Call.bill_rate}}",
-          "{{Initiate Confirmation Call.from_country}}",
-          "{{Initiate Confirmation Call.voicemail_detected}}",
-          "{{Initiate Confirmation Call.call_status}}",
-          "{{Initiate Confirmation Call.conversation_id}}"
-        ]
-      }
-    },
-    {
-      "id": "a7c3e1f0-3003-4c0f-9a01-000000003003",
-      "source": "a7c3e1f0-0002-4c0f-9a01-000000000002",
-      "target": "a7c3e1f0-0007-4c0f-9a01-000000000007",
-      "sourceHandle": "no_answer",
-      "data": {
-        "nodeVars": [
-          "{{Initiate Confirmation Call.uuid}}",
-          "{{Initiate Confirmation Call.to}}",
-          "{{Initiate Confirmation Call.from}}",
-          "{{Initiate Confirmation Call.direction}}",
-          "{{Initiate Confirmation Call.from_iso2}}",
-          "{{Initiate Confirmation Call.leg}}",
-          "{{Initiate Confirmation Call.bill_rate}}",
-          "{{Initiate Confirmation Call.from_country}}",
-          "{{Initiate Confirmation Call.voicemail_detected}}",
-          "{{Initiate Confirmation Call.call_status}}",
-          "{{Initiate Confirmation Call.conversation_id}}"
-        ]
-      }
-    },
-    {
-      "id": "a7c3e1f0-3004-4c0f-9a01-000000003004",
-      "source": "a7c3e1f0-0002-4c0f-9a01-000000000002",
-      "target": "a7c3e1f0-0008-4c0f-9a01-000000000008",
-      "sourceHandle": "busy_rejected",
-      "data": {
-        "nodeVars": [
-          "{{Initiate Confirmation Call.uuid}}",
-          "{{Initiate Confirmation Call.to}}",
-          "{{Initiate Confirmation Call.from}}",
-          "{{Initiate Confirmation Call.direction}}",
-          "{{Initiate Confirmation Call.from_iso2}}",
-          "{{Initiate Confirmation Call.leg}}",
-          "{{Initiate Confirmation Call.bill_rate}}",
-          "{{Initiate Confirmation Call.from_country}}",
-          "{{Initiate Confirmation Call.voicemail_detected}}",
-          "{{Initiate Confirmation Call.call_status}}",
-          "{{Initiate Confirmation Call.conversation_id}}"
-        ]
-      }
-    },
-    {
-      "id": "a7c3e1f0-3005-4c0f-9a01-000000003005",
-      "source": "a7c3e1f0-0002-4c0f-9a01-000000000002",
-      "target": "a7c3e1f0-0009-4c0f-9a01-000000000009",
-      "sourceHandle": "failed",
-      "data": {
-        "nodeVars": [
-          "{{Initiate Confirmation Call.uuid}}",
-          "{{Initiate Confirmation Call.to}}",
-          "{{Initiate Confirmation Call.from}}",
-          "{{Initiate Confirmation Call.direction}}",
-          "{{Initiate Confirmation Call.from_iso2}}",
-          "{{Initiate Confirmation Call.leg}}",
-          "{{Initiate Confirmation Call.bill_rate}}",
-          "{{Initiate Confirmation Call.from_country}}",
-          "{{Initiate Confirmation Call.voicemail_detected}}",
-          "{{Initiate Confirmation Call.call_status}}",
-          "{{Initiate Confirmation Call.conversation_id}}"
-        ]
-      }
-    },
-    {
-      "id": "a7c3e1f0-3006-4c0f-9a01-000000003006",
-      "source": "a7c3e1f0-0003-4c0f-9a01-000000000003",
-      "target": "a7c3e1f0-0004-4c0f-9a01-000000000004",
-      "sourceHandle": "a7c3e1f0-1001-4c0f-9a01-000000001001",
-      "data": {
-        "nodeVars": [
-          "{{Outbound Attendance Confirmation.candidate_confirmed}}",
-          "{{Outbound Attendance Confirmation.candidate_disposition}}",
-          "{{Outbound Attendance Confirmation.confirmed_candidate_name}}"
-        ]
-      }
-    },
-    {
-      "id": "a7c3e1f0-3007-4c0f-9a01-000000003007",
-      "source": "a7c3e1f0-0003-4c0f-9a01-000000000003",
-      "target": "a7c3e1f0-0005-4c0f-9a01-000000000005",
-      "sourceHandle": "a7c3e1f0-1002-4c0f-9a01-000000001002",
-      "data": {
-        "nodeVars": [
-          "{{Outbound Attendance Confirmation.candidate_confirmed}}",
-          "{{Outbound Attendance Confirmation.candidate_disposition}}",
-          "{{Outbound Attendance Confirmation.confirmed_candidate_name}}"
-        ]
-      }
-    },
-    {
-      "id": "a7c3e1f0-3008-4c0f-9a01-000000003008",
-      "source": "a7c3e1f0-0003-4c0f-9a01-000000000003",
-      "target": "a7c3e1f0-0006-4c0f-9a01-000000000006",
-      "sourceHandle": "a7c3e1f0-1003-4c0f-9a01-000000001003",
-      "data": {
-        "nodeVars": [
-          "{{Outbound Attendance Confirmation.candidate_confirmed}}",
-          "{{Outbound Attendance Confirmation.candidate_disposition}}",
-          "{{Outbound Attendance Confirmation.confirmed_candidate_name}}"
-        ]
-      }
-    }
-  ],
-  "systemPrompt": {
-    "ai_nodes": [],
-    "all_nodes_enabled": true,
-    "prompt": "You are a professional interview attendance-confirmation assistant for Risebird Interviews. Be polite, concise, and respectful. Your only task is to confirm whether the candidate will attend an interview that is already scheduled. Never schedule, move or cancel interviews. Do not invent details. If the user is not the intended candidate, politely apologize and close the conversation."
-  },
-  "sttGuidance": "This agent confirms whether a candidate will attend an already-scheduled interview. Decode person and company names in context: candidate name, client name, and job title from the provided call context. Listen for confirmations like 'yes', 'I will join', 'I'll be there', 'confirmed', and for declines like 'I can't make it', 'please reschedule', 'not interested'. The caller may use slight Hinglish ('haan', 'ji', 'nahi', 'main aa jaunga').",
-  "agentSettings": {
-    "schedule": {
-      "timezone": "Asia/Calcutta",
-      "start_time": "",
-      "end_time": ""
-    },
-    "knowledge_base_ids": [],
-    "voice_ai_config": {
-      "language": "en-IN",
-      "text_to_speech": {
-        "provider": "elevenlabs",
-        "model": "eleven_turbo_v2_5",
-        "voice": "ack0QsRaQyDLnVyMQTSd",
-        "voice_label": "Ananya",
-        "pronunciation": []
-      },
-      "speech_to_text": {
-        "keyterms": [
-          "Risebird",
-          "Risebird Interviews",
-          "interview",
-          "confirm",
-          "attend",
-          "reschedule"
-        ]
-      },
-      "user_idle_config": {
-        "hangup_msg": "Since I'm not hearing a response, I'll go ahead and disconnect the call. If you need further assistance, please don't hesitate to contact us again.",
-        "hold_timeout": 30,
-        "idling_timeout": 15,
-        "reminder_msg": "Are you still there? I'm happy to assist whenever you're ready",
-        "retries": 3
-      },
-      "allow_greeting_interruption": true,
-      "background_audio": {
-        "type": "none",
-        "volume": 1
-      }
-    },
-    "event_callbacks": {
-      "HANGUP": {
-        "url": "https://portal.risebird.io/PlivoCXInterviewCall/HangupCallback",
-        "method": "POST",
-        "auth": "no_auth",
-        "username": "",
-        "password": "",
-        "token": "",
-        "type": "url"
-      },
-      "RECORDING": {
-        "url": "",
-        "method": "POST",
-        "auth": "no_auth",
-        "username": "",
-        "password": "",
-        "token": "",
-        "transcription": false
-      },
-      "ERROR": {
-        "url": "",
-        "method": "POST",
-        "auth": "no_auth",
-        "username": "",
-        "password": "",
-        "token": ""
-      },
-      "SMS_STATUS": {
-        "url": "",
-        "method": "POST",
-        "auth": "no_auth",
-        "username": "",
-        "password": "",
-        "token": ""
-      },
-      "WHATSAPP_STATUS": {
-        "url": "",
-        "method": "POST",
-        "auth": "no_auth",
-        "username": "",
-        "password": "",
-        "token": ""
-      },
-      "CONVERSATION_CLOSURE": {
-        "url": "",
-        "method": "POST",
-        "auth": "no_auth",
-        "username": "",
-        "password": "",
-        "token": ""
-      }
-    },
-    "conversation_goals": [
-      {
-        "goal_name": "Candidate confirms attendance",
-        "goal_instructions": "The call is successful when the candidate explicitly states whether they will attend the already-scheduled interview, and candidate_confirmed and candidate_disposition are set accordingly."
-      }
-    ]
-  }
+    "systemPrompt":  {
+                         "ai_nodes":  [
+
+                                      ],
+                         "all_nodes_enabled":  true,
+                         "prompt":  "You are a professional interview attendance-confirmation assistant for Risebird Interviews. Be polite, concise, and respectful. Your only task is to confirm whether the candidate will attend an interview that is already scheduled. Never schedule, move or cancel interviews. Do not invent details. If the user is not the intended candidate, politely apologize and close the conversation."
+                     },
+    "sttGuidance":  "This agent confirms whether a candidate will attend an already-scheduled interview. Decode person and company names in context: candidate name, client name, and job title from the provided call context. Listen for confirmations like \u0027yes\u0027, \u0027I will join\u0027, \u0027I\u0027ll be there\u0027, \u0027confirmed\u0027, and for declines like \u0027I can\u0027t make it\u0027, \u0027please reschedule\u0027, \u0027not interested\u0027. The caller may use slight Hinglish (\u0027haan\u0027, \u0027ji\u0027, \u0027nahi\u0027, \u0027main aa jaunga\u0027). Listen for opt-out phrases like \u0027don\u0027t call me again\u0027, \u0027not interested\u0027, \u0027remove my number\u0027, \u0027stop calling\u0027, \u0027unsubscribe\u0027, \u0027mujhe call mat karo\u0027.",
+    "agentSettings":  {
+                          "schedule":  {
+                                           "timezone":  "Asia/Calcutta",
+                                           "start_time":  "",
+                                           "end_time":  ""
+                                       },
+                          "knowledge_base_ids":  [
+
+                                                 ],
+                          "voice_ai_config":  {
+                                                  "language":  "en-IN",
+                                                  "text_to_speech":  {
+                                                                         "provider":  "elevenlabs",
+                                                                         "model":  "eleven_turbo_v2_5",
+                                                                         "voice":  "ack0QsRaQyDLnVyMQTSd",
+                                                                         "voice_label":  "Ananya",
+                                                                         "pronunciation":  [
+
+                                                                                           ]
+                                                                     },
+                                                  "speech_to_text":  {
+                                                                         "keyterms":  [
+                                                                                          "Risebird",
+                                                                                          "Risebird Interviews",
+                                                                                          "interview",
+                                                                                          "confirm",
+                                                                                          "attend",
+                                                                                          "reschedule"
+                                                                                      ]
+                                                                     },
+                                                  "user_idle_config":  {
+                                                                           "hangup_msg":  "Since I\u0027m not hearing a response, I\u0027ll go ahead and disconnect the call. If you need further assistance, please don\u0027t hesitate to contact us again.",
+                                                                           "hold_timeout":  30,
+                                                                           "idling_timeout":  15,
+                                                                           "reminder_msg":  "Are you still there? I\u0027m happy to assist whenever you\u0027re ready",
+                                                                           "retries":  3
+                                                                       },
+                                                  "allow_greeting_interruption":  true,
+                                                  "background_audio":  {
+                                                                           "type":  "none",
+                                                                           "volume":  1
+                                                                       }
+                                              },
+                          "event_callbacks":  {
+                                                  "HANGUP":  {
+                                                                 "url":  "https://portal.risebird.io/PlivoCXInterviewCall/HangupCallback",
+                                                                 "method":  "POST",
+                                                                 "auth":  "no_auth",
+                                                                 "username":  "",
+                                                                 "password":  "",
+                                                                 "token":  "",
+                                                                 "type":  "url"
+                                                             },
+                                                  "RECORDING":  {
+                                                                    "url":  "",
+                                                                    "method":  "POST",
+                                                                    "auth":  "no_auth",
+                                                                    "username":  "",
+                                                                    "password":  "",
+                                                                    "token":  "",
+                                                                    "transcription":  false
+                                                                },
+                                                  "ERROR":  {
+                                                                "url":  "",
+                                                                "method":  "POST",
+                                                                "auth":  "no_auth",
+                                                                "username":  "",
+                                                                "password":  "",
+                                                                "token":  ""
+                                                            },
+                                                  "SMS_STATUS":  {
+                                                                     "url":  "",
+                                                                     "method":  "POST",
+                                                                     "auth":  "no_auth",
+                                                                     "username":  "",
+                                                                     "password":  "",
+                                                                     "token":  ""
+                                                                 },
+                                                  "WHATSAPP_STATUS":  {
+                                                                          "url":  "",
+                                                                          "method":  "POST",
+                                                                          "auth":  "no_auth",
+                                                                          "username":  "",
+                                                                          "password":  "",
+                                                                          "token":  ""
+                                                                      },
+                                                  "CONVERSATION_CLOSURE":  {
+                                                                               "url":  "",
+                                                                               "method":  "POST",
+                                                                               "auth":  "no_auth",
+                                                                               "username":  "",
+                                                                               "password":  "",
+                                                                               "token":  ""
+                                                                           }
+                                              },
+                          "conversation_goals":  [
+                                                     {
+                                                         "goal_name":  "Candidate confirms attendance",
+                                                         "goal_instructions":  "The call is successful when the candidate explicitly states whether they will attend the already-scheduled interview, and candidate_confirmed and candidate_disposition are set accordingly."
+                                                     }
+                                                 ]
+                      }
 }

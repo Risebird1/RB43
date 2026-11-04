@@ -452,7 +452,10 @@ namespace Risebird.Web.Controllers
                         InterviewTime          = GetEventDataValue(ed, "interview_time"),
                         CandidateConfirmed     = GetEventDataValue(ed, "candidate_confirmed"),
                         ConfirmedCandidateName = GetEventDataValue(ed, "confirmed_candidate_name"),
-                        CandidateDisposition   = GetEventDataValue(ed, "candidate_disposition")
+                        CandidateDisposition   = GetEventDataValue(ed, "candidate_disposition"),
+                        Unsubscribe            = GetEventDataValue(ed, "unsubscribe"),
+                        OptOutReason           = GetEventDataValue(ed, "opt_out_reason"),
+                        Provider               = "PlivoCX"
                     };
 
                     await SaveCpAsync(CheckpointNames.HangupJsonParsed,
@@ -497,7 +500,10 @@ namespace Risebird.Web.Controllers
                         InterviewTime          = form["interview_time"],
                         CandidateConfirmed     = form["candidate_confirmed"],
                         ConfirmedCandidateName = form["confirmed_candidate_name"],
-                        CandidateDisposition   = form["candidate_disposition"]
+                        CandidateDisposition   = form["candidate_disposition"],
+                        Unsubscribe            = form["unsubscribe"],
+                        OptOutReason           = form["opt_out_reason"],
+                        Provider               = "PlivoCX"
                         };
                         await SaveCpAsync(CheckpointNames.HangupFormParsed,
                             $"Parsed as form-encoded — conv_id: {payload.ConversationId}, log_id: {payload.LogId}",

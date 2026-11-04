@@ -46,6 +46,7 @@ namespace Risebird.AzureTimerFunctions
         private readonly IAssistantServiceHelper      _assistantServiceHelper;
         private readonly IInterviewerService          _interviewerService;
         private readonly IHttpRequestHelper           _httpRequestHelper;
+        private readonly ICallPreferenceRepository    _callPreferenceRepository;
         private readonly IWhatsAppHelper              _whatsAppHelper;
         private readonly string                       _evApiKey;
         private readonly string                       _evEndpoint;
@@ -68,8 +69,10 @@ namespace Risebird.AzureTimerFunctions
             IAssistantServiceHelper     assistantServiceHelper,
             IInterviewerService         interviewerService,
             IHttpRequestHelper          httpRequestHelper,
-            IWhatsAppHelper             whatsAppHelper)
+            IWhatsAppHelper             whatsAppHelper,
+            ICallPreferenceRepository   callPreferenceRepository)
         {
+            _callPreferenceRepository = callPreferenceRepository;
             _configuration     = configuration;
             _repository        = repository;
             _pdfReaderHelper   = pdfReaderHelper;
@@ -440,6 +443,18 @@ namespace Risebird.AzureTimerFunctions
                 return;
             }
 
+            // Pre-dial check: the number belongs to an interviewer who opted out of calls. Not a failed call, so no
+            // attempt is used up; hand it to an operator instead of retrying every run.
+            var canCall = await _callPreferenceRepository.CanCallContact("Interviewer", p.ParsedPhone);
+            if (!canCall.CanCall)
+            {
+                _log.LogInformation($"[OnboardAuto] #{p.Id} — not called: {canCall.Reason}");
+                await _repository.UpdateAutomationStatusAsync(p.Id, "ManualRequired");
+                await _repository.InsertHistoryAsync(p.Id, "AutomationNote", "—",
+                    $"Automation: not called — {canCall.Reason} ({p.ParsedPhone}). Operator review required.", "AutomationJob");
+                return;
+            }
+
             var callOk = await TriggerCallAsync(p);
             if (callOk)
             {
@@ -757,9 +772,17 @@ namespace Risebird.AzureTimerFunctions
                 return;
             }
 
+            // "a@x.com / b@y.com" cannot get a sign-in account; let the operator pick the address.
+            string onboardEmail = CandidateEmailNormalizer.Normalize(rec.ParsedEmail);
+            if (onboardEmail == null)
+            {
+                await MarkManualAsync(rec.Id, $"Auto-onboard halted: email '{rec.ParsedEmail}' is not a single valid address. Edit it to one address and onboard manually.");
+                return;
+            }
+
             var profileVM = new InterviewerProfileVM
             {
-                EmailId = rec.ParsedEmail.Trim().ToLower(),
+                EmailId = onboardEmail,
                 FirstName = firstName,
                 LastName = lastName,
                 MobileNumber = phone,
@@ -813,12 +836,14 @@ namespace Risebird.AzureTimerFunctions
             bool ackSent = false;
             try
             {
-                string yesButton  = $"{portalBase}/Interviewer/InterviewerAcknowledgementResponse?status=1&user={userId}";
+                // Encrypted user id: call consent is recorded only for an encrypted link, so it can't be forged for any id.
+                string encUser = await _encryptionHelper.EncryptInteger(userId);
+                string yesButton  = $"{portalBase}/Interviewer/InterviewerAcknowledgementResponse?status=1&callConsent=1&user={(string.IsNullOrEmpty(encUser) ? userId.ToString() : Uri.EscapeDataString(encUser))}";
                 string dropButton = $"{portalBase}/Interviewer/InterviewerAcknowledgementResponse?status=4&user={userId}";
                 string agNames    = rec.AssessmentGroupName ?? rec.MagName ?? "";
 
                 await _notificationHelper.SendAcknowledgementEmailToInterviewer(
-                    rec.ParsedEmail, rec.CandidateName ?? firstName,
+                    onboardEmail, rec.CandidateName ?? firstName,
                     yesButton, dropButton, agNames,
                     rec.AssessmentGroupName ?? rec.MagName ?? "",
                     uniqueid ?? "");

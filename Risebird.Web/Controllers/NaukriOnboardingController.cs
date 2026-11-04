@@ -526,6 +526,14 @@ namespace Risebird.Web.Controllers
                         ok = await _repository.UpdateMagNameAsync(id, newValue?.Trim());
                         break;
                     case "ParsedEmail":
+                        if (!string.IsNullOrWhiteSpace(newValue))
+                        {
+                            // One clean address only: "a@x.com / b@y.com" later fails interviewer creation.
+                            var cleanEmail = CandidateEmailNormalizer.Normalize(newValue);
+                            if (cleanEmail == null)
+                                return Json(new { success = false, error = "Enter a single valid email address." });
+                            newValue = cleanEmail;
+                        }
                         ok = await _repository.UpdateParsedEmailAsync(id, newValue?.Trim());
                         break;
                     case "ParsedPhone":
@@ -1206,6 +1214,12 @@ namespace Risebird.Web.Controllers
                 if (string.IsNullOrWhiteSpace(record.ParsedEmail))
                     return Json(new { success = false, error = "Email not parsed yet. Complete Step 1 first." });
 
+                // Naukri / the operator sometimes stores two addresses ("a@x.com / b@y.com"); the sign-in
+                // account cannot be created for that, and it surfaced as "Unknown reason".
+                string onboardEmail = CandidateEmailNormalizer.Normalize(record.ParsedEmail);
+                if (onboardEmail == null)
+                    return Json(new { success = false, error = $"The email '{record.ParsedEmail}' is not a single valid address. Edit the Email field to keep just one address, then onboard again." });
+
                 // Use the assessment group the operator explicitly CONFIRMED / locked (stored in
                 // AssessmentGroupId by ConfirmMag / SelectSkillChannel — it is also the AG the MAG
                 // application link was built from). Only fall back to the AG re-derived from the MAG
@@ -1255,9 +1269,9 @@ namespace Risebird.Web.Controllers
                     //   • currently INACTIVE → an account that was never activated (e.g. a MAG-direct
                     //     add). Adopt it: map them to this MAG (channels available-only / inactive),
                     //     link the prospect, send the acknowledgement, and let acceptance activate them.
-                    var existing = await _repository.FindInterviewerByEmailAnyStatusAsync(record.ParsedEmail);
+                    var existing = await _repository.FindInterviewerByEmailAnyStatusAsync(onboardEmail);
                     if (!existing.UserId.HasValue || existing.UserId.Value <= 0)
-                        return Json(new { success = false, error = $"Flagged as an existing interviewer, but no account was found for {record.ParsedEmail}." });
+                        return Json(new { success = false, error = $"Flagged as an existing interviewer, but no account was found for {onboardEmail}." });
 
                     if (existing.IsActive == true)
                         return Json(new { success = false, error = "This interviewer is already ACTIVE in the system. Cannot re-onboard." });
@@ -1277,7 +1291,7 @@ namespace Risebird.Web.Controllers
                     // ── CREATE a new interviewer account (INACTIVE) ────────────────────────────
                     var profileVM = new InterviewerProfileVM
                     {
-                        EmailId = record.ParsedEmail.Trim().ToLower(),
+                        EmailId = onboardEmail,
                         FirstName = firstName,
                         LastName = lastName,
                         MobileNumber = phone,
@@ -1351,12 +1365,14 @@ namespace Risebird.Web.Controllers
                 bool ackSent = false;
                 try
                 {
-                    string yesButton = $"https://{Request.Host}/Interviewer/InterviewerAcknowledgementResponse?status=1&user={userId}";
+                    // Encrypted user id: call consent is recorded only for an encrypted link, so it can't be forged for any id.
+                    string encUser = await _encryptionHelper.EncryptInteger(userId);
+                    string yesButton = $"https://{Request.Host}/Interviewer/InterviewerAcknowledgementResponse?status=1&callConsent=1&user={(string.IsNullOrEmpty(encUser) ? userId.ToString() : Uri.EscapeDataString(encUser))}";
                     string dropButton = $"https://{Request.Host}/Interviewer/InterviewerAcknowledgementResponse?status=4&user={userId}";
                     string agNames = record.AssessmentGroupName ?? record.MagName ?? "";
 
                     await _notificationHelper.SendAcknowledgementEmailToInterviewer(
-                        record.ParsedEmail, record.CandidateName ?? firstName,
+                        onboardEmail, record.CandidateName ?? firstName,
                         yesButton, dropButton, agNames,
                         record.AssessmentGroupName ?? record.MagName ?? "",
                         uniqueid ?? "");
@@ -1435,7 +1451,9 @@ namespace Risebird.Web.Controllers
                     return Json(new { success = false, error = "Interviewer not yet onboarded." });
 
                 int userId = record.OnboardedUserId.Value;
-                string yesButton = $"https://{Request.Host}/Interviewer/InterviewerAcknowledgementResponse?status=1&user={userId}";
+                // Encrypted user id: call consent is recorded only for an encrypted link, so it can't be forged for any id.
+                string encUser = await _encryptionHelper.EncryptInteger(userId);
+                string yesButton = $"https://{Request.Host}/Interviewer/InterviewerAcknowledgementResponse?status=1&callConsent=1&user={(string.IsNullOrEmpty(encUser) ? userId.ToString() : Uri.EscapeDataString(encUser))}";
                 string dropButton = $"https://{Request.Host}/Interviewer/InterviewerAcknowledgementResponse?status=4&user={userId}";
                 string agNames = record.AssessmentGroupName ?? record.MagName ?? "";
 

@@ -7,11 +7,18 @@ function MarkedColdCandidate(CandidateId, IRFId, CandidateEmail, InterviewId, ir
             showCancelButton: true,
             cancelButtonText: 'Cancel',
             allowOutsideClick: false,
-            preConfirm: function () {
+            // Call opt-out: "Opted out on call" = the candidate told us not to call (shown as a badge, blocks calls
+            // for this skill channel); "Other reason" = an ordinary cold mark. Asked of Risebird staff only
+            // (window.rbIsRisebirdStaff, set in _Layout); everyone else gets the plain confirmation as before.
+            input: window.rbIsRisebirdStaff ? 'radio' : null,
+            inputOptions: { 'OptedOutOnCall': 'Opted out on call', 'Other': 'Other reason' },
+            inputValidator: function (value) { if (!value) { return 'Please pick a reason'; } },
+            preConfirm: function (inputValue) {
+                var coldReasonType = window.rbIsRisebirdStaff ? inputValue : '';
                 return new Promise(function (resolve, reject) {
                     $.ajax({
                         url: '/Dashboard/MarkedColdCandidate',
-                        data: { 'CandidateId': CandidateId, 'IRFId': IRFId, 'CandidateEmail': CandidateEmail, 'InterviewId': InterviewId, 'irfIntId': irfIntId },
+                        data: { 'CandidateId': CandidateId, 'IRFId': IRFId, 'CandidateEmail': CandidateEmail, 'InterviewId': InterviewId, 'irfIntId': irfIntId, 'coldReasonType': coldReasonType },
                         type: "POST",
                         success: function (data) {
                             if (data != null && data.toLowerCase().includes('success')) {
@@ -68,11 +75,18 @@ function MarkedColdCandidateForClient(CandidateId, IRFId, CandidateEmail, Interv
             showCancelButton: true,
             cancelButtonText: 'Cancel',
             allowOutsideClick: false,
-            preConfirm: function () {
+            // Call opt-out: "Opted out on call" = the candidate told us not to call (shown as a badge, blocks calls
+            // for this skill channel); "Other reason" = an ordinary cold mark. Asked of Risebird staff only
+            // (window.rbIsRisebirdStaff, set in _Layout); everyone else gets the plain confirmation as before.
+            input: window.rbIsRisebirdStaff ? 'radio' : null,
+            inputOptions: { 'OptedOutOnCall': 'Opted out on call', 'Other': 'Other reason' },
+            inputValidator: function (value) { if (!value) { return 'Please pick a reason'; } },
+            preConfirm: function (inputValue) {
+                var coldReasonType = window.rbIsRisebirdStaff ? inputValue : '';
                 return new Promise(function (resolve, reject) {
                     $.ajax({
                         url: '/Dashboard/MarkedColdCandidate',
-                        data: { 'CandidateId': CandidateId, 'IRFId': IRFId, 'CandidateEmail': CandidateEmail, 'InterviewId': InterviewId, 'irfIntId': irfIntId },
+                        data: { 'CandidateId': CandidateId, 'IRFId': IRFId, 'CandidateEmail': CandidateEmail, 'InterviewId': InterviewId, 'irfIntId': irfIntId, 'coldReasonType': coldReasonType },
                         type: "POST",
                         success: function (data) {
                             if (data != null && data.toLowerCase().includes('success')) {

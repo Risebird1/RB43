@@ -2468,7 +2468,7 @@ Values
             return null;
         }
 
-        public async Task<List<InterviewUsersDetails>> MarkedColdCandidate(int CandidateId, string Email, int InterviewId, int type)
+        public async Task<List<InterviewUsersDetails>> MarkedColdCandidate(int CandidateId, string Email, int InterviewId, int type, string coldSource = null, string coldReason = null, bool logCallOptOut = false)
         {
             try
             {
@@ -2479,6 +2479,11 @@ Values
                 dynamicParam.Add("@InterviewId", InterviewId);
                 dynamicParam.Add("@type", type);
                 dynamicParam.Add("@Currentdate", DateTime.Now);
+                // Call opt-out: where the cold mark came from (AICall | HumanCall | Manual), the reason picked in the
+                // Mark cold popup, and whether to log it in CallPreferences ("Opted out on call").
+                dynamicParam.Add("@ColdSource", coldSource);
+                dynamicParam.Add("@ColdReason", coldReason);
+                dynamicParam.Add("@LogCallOptOut", logCallOptOut);
 
                 using (SqlConnection conChange = new SqlConnection(connectionString))
                 {

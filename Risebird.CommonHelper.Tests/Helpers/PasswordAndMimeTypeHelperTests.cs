@@ -92,26 +92,26 @@ namespace Risebird.CommonHelper.Tests.Helpers
         }
 
         [Fact]
-        public async Task A_very_short_combined_name_produces_a_short_prefix()
+        public async Task A_very_short_combined_name_is_padded_to_an_eight_character_password()
         {
-            // "A" + "B" is two characters, so the password is "AB@123" — shorter than most B2C
-            // password policies allow. Recorded because it is a real edge the portal can hit.
+            // "A" + "B" used to give "AB@123", which B2C rejects (8 characters minimum), so the
+            // account was never created and interviewer onboarding failed.
             var sut = new PasswordHelper(B2C().Object);
 
             var password = await Generate(sut, User("A", "B"));
 
-            Assert.StartsWith("AB@", password);
-            Assert.Equal(6, password.Length);
+            Assert.StartsWith("ABXX@", password);
+            Assert.Equal(8, password.Length);
         }
 
         [Fact]
-        public async Task An_empty_last_name_leaves_only_the_first_name()
+        public async Task An_empty_last_name_leaves_only_the_first_name_padded()
         {
             var sut = new PasswordHelper(B2C().Object);
 
             var password = await Generate(sut, User("Jo", ""));
 
-            Assert.StartsWith("JO@", password);
+            Assert.StartsWith("JOXX@", password);
         }
 
         [Fact]
@@ -121,7 +121,7 @@ namespace Risebird.CommonHelper.Tests.Helpers
 
             var password = await Generate(sut, User("Jo", null));
 
-            Assert.StartsWith("JO@", password);
+            Assert.StartsWith("JOXX@", password);
         }
 
         [Fact]
@@ -136,14 +136,14 @@ namespace Risebird.CommonHelper.Tests.Helpers
         }
 
         [Fact]
-        public async Task An_empty_first_and_last_name_produces_a_password_that_is_only_the_suffix()
+        public async Task An_empty_first_and_last_name_still_produces_an_eight_character_password()
         {
             var sut = new PasswordHelper(B2C().Object);
 
             var password = await Generate(sut, User("", ""));
 
-            Assert.StartsWith("@", password);
-            Assert.Equal(4, password.Length);
+            Assert.StartsWith("XXXX@", password);
+            Assert.Equal(8, password.Length);
         }
 
         [Fact]

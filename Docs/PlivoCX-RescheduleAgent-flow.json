@@ -1,0 +1,510 @@
+{
+    "nodes":  [
+                  {
+                      "id":  "06115030-f590-4fbd-8df3-021969c5029f",
+                      "type":  "end_conversation",
+                      "data":  {
+                                   "meta":  {
+                                                "name":  "End conversation"
+                                            },
+                                   "config":  {
+                                                  "name":  "Hangup No Answer",
+                                                  "description":  "",
+                                                  "end_message":  null
+                                              }
+                               }
+                  },
+                  {
+                      "id":  "0e99a466-d8dc-47ed-b766-5920afc787d0",
+                      "type":  "end_conversation",
+                      "data":  {
+                                   "meta":  {
+                                                "name":  "End conversation"
+                                            },
+                                   "config":  {
+                                                  "name":  "Hangup Confirmed",
+                                                  "description":  "",
+                                                  "end_message":  null
+                                              }
+                               }
+                  },
+                  {
+                      "id":  "2a9b8396-f9e1-4a54-a080-4b93ca1986e7",
+                      "type":  "end_conversation",
+                      "data":  {
+                                   "meta":  {
+                                                "name":  "End conversation"
+                                            },
+                                   "config":  {
+                                                  "name":  "Hangup Busy",
+                                                  "description":  "",
+                                                  "end_message":  null
+                                              }
+                               }
+                  },
+                  {
+                      "id":  "36755dd7-5e95-4e66-9cf1-2760169dae74",
+                      "type":  "ai_agent_v2",
+                      "data":  {
+                                   "meta":  {
+                                                "name":  "AI conversation"
+                                            },
+                                   "config":  {
+                                                  "name":  "Outbound Interview Rescheduler",
+                                                  "description":  "Calls candidates to urgently reschedule interviews for tomorrow or the day after.",
+                                                  "channel":  "call",
+                                                  "instructions":  "You are an outbound interview rescheduling assistant from Risebird Interviews\ncalling on behalf of {{client_name}} for urgent hiring.\n\n\n\nCONTEXT FOR THIS CALL:\n\n- Candidate Name:       {{candidate_name}}\n- Candidate Email:      {{candidate_email}}\n- Job / Role:         {{job_title}}\n- Client Company:       {{client_name}}\n- IRF ID:           {{irf_id}}\n- Original Interview Date:  {{original_interview_date}}\n- Today\u0027s Date:        {{today_date}}\n- Tomorrow\u0027s Date:      {{tomorrow_date}}\n- Day After Tomorrow\u0027s Date: {{day_after_tomorrow_date}}\n\n\n\nIDENTITY \u0026 PURPOSE:\n\n- You represent Risebird Interviews on behalf of {{client_name}}\n- The candidate had a previous interview that was cancelled, missed, or needs\n to be rescheduled. You are calling to set a new interview time.\n- This is URGENT — the new interview MUST be within the next TWO days ONLY\n- Your goal: Secure a confirmed replacement interview slot\n\n\n\nCRITICAL RULES:\n\n- The rescheduled interview MUST be tomorrow or day after tomorrow ONLY — no exceptions\n- When speaking about timing, ALWAYS say \"tomorrow\" or \"day after tomorrow\" —\n NEVER say a specific date like \"March 10th\" — not even once\n- If candidate requests a date beyond two days: \"I understand, but given the\n urgency of this hiring, we can only offer slots within the next two days.\n Would either tomorrow or the day after work for you?\"\n- If candidate insists on a later date: politely explain it is not possible and\n end the call gracefully\n- ALL times must be confirmed in IST (Indian Standard Time)\n\n\n\nCALL FLOW — follow this exactly:\n\n\n\n1. Greet and confirm identity\n\n  Say: \"Hello, this is Risebird Interviews calling. Am I speaking with {{candidate_name}}?\"\n  Wait for their response.\n  - If they confirm yes → continue to step 2\n  - If wrong person → say \"I apologize for the confusion. Could you please let\n   {{candidate_name}} know we called? Thank you.\" Then end the call.\n  - If no answer or unclear → say \"I\u0027m sorry, I could not hear you clearly.\n   Could you confirm if I am speaking with {{candidate_name}}?\" If still\n   unclear, end call.\n\n\n\n2. Reference the previous interview and state purpose\n\n  Say: \"I am calling on behalf of {{client_name}} regarding the {{job_title}}\n  interview. We need to reschedule your interview — it had originally been\n  set and we\u0027d like to lock in a new time within the next two days. Would you\n  be available tomorrow or the day after tomorrow?\"\n\n  Note: If {{original_interview_date}} is available, you may naturally say\n  \"your interview that was scheduled for {{original_interview_date}}\" but NEVER\n  mention a new specific calendar date when offering replacement slots.\n  Wait for their response.\n\n\n\n3. Get specific time\n\n  Say: \"What time would work best for you?\"\n  If they say only \"morning\" or \"afternoon\" without a specific time:\n  Say: \"Could you give me a specific time? For example, 10 AM or 2 PM?\"\n  Wait for a specific time with AM or PM confirmed.\n\n\n\n4. Confirm details explicitly\n\n  Say: \"Thank you! Let me confirm — your rescheduled interview is set for\n  [tomorrow / day after tomorrow] at [TIME] IST. Is that correct?\"\n  Wait for explicit confirmation — yes, correct, that is right, confirmed.\n  - If candidate says \"maybe\" or \"I think so\" → ask again: \"I want to make\n   sure we have this right. Can you confirm this time works for you?\"\n  - Do NOT proceed to step 5 without an explicit yes.\n\n\n\n5. End the call professionally\n\n  Say: \"Perfect! Your interview is rescheduled. You will receive a confirmation\n  email shortly. We appreciate your time. Good luck!\"\n  After saying this sentence, END THE CALL IMMEDIATELY.\n  Do not say anything more. Do not ask further questions.\n\n\n\nVARIABLE EXTRACTION — MANDATORY — NO EXCEPTIONS:\n\nYou MUST set ALL variables below before ending the call.\nLeaving any variable blank is a critical failure. There is NO scenario where\ncandidate_disposition may be left empty.\n\n- interview_date:\n  If the candidate confirmed TOMORROW → set to the value of {{tomorrow_date}}\n  If the candidate confirmed DAY AFTER TOMORROW → set to the value of {{day_after_tomorrow_date}}\n  If no slot was confirmed → leave blank.\n  Do NOT set this to the words \"tomorrow\" or \"day after tomorrow\" — always use\n  the real calendar date from the variables above.\n\n- interview_time:\n  The exact time the candidate confirmed, in AM/PM format (e.g. \"10:00 AM\").\n  If no slot was confirmed → leave blank.\n\n- candidate_confirmed:\n  \"true\" only if the candidate gave an explicit yes in step 4. Otherwise \"false\".\n\n- confirmed_candidate_name:\n  The full name of the person who answered the call, as confirmed at the start\n  of the conversation in step 1. If the call was not answered or identity was\n  not confirmed, leave blank.\n\n- candidate_disposition:\n  THIS VARIABLE IS MANDATORY. You MUST set it to exactly one of the three values\n  below before ending the call — regardless of how the call went. Never leave it blank.\n\n  \"interested\"  — The candidate was cooperative, agreed to reschedule positively,\n           and either confirmed a slot OR was clearly willing but could\n           not commit right now for a practical reason (e.g. \"I\u0027m driving\").\n\n  \"uninterested\" — The candidate explicitly declined to reschedule, said they are\n           not interested, asked to be removed, or was rude/dismissive.\n\n  \"cant_say\"   — The person who answered was not the candidate, the candidate\n           was ambiguous or non-committal, or the call dropped before a\n           clear signal emerged. When in doubt, use \"cant_say\" — but you\n           MUST pick one of the three values. Blank is never acceptable.\n\n\n\nOBJECTION HANDLING:\n\n- If busy right now: \"I completely understand. This will only take 2 minutes to\n lock in a new time. May we proceed?\"\n- If asks to call back later: \"Since I have you on the line and this is\n time-sensitive, could we quickly find a time that works? It will just take a moment.\"\n- If uncertain about the job: \"You had applied for this position and the company\n is keen to move forward with you. Would you like to secure a slot?\"\n- If wants a date beyond 2 days: \"I appreciate your preference, but we can only\n offer replacement slots within the next two days. Would tomorrow or the day\n after work for you?\"\n- If asks about role / salary / JD / process: \"The scope of this call is limited\n to scheduling your new interview slot. For all further details, please check\n your email. Now, shall we find a time that works for you?\"\n- If asks why original interview needs rescheduling: \"There was a scheduling\n conflict on our end and we\u0027d like to ensure you get a fair opportunity. Can\n we lock in a new slot?\"\n\n\n\nNEVER:\n\n- Accept or offer any date beyond 2 days from today\n- Submit or confirm without the candidate\u0027s explicit yes\n- Use 24-hour time format — always use AM/PM\n- Read out a specific calendar date when offering replacement slots\n- Set interview_date to the word \"tomorrow\" or \"day after tomorrow\" — always use\n the real date from {{tomorrow_date}} or {{day_after_tomorrow_date}}\n- Set candidate_disposition to any value other than \"interested\", \"uninterested\",\n or \"cant_say\"\n- Leave candidate_disposition blank — it MUST always be one of the three values above\n\nOPT-OUT (DO NOT CALL AGAIN)\nIf the candidate says anything like \"don\u0027t call me again\", \"not interested\", \"remove my number\", \"stop calling\", \"unsubscribe\" or \"I\u0027m not looking for a job\":\n- Do not try to persuade them and do not continue the call flow.\n- IMMEDIATELY select the \u0027Opted Out\u0027 route. It apologises and ends the call, so do not say goodbye yourself.\n- \"Call me later\", \"not now\", \"I\u0027m busy\" or \"I\u0027m in a meeting\" is NOT an opt-out: handle it as described above.",
+                                                  "instruction_attachments":  null,
+                                                  "allow_greeting_interruption":  true,
+                                                  "intents":  [
+                                                                  {
+                                                                      "id":  "2702f3ab-713b-4558-aa60-dddcdc073bde",
+                                                                      "intent_instructions":  "Use when candidate has selected tomorrow or day after tomorrow, given a specific AM or PM time, and explicitly confirms the interview schedule.",
+                                                                      "intent_name":  "Scheduling Confirmed",
+                                                                      "intent_speech":  {
+                                                                                            "intent_speech_text":  "Thank you. Your interview is scheduled. We will email details shortly. Goodbye.",
+                                                                                            "speech_enabled":  true
+                                                                                        }
+                                                                  },
+                                                                  {
+                                                                      "id":  "7ad75277-46a5-425b-ab25-2400343755ac",
+                                                                      "intent_instructions":  "When voicemail is detected.",
+                                                                      "intent_name":  "Voicemail Detected",
+                                                                      "intent_speech":  {
+                                                                                            "intent_speech_text":  "",
+                                                                                            "speech_enabled":  false
+                                                                                        }
+                                                                  },
+                                                                  {
+                                                                      "id":  "ca81a8e2-ba64-4cb1-a0c9-b17f96dba7f3",
+                                                                      "intent_instructions":  "Select IMMEDIATELY when the candidate asks not to be called again, says they are not interested in this role, asks to remove their number, says stop calling or unsubscribe, or says they are not looking for a job. Never for \u0027call me later\u0027, \u0027not now\u0027, busy or in a meeting.",
+                                                                      "intent_name":  "Opted Out",
+                                                                      "intent_speech":  {
+                                                                                            "intent_speech_text":  "Understood. We won\u0027t call you again about this role. Sorry for the trouble. Goodbye.",
+                                                                                            "speech_enabled":  true
+                                                                                        }
+                                                                  }
+                                                              ],
+                                                  "extract_variables":  [
+                                                                            {
+                                                                                "variable_instructions":  "The confirmed interview date. Must be set to the actual calendar date — use the value of tomorrow_date if the candidate chose tomorrow, or day_after_tomorrow_date if they chose the day after. Never set this to the word \u0027tomorrow\u0027 or \u0027dayaftertomorrow\u0027.",
+                                                                                "variable_name":  "interview_date"
+                                                                            },
+                                                                            {
+                                                                                "variable_instructions":  "The time the candidate confirmed. Must be in HH:MM AM/PM format, for example \"10:00 AM\" or \"02:30 PM\".\n",
+                                                                                "variable_name":  "interview_time"
+                                                                            },
+                                                                            {
+                                                                                "variable_instructions":  "Must be exactly \"true\" if the candidate explicitly said yes or confirmed. Otherwise \"false\".\n",
+                                                                                "variable_name":  "candidate_confirmed"
+                                                                            },
+                                                                            {
+                                                                                "id":  "bd9637f1-514c-4bf3-be62-82e18803cfe8",
+                                                                                "variable_instructions":  "Based on the full conversation, assess the candidate\u0027s disposition towards the interview. Set to exactly one of: \"interested\" (candidate willingly confirmed or was clearly open), \"uninterested\" (candidate declined, was dismissive, or said they are not interested), \"cant_say\" (call dropped, no answer, unclear, or the candidate was non-committal).\n",
+                                                                                "variable_name":  "candidate_disposition"
+                                                                            },
+                                                                            {
+                                                                                "id":  "8fb77aed-043d-4dc1-97d4-b62d87a86823",
+                                                                                "variable_instructions":  "The full name of the person who answered the call, as confirmed at the start of the conversation. Leave blank if identity was not confirmed.\n",
+                                                                                "variable_name":  "confirmed_candidate_name"
+                                                                            },
+                                                                            {
+                                                                                "id":  "bd400d99-8178-4899-af84-b58c8e294343",
+                                                                                "configure_data_format":  true,
+                                                                                "variable_type":  "enum",
+                                                                                "variable_enum_values":  [
+                                                                                                             "true",
+                                                                                                             "false"
+                                                                                                         ],
+                                                                                "variable_format_instructions":  "Exactly one of the allowed values, lowercase, without quotes.",
+                                                                                "variable_instructions":  "true only if the candidate asked not to be called again about this role, said they are not interested, asked to remove their number, said stop calling or unsubscribe, or said they are not looking for a job. false in every other case, including \u0027call me later\u0027, \u0027not now\u0027, busy, wrong person, unclear, or the call dropped.",
+                                                                                "variable_name":  "unsubscribe"
+                                                                            },
+                                                                            {
+                                                                                "id":  "aa7482ad-6f00-467f-aec9-370cdd0cf79e",
+                                                                                "configure_data_format":  true,
+                                                                                "variable_type":  "string",
+                                                                                "variable_enum_values":  [
+
+                                                                                                         ],
+                                                                                "variable_format_instructions":  "A short quote, at most 20 words. Empty when unsubscribe is false.",
+                                                                                "variable_instructions":  "If the candidate opted out: a short quote of what they said. Otherwise leave empty.",
+                                                                                "variable_name":  "opt_out_reason"
+                                                                            }
+                                                                        ],
+                                                  "actions":  null,
+                                                  "screening_name":  "Hi, this is Risebird Interviews calling",
+                                                  "screening_reason":  "Calling to schedule an interview for your applied role",
+                                                  "initial_wait_time":  0
+                                              }
+                               }
+                  },
+                  {
+                      "id":  "bf634fd3-1b4e-4acd-97c7-226fe9de68c3",
+                      "type":  "end_conversation",
+                      "data":  {
+                                   "meta":  {
+                                                "name":  "End conversation"
+                                            },
+                                   "config":  {
+                                                  "name":  "End conversation 12",
+                                                  "description":  "",
+                                                  "end_message":  null
+                                              }
+                               }
+                  },
+                  {
+                      "id":  "c54943f7-761e-4456-86d4-359615f8e1d5",
+                      "type":  "end_conversation",
+                      "data":  {
+                                   "meta":  {
+                                                "name":  "End conversation"
+                                            },
+                                   "config":  {
+                                                  "name":  "Hangup Failed",
+                                                  "description":  "",
+                                                  "end_message":  null
+                                              }
+                               }
+                  },
+                  {
+                      "id":  "e5347fed-a786-4c26-926b-787f822e9640",
+                      "type":  "start",
+                      "data":  {
+                                   "meta":  {
+                                                "name":  "Start"
+                                            },
+                                   "config":  {
+                                                  "name":  "Start",
+                                                  "description":  "",
+                                                  "triggers":  [
+                                                                   "http"
+                                                               ],
+                                                  "payload_format":  {
+                                                                         "candidate_email":  "string",
+                                                                         "candidate_name":  "string",
+                                                                         "client_name":  "string",
+                                                                         "day_after_tomorrow_date":  "string",
+                                                                         "irf_id":  "string",
+                                                                         "job_title":  "string",
+                                                                         "log_id":  "string",
+                                                                         "phone_number":  "string",
+                                                                         "today_date":  "string",
+                                                                         "tomorrow_date":  "string"
+                                                                     },
+                                                  "enable_quick_responses":  false,
+                                                  "quick_response_questions":  [
+
+                                                                               ],
+                                                  "slack_channel_id":  null,
+                                                  "slack_workspace_id":  null,
+                                                  "slack_reply_in_thread":  true,
+                                                  "events":  {
+                                                                 "hangup":  {
+                                                                                "method":  "POST",
+                                                                                "url":  ""
+                                                                            }
+                                                             },
+                                                  "record_start":  null,
+                                                  "record_stop":  null,
+                                                  "slack_trigger_event":  "on_direct_mention"
+                                              }
+                               }
+                  },
+                  {
+                      "id":  "f855f0de-6ac0-4175-a106-d37575a35d7a",
+                      "type":  "initiate_call",
+                      "data":  {
+                                   "meta":  {
+                                                "name":  "Initiate call"
+                                            },
+                                   "config":  {
+                                                  "name":  "Initiate Interview Call",
+                                                  "description":  "",
+                                                  "from":  "+918031136547",
+                                                  "to":  "{{Start.http.params.phone_number}}",
+                                                  "send_digits":  "",
+                                                  "ring_timeout":  30,
+                                                  "detect_voicemail":  false,
+                                                  "max_call_duration":  10
+                                              }
+                               }
+                  },
+                  {
+                      "id":  "d2399250-44a4-4e18-8679-63c2765c638b",
+                      "type":  "end_conversation",
+                      "data":  {
+                                   "meta":  {
+                                                "name":  "End conversation"
+                                            },
+                                   "config":  {
+                                                  "name":  "Hangup Opted Out",
+                                                  "description":  "",
+                                                  "end_message":  null
+                                              }
+                               }
+                  }
+              ],
+    "edges":  [
+                  {
+                      "id":  "eb742679-22fc-4e17-b8d6-95bfcc251029",
+                      "source":  "e5347fed-a786-4c26-926b-787f822e9640",
+                      "target":  "f855f0de-6ac0-4175-a106-d37575a35d7a",
+                      "sourceHandle":  "http",
+                      "data":  {
+                                   "nodeVars":  [
+                                                    "{{Start.request_type}}",
+                                                    "{{Start.flow_run_id}}",
+                                                    "{{Start.http.params}}",
+                                                    "{{Start.http.params.candidate_email}}",
+                                                    "{{Start.http.params.candidate_name}}",
+                                                    "{{Start.http.params.client_name}}",
+                                                    "{{Start.http.params.day_after_tomorrow_date}}",
+                                                    "{{Start.http.params.irf_id}}",
+                                                    "{{Start.http.params.job_title}}",
+                                                    "{{Start.http.params.log_id}}",
+                                                    "{{Start.http.params.phone_number}}",
+                                                    "{{Start.http.params.today_date}}",
+                                                    "{{Start.http.params.tomorrow_date}}"
+                                                ]
+                               }
+                  },
+                  {
+                      "id":  "520c1be3-66e9-43f0-9980-ed772ebb0cf4",
+                      "source":  "f855f0de-6ac0-4175-a106-d37575a35d7a",
+                      "target":  "36755dd7-5e95-4e66-9cf1-2760169dae74",
+                      "sourceHandle":  "answered",
+                      "data":  {
+                                   "nodeVars":  [
+                                                    "{{Initiate Interview Call.uuid}}",
+                                                    "{{Initiate Interview Call.to}}",
+                                                    "{{Initiate Interview Call.from}}",
+                                                    "{{Initiate Interview Call.direction}}",
+                                                    "{{Initiate Interview Call.from_iso2}}",
+                                                    "{{Initiate Interview Call.leg}}",
+                                                    "{{Initiate Interview Call.bill_rate}}",
+                                                    "{{Initiate Interview Call.from_country}}",
+                                                    "{{Initiate Interview Call.voicemail_detected}}",
+                                                    "{{Initiate Interview Call.call_status}}",
+                                                    "{{Initiate Interview Call.conversation_id}}"
+                                                ]
+                               }
+                  },
+                  {
+                      "id":  "afd7ea68-b80e-4ca5-a334-5e6295748460",
+                      "source":  "36755dd7-5e95-4e66-9cf1-2760169dae74",
+                      "target":  "0e99a466-d8dc-47ed-b766-5920afc787d0",
+                      "sourceHandle":  "2702f3ab-713b-4558-aa60-dddcdc073bde",
+                      "data":  {
+                                   "nodeVars":  [
+                                                    "{{Outbound Interview Rescheduler.interview_date}}",
+                                                    "{{Outbound Interview Rescheduler.interview_time}}",
+                                                    "{{Outbound Interview Rescheduler.candidate_confirmed}}",
+                                                    "{{Outbound Interview Rescheduler.candidate_disposition}}",
+                                                    "{{Outbound Interview Rescheduler.confirmed_candidate_name}}",
+                                                    "{{Outbound Interview Rescheduler.unsubscribe}}",
+                                                    "{{Outbound Interview Rescheduler.opt_out_reason}}"
+                                                ]
+                               }
+                  },
+                  {
+                      "id":  "939d4954-1611-4d68-8961-2d96f07ae9d2",
+                      "source":  "36755dd7-5e95-4e66-9cf1-2760169dae74",
+                      "target":  "bf634fd3-1b4e-4acd-97c7-226fe9de68c3",
+                      "sourceHandle":  "7ad75277-46a5-425b-ab25-2400343755ac",
+                      "data":  {
+                                   "nodeVars":  [
+                                                    "{{Outbound Interview Rescheduler.interview_date}}",
+                                                    "{{Outbound Interview Rescheduler.interview_time}}",
+                                                    "{{Outbound Interview Rescheduler.candidate_confirmed}}",
+                                                    "{{Outbound Interview Rescheduler.candidate_disposition}}",
+                                                    "{{Outbound Interview Rescheduler.confirmed_candidate_name}}",
+                                                    "{{Outbound Interview Rescheduler.unsubscribe}}",
+                                                    "{{Outbound Interview Rescheduler.opt_out_reason}}"
+                                                ]
+                               }
+                  },
+                  {
+                      "id":  "5c41955a-d98b-4f05-8d02-13ac68aab816",
+                      "source":  "f855f0de-6ac0-4175-a106-d37575a35d7a",
+                      "target":  "06115030-f590-4fbd-8df3-021969c5029f",
+                      "sourceHandle":  "no_answer",
+                      "data":  {
+                                   "nodeVars":  [
+                                                    "{{Initiate Interview Call.uuid}}",
+                                                    "{{Initiate Interview Call.to}}",
+                                                    "{{Initiate Interview Call.from}}",
+                                                    "{{Initiate Interview Call.direction}}",
+                                                    "{{Initiate Interview Call.from_iso2}}",
+                                                    "{{Initiate Interview Call.leg}}",
+                                                    "{{Initiate Interview Call.bill_rate}}",
+                                                    "{{Initiate Interview Call.from_country}}",
+                                                    "{{Initiate Interview Call.voicemail_detected}}",
+                                                    "{{Initiate Interview Call.call_status}}",
+                                                    "{{Initiate Interview Call.conversation_id}}"
+                                                ]
+                               }
+                  },
+                  {
+                      "id":  "bc3560e9-121b-4407-8896-712d879d94e2",
+                      "source":  "f855f0de-6ac0-4175-a106-d37575a35d7a",
+                      "target":  "2a9b8396-f9e1-4a54-a080-4b93ca1986e7",
+                      "sourceHandle":  "busy_rejected",
+                      "data":  {
+                                   "nodeVars":  [
+                                                    "{{Initiate Interview Call.uuid}}",
+                                                    "{{Initiate Interview Call.to}}",
+                                                    "{{Initiate Interview Call.from}}",
+                                                    "{{Initiate Interview Call.direction}}",
+                                                    "{{Initiate Interview Call.from_iso2}}",
+                                                    "{{Initiate Interview Call.leg}}",
+                                                    "{{Initiate Interview Call.bill_rate}}",
+                                                    "{{Initiate Interview Call.from_country}}",
+                                                    "{{Initiate Interview Call.voicemail_detected}}",
+                                                    "{{Initiate Interview Call.call_status}}",
+                                                    "{{Initiate Interview Call.conversation_id}}"
+                                                ]
+                               }
+                  },
+                  {
+                      "id":  "aa25e5d4-32e8-44af-836a-d625a2993e14",
+                      "source":  "f855f0de-6ac0-4175-a106-d37575a35d7a",
+                      "target":  "c54943f7-761e-4456-86d4-359615f8e1d5",
+                      "sourceHandle":  "failed",
+                      "data":  {
+                                   "nodeVars":  [
+                                                    "{{Initiate Interview Call.uuid}}",
+                                                    "{{Initiate Interview Call.to}}",
+                                                    "{{Initiate Interview Call.from}}",
+                                                    "{{Initiate Interview Call.direction}}",
+                                                    "{{Initiate Interview Call.from_iso2}}",
+                                                    "{{Initiate Interview Call.leg}}",
+                                                    "{{Initiate Interview Call.bill_rate}}",
+                                                    "{{Initiate Interview Call.from_country}}",
+                                                    "{{Initiate Interview Call.voicemail_detected}}",
+                                                    "{{Initiate Interview Call.call_status}}",
+                                                    "{{Initiate Interview Call.conversation_id}}"
+                                                ]
+                               }
+                  },
+                  {
+                      "id":  "3b1644c1-d8a0-41f4-a0f3-02ad0f7ecf4e",
+                      "source":  "36755dd7-5e95-4e66-9cf1-2760169dae74",
+                      "target":  "d2399250-44a4-4e18-8679-63c2765c638b",
+                      "sourceHandle":  "ca81a8e2-ba64-4cb1-a0c9-b17f96dba7f3",
+                      "data":  {
+                                   "nodeVars":  [
+                                                    "{{Outbound Interview Rescheduler.interview_date}}",
+                                                    "{{Outbound Interview Rescheduler.interview_time}}",
+                                                    "{{Outbound Interview Rescheduler.candidate_confirmed}}",
+                                                    "{{Outbound Interview Rescheduler.candidate_disposition}}",
+                                                    "{{Outbound Interview Rescheduler.confirmed_candidate_name}}",
+                                                    "{{Outbound Interview Rescheduler.unsubscribe}}",
+                                                    "{{Outbound Interview Rescheduler.opt_out_reason}}"
+                                                ]
+                               }
+                  }
+              ],
+    "systemPrompt":  {
+                         "ai_nodes":  [
+
+                                      ],
+                         "all_nodes_enabled":  true,
+                         "prompt":  "You are a professional interview scheduling assistant for Risebird Interviews. Be polite, concise, and respectful. Focus only on scheduling-related conversation. Do not invent details. Confirm information clearly before finalizing. If the user is not the intended candidate, politely apologize and close the conversation."
+                     },
+    "sttGuidance":  "This agent schedules interviews and collects candidate confirmation details. Decode person and company names in context: candidate name, client name, and job title from provided call context. For interview_date, normalize responses only to \u0027tomorrow\u0027 or \u0027day after tomorrow\u0027. For interview_time, normalize to a specific spoken time with AM or PM. Prioritize clear interpretation of time expressions and confirmations. Listen for opt-out phrases like \u0027don\u0027t call me again\u0027, \u0027not interested\u0027, \u0027remove my number\u0027, \u0027stop calling\u0027, \u0027unsubscribe\u0027, \u0027mujhe call mat karo\u0027.",
+    "agentSettings":  {
+                          "schedule":  {
+                                           "timezone":  "Asia/Calcutta",
+                                           "start_time":  "",
+                                           "end_time":  ""
+                                       },
+                          "knowledge_base_ids":  [
+
+                                                 ],
+                          "voice_ai_config":  {
+                                                  "language":  "en-IN",
+                                                  "text_to_speech":  {
+                                                                         "provider":  "elevenlabs",
+                                                                         "model":  "eleven_turbo_v2_5",
+                                                                         "voice":  "ack0QsRaQyDLnVyMQTSd",
+                                                                         "voice_label":  "Ananya",
+                                                                         "pronunciation":  [
+
+                                                                                           ]
+                                                                     },
+                                                  "speech_to_text":  {
+                                                                         "keyterms":  [
+
+                                                                                      ]
+                                                                     },
+                                                  "user_idle_config":  {
+                                                                           "hangup_msg":  "Since I\u0027m not hearing a response, I\u0027ll go ahead and disconnect the call. If you need further assistance, please don\u0027t hesitate to contact us again.",
+                                                                           "hold_timeout":  30,
+                                                                           "idling_timeout":  15,
+                                                                           "reminder_msg":  "Are you still there? I\u0027m happy to assist whenever you\u0027re ready",
+                                                                           "retries":  3
+                                                                       },
+                                                  "allow_greeting_interruption":  true,
+                                                  "background_audio":  {
+                                                                           "type":  "none",
+                                                                           "volume":  1
+                                                                       }
+                                              },
+                          "event_callbacks":  {
+                                                  "HANGUP":  {
+                                                                 "url":  "https://portal.risebird.io/PlivoCXInterviewCall/HangupCallback",
+                                                                 "method":  "POST",
+                                                                 "auth":  "no_auth",
+                                                                 "username":  "",
+                                                                 "password":  "",
+                                                                 "token":  "",
+                                                                 "type":  "url"
+                                                             },
+                                                  "RECORDING":  {
+                                                                    "url":  "",
+                                                                    "method":  "POST",
+                                                                    "auth":  "no_auth",
+                                                                    "username":  "",
+                                                                    "password":  "",
+                                                                    "token":  "",
+                                                                    "transcription":  false
+                                                                },
+                                                  "ERROR":  {
+                                                                "url":  "",
+                                                                "method":  "POST",
+                                                                "auth":  "no_auth",
+                                                                "username":  "",
+                                                                "password":  "",
+                                                                "token":  ""
+                                                            },
+                                                  "SMS_STATUS":  {
+                                                                     "url":  "",
+                                                                     "method":  "POST",
+                                                                     "auth":  "no_auth",
+                                                                     "username":  "",
+                                                                     "password":  "",
+                                                                     "token":  ""
+                                                                 },
+                                                  "WHATSAPP_STATUS":  {
+                                                                          "url":  "",
+                                                                          "method":  "POST",
+                                                                          "auth":  "no_auth",
+                                                                          "username":  "",
+                                                                          "password":  "",
+                                                                          "token":  ""
+                                                                      },
+                                                  "CONVERSATION_CLOSURE":  {
+                                                                               "url":  "",
+                                                                               "method":  "POST",
+                                                                               "auth":  "no_auth",
+                                                                               "username":  "",
+                                                                               "password":  "",
+                                                                               "token":  ""
+                                                                           }
+                                              },
+                          "conversation_goals":  [
+
+                                                 ]
+                      }
+}

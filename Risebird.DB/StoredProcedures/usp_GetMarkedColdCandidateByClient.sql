@@ -19,7 +19,7 @@ set @RoleId =(select top 1 cu.RoleId from UserList ul join ClientUser cu on cu.U
 if(@RoleId = 4)     
 begin           
 With CTE AS(    
-select cci.FKCandidateId,cci.IsColdCandidate,cci.ColdMarkedDate,cci.ColdMarkedBY ,c.IRFId as irfIntId,ul.EmailId as candidateEmail,IRF.IRFId,    
+select cci.FKCandidateId,cci.IsColdCandidate,cci.ColdMarkedDate,cci.ColdMarkedBY ,cci.ColdSource,cci.ColdReason,c.IRFId as irfIntId,ul.EmailId as candidateEmail,IRF.IRFId,    
 cm.id as CandidateMasterId,c.id as CandidateId,ulir.EmailId as ChannelOwner,ul.MobileNumber,cl.Name as ClientName,case     
   when ul.LastName is null then ul.FirstName    
   else RTRIM(LTRIM(ul.FirstName)) + SPACE(1) + RTRIM(LTRIM(ul.LastName))    
@@ -58,7 +58,7 @@ END
 else if(@RoleId = 1)     
 begin        
 With CTE AS(    
-select cci.FKCandidateId,cci.IsColdCandidate,cci.ColdMarkedDate,cci.ColdMarkedBY ,c.IRFId as irfIntId,ul.EmailId as candidateEmail,IRF.IRFId,    
+select cci.FKCandidateId,cci.IsColdCandidate,cci.ColdMarkedDate,cci.ColdMarkedBY ,cci.ColdSource,cci.ColdReason,c.IRFId as irfIntId,ul.EmailId as candidateEmail,IRF.IRFId,    
 cm.id as CandidateMasterId,c.id as CandidateId,ulir.EmailId as ChannelOwner,ul.MobileNumber,cl.Name as ClientName,case     
   when ul.LastName is null then ul.FirstName    
   else RTRIM(LTRIM(ul.FirstName)) + SPACE(1) + RTRIM(LTRIM(ul.LastName))    
@@ -96,7 +96,7 @@ END
 else if(@RoleId = 9)     
 begin      
 With CTE AS(    
-select cci.FKCandidateId,cci.IsColdCandidate,cci.ColdMarkedDate,cci.ColdMarkedBY ,c.IRFId as irfIntId,ul.EmailId as candidateEmail,IRF.IRFId,    
+select cci.FKCandidateId,cci.IsColdCandidate,cci.ColdMarkedDate,cci.ColdMarkedBY ,cci.ColdSource,cci.ColdReason,c.IRFId as irfIntId,ul.EmailId as candidateEmail,IRF.IRFId,    
 cm.id as CandidateMasterId,c.id as CandidateId,ulir.EmailId as ChannelOwner,ul.MobileNumber,cl.Name as ClientName,case     
   when ul.LastName is null then ul.FirstName    
   else RTRIM(LTRIM(ul.FirstName)) + SPACE(1) + RTRIM(LTRIM(ul.LastName))    
@@ -132,7 +132,7 @@ END
 else     
 begin    
 With CTE AS(    
-select cci.FKCandidateId,cci.IsColdCandidate,cci.ColdMarkedDate,cci.ColdMarkedBY ,c.IRFId as irfIntId,ul.EmailId as candidateEmail,IRF.IRFId,    
+select cci.FKCandidateId,cci.IsColdCandidate,cci.ColdMarkedDate,cci.ColdMarkedBY ,cci.ColdSource,cci.ColdReason,c.IRFId as irfIntId,ul.EmailId as candidateEmail,IRF.IRFId,    
 cm.id as CandidateMasterId,c.id as CandidateId,ulir.EmailId as ChannelOwner,ul.MobileNumber,cl.Name as ClientName,case     
   when ul.LastName is null then ul.FirstName    
   else RTRIM(LTRIM(ul.FirstName)) + SPACE(1) + RTRIM(LTRIM(ul.LastName))    

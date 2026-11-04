@@ -31,8 +31,10 @@ namespace Risebird.CommonHelper
             else
             {
                 //string name = string.Empty;
-                string name = user.FirstName + user.LastName;
-                password = name.Length >= 4 ? (name.Substring(0, 4).ToUpper() + "@" + number) : (password = name.ToUpper() + "@" + number);
+                // Padded to 4 so the password is always 8 characters: B2C rejects anything shorter,
+                // which failed provisioning for short names ("Al", "Om").
+                string name = (user.FirstName + user.LastName).PadRight(4, 'X');
+                password = name.Substring(0, 4).ToUpper() + "@" + number;
             }
             var userobj = new UserList
             {

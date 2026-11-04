@@ -376,6 +376,12 @@ namespace Risebird.Entities.ViewModel
         public bool IsColdCandidate { get; set; }
         public string ColdMarkedBY { get; set; }
         public DateTime? ColdMarkedDate { get; set; }
+        // ColdSource: AICall | HumanCall (call opt-out badge on the cold lists), a WhatsApp opt-out source, or NULL for a
+        // portal mark. ColdReason: the opt-out quote, popup reason or WhatsApp unsubscribe reason.
+        public string ColdSource { get; set; }
+        public string ColdReason { get; set; }
+        // Interviewer Churn: AICall | HumanCall when Isavailable = 5 (opted out of calls).
+        public string CallOptOutSource { get; set; }
         public int TotalCandidate { get; set; }
 
         public DateTime? RescheduleDate { get; set; }
