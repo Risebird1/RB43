@@ -161,7 +161,8 @@
                                 <td class="pcx-num">@cc.Sends / @c.MaxSends</td>
                                 <td style="white-space:nowrap;">@(local(cc.LastSentAt)?.ToString("dd MMM HH:mm") ?? "—")</td>
                                 <td>@(cc.OutcomeNote ?? "—")</td>
-                                <td class="pcx-small" style="max-width:240px;" title="@cc.LastError">@(cc.LastResult ?? "—")</td>
+                                @* max-width is ignored on a table cell, so the div caps the width and long unbroken text (Interakt JSON, URLs) wraps. *@
+                                <td class="pcx-small" title="@cc.LastError"><div style="min-width:160px;max-width:260px;white-space:normal;overflow-wrap:anywhere;word-break:break-word;">@(cc.LastResult ?? "—")</div></td>
                                 <td style="white-space:nowrap;">
                                     <button type="button" class="pcx-link js-send" data-candidate="@cc.CandidateId" data-name="@name" @(isCompleted ? "disabled" : "")>Re-send</button>
                                     <span class="pcx-muted">·</span>
