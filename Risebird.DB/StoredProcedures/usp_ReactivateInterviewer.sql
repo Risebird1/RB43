@@ -35,7 +35,10 @@ BEGIN
     -- Call opt-out / MAG: put back the assessment groups removed by a manual inactivation. A call opt-out
     -- exclusion is restored separately (consent or flag panel "Calls -> Allowed").
     DECLARE @MagNow datetime = DATEADD(MINUTE, 330, GETUTCDATE())
-    EXEC usp_RestoreInterviewerToMAG @UserId, 'ManualInactive', @ReactivatedBy, @MagNow
+    -- Only while the account is active: this procedure restores access but not IsActive, so after a dashboard
+    -- Remove (IsActive = 0) the groups come back when the Edit Profile form turns Active on.
+    IF EXISTS (SELECT 1 FROM UserList WHERE id = @UserId AND ISNULL(IsActive, 0) = 1)
+        EXEC usp_RestoreInterviewerToMAG @UserId, 'ManualInactive', @ReactivatedBy, @MagNow
 
     -- NOTE: We intentionally do NOT reactivate the interviewer in their existing skill channels.
     -- Reactivation only restores the user account; the interviewer's TransInterviewer (skill

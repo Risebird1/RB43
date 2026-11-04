@@ -828,7 +828,9 @@ namespace Risebird.AzureTimerFunctions
             bool ackSent = false;
             try
             {
-                string yesButton  = $"{portalBase}/Interviewer/InterviewerAcknowledgementResponse?status=1&callConsent=1&user={userId}";
+                // Encrypted user id: call consent is recorded only for an encrypted link, so it can't be forged for any id.
+                string encUser = await _encryptionHelper.EncryptInteger(userId);
+                string yesButton  = $"{portalBase}/Interviewer/InterviewerAcknowledgementResponse?status=1&callConsent=1&user={(string.IsNullOrEmpty(encUser) ? userId.ToString() : Uri.EscapeDataString(encUser))}";
                 string dropButton = $"{portalBase}/Interviewer/InterviewerAcknowledgementResponse?status=4&user={userId}";
                 string agNames    = rec.AssessmentGroupName ?? rec.MagName ?? "";
 

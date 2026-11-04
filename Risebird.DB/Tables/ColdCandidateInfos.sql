@@ -65,3 +65,13 @@ GO
 IF COL_LENGTH('dbo.ColdCandidateInfos', 'ColdReason') IS NULL
     ALTER TABLE dbo.ColdCandidateInfos ADD ColdReason nvarchar(300) NULL;
 GO
+
+-- Databases that ran an earlier call opt-out script created these narrower (ColdSource varchar(20), ColdReason
+-- varchar(500)); the WhatsApp opt-out writes longer sources and Unicode reasons, so bring them to the shared types.
+IF COL_LENGTH(N'dbo.ColdCandidateInfos', N'ColdSource') < 150
+    ALTER TABLE dbo.ColdCandidateInfos ALTER COLUMN ColdSource varchar(150) NULL;
+GO
+IF EXISTS (SELECT 1 FROM sys.columns c JOIN sys.types t ON t.user_type_id = c.user_type_id
+           WHERE c.object_id = OBJECT_ID(N'dbo.ColdCandidateInfos') AND c.name = N'ColdReason' AND t.name = N'varchar')
+    ALTER TABLE dbo.ColdCandidateInfos ALTER COLUMN ColdReason nvarchar(300) NULL;
+GO

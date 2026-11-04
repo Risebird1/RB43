@@ -5,6 +5,7 @@ using Risebird.Entities.Data.ElevenLabsModels;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data.PlivoCXModels;
+using Risebird.Entities.Data.RbAPIDataModels;
 using Risebird.Entities.Enum;
 using Risebird.Entities.Helpers;
 using Risebird.Repository.Interface;
@@ -276,6 +277,32 @@ namespace Risebird.Business.PlivoCX
                 return new PlivoCXDialResult { Error = "Already has a confirmed interview - marked Booked." };
             }
 
+            // Pre-dial check, before the claim and the call log: an opted-out (or cold) contact is not a failed call.
+            // Marked Cold so the campaign stops picking it up, like an invalid number. Interviewer agents check the
+            // interviewer opt-out; candidate agents the candidate's cold / opt-out state in this skill channel.
+            // A failed check lets the call through, as before this check existed.
+            if (_callPreferenceRepository != null)
+            {
+                try
+                {
+                    bool interviewerTarget = string.Equals(agent.TargetType, "Interviewer", StringComparison.OrdinalIgnoreCase);
+                    CanCallResult canCall = null;
+                    if (interviewerTarget)
+                        canCall = await _callPreferenceRepository.CanCallContact("Interviewer", phone);
+                    else if (cc.IRFId.HasValue && cc.IRFId.Value > 0)
+                        canCall = await _callPreferenceRepository.CanCallContact("Candidate", phone, cc.IRFId.Value);
+                    if (canCall != null && !canCall.CanCall)
+                    {
+                        await _campaignRepository.SetCampaignCandidateStateAsync(cc.Id, PlivoCXCampaignCandidateState.Cold, "opted-out", null, null);
+                        return new PlivoCXDialResult { Error = "Not called: " + canCall.Reason };
+                    }
+                }
+                catch (Exception ex)
+                {
+                    await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                }
+            }
+
             // Call now, a per-row Call and the scheduler can reach the same candidate at once; only
             // the one that takes the lock dials. Once the call is logged it counts as in flight,
             // which keeps it from being dialled again, so the bump below releases the lock.
@@ -484,23 +511,6 @@ namespace Risebird.Business.PlivoCX
         private async Task<PlivoCXTriggerResponse> TriggerAsync(PlivoCXAgent agent, PlivoCXTriggerRequest request, int logId)
         {
             PlivoCXTriggerResponse response;
-
-            // Pre-dial check (both providers): never call a candidate who opted out of calls or is cold in this
-            // skill channel. A failed check lets the call through, as before this check existed.
-            if (_callPreferenceRepository != null && int.TryParse(request.IrfId, out var irfIntId) && irfIntId > 0)
-            {
-                try
-                {
-                    var canCall = await _callPreferenceRepository.CanCallContact("Candidate", request.PhoneNumber, irfIntId);
-                    if (canCall != null && !canCall.CanCall)
-                        return new PlivoCXTriggerResponse { Error = "Not called: " + canCall.Reason };
-                }
-                catch (Exception ex)
-                {
-                    await _logger.LogMessage(LogLevelInfo.Exception, ex);
-                }
-            }
-
             try
             {
                 response = PlivoCXCampaignProvider.Normalize(agent.Provider) == PlivoCXCampaignProvider.ElevenLabs

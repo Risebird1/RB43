@@ -1351,7 +1351,9 @@ namespace Risebird.Web.Controllers
                 bool ackSent = false;
                 try
                 {
-                    string yesButton = $"https://{Request.Host}/Interviewer/InterviewerAcknowledgementResponse?status=1&callConsent=1&user={userId}";
+                    // Encrypted user id: call consent is recorded only for an encrypted link, so it can't be forged for any id.
+                    string encUser = await _encryptionHelper.EncryptInteger(userId);
+                    string yesButton = $"https://{Request.Host}/Interviewer/InterviewerAcknowledgementResponse?status=1&callConsent=1&user={(string.IsNullOrEmpty(encUser) ? userId.ToString() : Uri.EscapeDataString(encUser))}";
                     string dropButton = $"https://{Request.Host}/Interviewer/InterviewerAcknowledgementResponse?status=4&user={userId}";
                     string agNames = record.AssessmentGroupName ?? record.MagName ?? "";
 
@@ -1435,7 +1437,9 @@ namespace Risebird.Web.Controllers
                     return Json(new { success = false, error = "Interviewer not yet onboarded." });
 
                 int userId = record.OnboardedUserId.Value;
-                string yesButton = $"https://{Request.Host}/Interviewer/InterviewerAcknowledgementResponse?status=1&callConsent=1&user={userId}";
+                // Encrypted user id: call consent is recorded only for an encrypted link, so it can't be forged for any id.
+                string encUser = await _encryptionHelper.EncryptInteger(userId);
+                string yesButton = $"https://{Request.Host}/Interviewer/InterviewerAcknowledgementResponse?status=1&callConsent=1&user={(string.IsNullOrEmpty(encUser) ? userId.ToString() : Uri.EscapeDataString(encUser))}";
                 string dropButton = $"https://{Request.Host}/Interviewer/InterviewerAcknowledgementResponse?status=4&user={userId}";
                 string agNames = record.AssessmentGroupName ?? record.MagName ?? "";
 

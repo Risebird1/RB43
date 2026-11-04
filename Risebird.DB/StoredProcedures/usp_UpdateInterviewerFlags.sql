@@ -56,7 +56,9 @@ DECLARE @MagNow datetime = DATEADD(MINUTE, 330, GETUTCDATE())
 DECLARE @MagBy varchar(200) = ISNULL(NULLIF(LTRIM(RTRIM(@ModifiedBy)), ''), 'Admin')
 IF @LogUserId IS NOT NULL AND @IsInterviewerAccess = 0 AND ISNULL(@OldAccess, 1) = 1
     EXEC usp_ExcludeInterviewerFromMAG @LogUserId, 'ManualInactive', @MagBy, @MagNow
+-- Only while the account is active too: a dashboard Remove (IsActive = 0) stays out of MAG until it is turned back on.
 IF @LogUserId IS NOT NULL AND @IsInterviewerAccess = 1 AND ISNULL(@OldAccess, 1) = 0
+   AND EXISTS (SELECT 1 FROM UserList WHERE id = @LogUserId AND ISNULL(IsActive, 0) = 1)
     EXEC usp_RestoreInterviewerToMAG @LogUserId, 'ManualInactive', @MagBy, @MagNow
 
 IF @LogUserId IS NOT NULL AND OBJECT_ID(N'dbo.InterviewerActionLog', N'U') IS NOT NULL

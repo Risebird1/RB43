@@ -5674,9 +5674,17 @@ namespace Risebird.Web.Controllers
                 }
                 else
                 {
-                    string decodedEncryptedId = System.Net.WebUtility.UrlDecode(user);
-                    userId = await _encryptionHelper.DecryptInteger(decodedEncryptedId);
+                    // The form posts the id already decoded; decoding again turns a base64 '+' into a space, so try
+                    // the value as posted first and fall back to the old double-decoded form.
+                    userId = await _encryptionHelper.DecryptInteger(user);
+                    if (!userId.HasValue || userId.Value <= 0)
+                    {
+                        string decodedEncryptedId = System.Net.WebUtility.UrlDecode(user);
+                        userId = await _encryptionHelper.DecryptInteger(decodedEncryptedId);
+                    }
                 }
+                // Call consent counts only from an encrypted link: a plain id could be posted for anyone.
+                bool consentFromEncryptedLink = !success;
 
                 //var userId = await _encryptionHelper.DecryptData(user);
 
@@ -5695,14 +5703,13 @@ namespace Risebird.Web.Controllers
 
                     // Call opt-in: record consent (IP + user agent as UCC proof) and reverse a previous call opt-out.
                     // A failure here never blocks the activation.
-                    if (result != null && status == 1 && callConsent == 1)
+                    if (result != null && status == 1 && callConsent == 1 && consentFromEncryptedLink)
                     {
                         try
                         {
-                            var forwardedFor = Request.Headers["X-Forwarded-For"].ToString();
-                            var ipAddress = !string.IsNullOrWhiteSpace(forwardedFor)
-                                ? forwardedFor.Split(',')[0].Trim()
-                                : HttpContext.Connection.RemoteIpAddress?.ToString();
+                            // The connection's address (App Service puts the client IP there), not X-Forwarded-For,
+                            // which the client can set.
+                            var ipAddress = HttpContext.Connection.RemoteIpAddress?.ToString();
                             await _callPreferenceRepository.RecordInterviewerCallConsent(userId.Value, ipAddress, Request.Headers["User-Agent"].ToString());
                         }
                         catch (Exception cex) { await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, cex); }

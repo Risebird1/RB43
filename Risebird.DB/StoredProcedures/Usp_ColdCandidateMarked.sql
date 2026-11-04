@@ -11,7 +11,7 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 
--- @ColdSource: AICall | HumanCall | Manual (default) — where the cold mark came from; shown as the
+-- @ColdSource: AICall | HumanCall, or NULL for an ordinary portal mark (the convention the WhatsApp opt-out also uses); shown as the
 -- "Opted out: AI call / Human call" badge on the cold lists. @ColdReason: opt-out quote or popup reason.
 -- @LogCallOptOut = 1 (Mark cold popup "Opted out on call") also logs a candidate OptOut row in CallPreferences;
 -- usp_RecordCandidateCallOptOut logs its own rows and leaves it 0. "Undo cold" (@type <> 1) clears source and reason.
@@ -22,19 +22,20 @@ CREATE PROCEDURE [dbo].[Usp_ColdCandidateMarked]
 @InterviewId int,
 @type int,
 @Currentdate dateTime,
-@ColdSource varchar(20) = NULL,
-@ColdReason varchar(500) = NULL,
+@ColdSource varchar(150) = NULL,
+@ColdReason nvarchar(300) = NULL,
 @LogCallOptOut bit = 0
 AS
 Begin
 if(@type=1)
 begin
-SET @ColdSource = CASE WHEN @ColdSource IN ('AICall', 'HumanCall') THEN @ColdSource ELSE 'Manual' END
+SET @ColdSource = CASE WHEN @ColdSource IN ('AICall', 'HumanCall') THEN @ColdSource ELSE NULL END
 Declare @oldIscandidateCold bit
 select @oldIscandidateCold=IsColdCandidate From ColdCandidateInfos where FKCandidateId=@FKCandidateId
 IF EXISTS(select * from ColdCandidateInfos where FKCandidateId=@FKCandidateId)
 Begin
-update ColdCandidateInfos set IsColdCandidate=1,ColdMarkedBY=@ColdMarkedBY,ColdMarkedDate=@ColdMarkedDate,ColdSource=@ColdSource,ColdReason=@ColdReason where FKCandidateId=@FKCandidateId
+-- A call opt-out replaces an earlier mark (e.g. WhatsApp), so its ColdInfo text would describe the wrong mark.
+update ColdCandidateInfos set IsColdCandidate=1,ColdMarkedBY=@ColdMarkedBY,ColdMarkedDate=@ColdMarkedDate,ColdSource=@ColdSource,ColdReason=@ColdReason,ColdInfo=CASE WHEN @ColdSource IS NOT NULL THEN NULL ELSE ColdInfo END where FKCandidateId=@FKCandidateId
 End
 Else
 Begin

@@ -7068,7 +7068,7 @@ NEVER:
                 if (!isRisebirdStaff) coldReasonType = null;
                 bool optedOutOnCall = string.Equals(coldReasonType, "OptedOutOnCall", StringComparison.OrdinalIgnoreCase);
                 var data = await _dashboardService.MarkedColdCandidate(CandidateId, emailId, InterviewId, 1,
-                    optedOutOnCall ? "HumanCall" : "Manual",
+                    optedOutOnCall ? "HumanCall" : null,
                     optedOutOnCall ? "Opted out on call" : (string.IsNullOrWhiteSpace(coldReasonType) ? null : "Other reason"),
                     optedOutOnCall);
 

@@ -223,6 +223,21 @@ namespace Risebird.Entities.Data.PlivoCXModels
         /// </summary>
         [JsonProperty("candidate_disposition")]
         public string CandidateDisposition { get; set; }
+
+        /// <summary>
+        /// Call opt-out: "true" when the person asked not to be called again (not for "call me later").
+        /// Extracted by the agent like candidate_confirmed; applied by PlivoCXCallOutcomeProcessor.
+        /// </summary>
+        [JsonProperty("unsubscribe")]
+        public string Unsubscribe { get; set; }
+
+        /// <summary>Short quote of what the person said when opting out.</summary>
+        [JsonProperty("opt_out_reason")]
+        public string OptOutReason { get; set; }
+
+        /// <summary>Which provider reported the call: PlivoCX | ElevenLabs. Logged as the opt-out source.</summary>
+        [JsonIgnore]
+        public string Provider { get; set; }
     }
 
     /// <summary>
