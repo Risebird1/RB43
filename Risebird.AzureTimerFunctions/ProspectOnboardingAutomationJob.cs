@@ -772,9 +772,17 @@ namespace Risebird.AzureTimerFunctions
                 return;
             }
 
+            // "a@x.com / b@y.com" cannot get a sign-in account; let the operator pick the address.
+            string onboardEmail = CandidateEmailNormalizer.Normalize(rec.ParsedEmail);
+            if (onboardEmail == null)
+            {
+                await MarkManualAsync(rec.Id, $"Auto-onboard halted: email '{rec.ParsedEmail}' is not a single valid address. Edit it to one address and onboard manually.");
+                return;
+            }
+
             var profileVM = new InterviewerProfileVM
             {
-                EmailId = rec.ParsedEmail.Trim().ToLower(),
+                EmailId = onboardEmail,
                 FirstName = firstName,
                 LastName = lastName,
                 MobileNumber = phone,
@@ -835,7 +843,7 @@ namespace Risebird.AzureTimerFunctions
                 string agNames    = rec.AssessmentGroupName ?? rec.MagName ?? "";
 
                 await _notificationHelper.SendAcknowledgementEmailToInterviewer(
-                    rec.ParsedEmail, rec.CandidateName ?? firstName,
+                    onboardEmail, rec.CandidateName ?? firstName,
                     yesButton, dropButton, agNames,
                     rec.AssessmentGroupName ?? rec.MagName ?? "",
                     uniqueid ?? "");

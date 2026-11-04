@@ -25,7 +25,7 @@ BEGIN
     SET XACT_ABORT ON;
 
     DECLARE @EmailId varchar(200), @Phone varchar(10)
-    SELECT @EmailId = ul.EmailId, @Phone = RIGHT(CAST(ul.MobileNumber AS varchar(20)), 10)
+    SELECT @EmailId = ul.EmailId, @Phone = dbo.fn_NormalizePhone(ul.MobileNumber)
     FROM UserList ul
     WHERE ul.id = @UserId
       AND EXISTS (SELECT 1 FROM InterviewerProfile ip WHERE ip.UserId = ul.id)
