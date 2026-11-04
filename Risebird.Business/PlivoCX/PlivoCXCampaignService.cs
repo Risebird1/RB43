@@ -5,7 +5,9 @@ using Risebird.Entities.Data.ElevenLabsModels;
 using Risebird.Business.Interface;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data.PlivoCXModels;
+using Risebird.Entities.Data.RbAPIDataModels;
 using Risebird.Entities.Enum;
+using Risebird.Entities.Helpers;
 using Risebird.Repository.Interface;
 using System;
 using System.Collections.Generic;
@@ -42,6 +44,7 @@ namespace Risebird.Business.PlivoCX
         private readonly IPhoneNumberHelper         _phoneNumberHelper;
         private readonly IApplicationErrorLogger    _logger;
         private readonly IElevenLabsAgentService    _elevenLabs;
+        private readonly ICallPreferenceRepository  _callPreferenceRepository;
 
         // ElevenLabs runs its own concurrency limit (set by the ElevenLabs plan), separate from
         // Plivo's 50 lines: ElevenLabs:Campaigns:ConcurrencyBudget (default 10).
@@ -54,8 +57,10 @@ namespace Risebird.Business.PlivoCX
             IPlivoCXCampaignRepository campaignRepository,
             IPhoneNumberHelper         phoneNumberHelper,
             IApplicationErrorLogger    logger,
-            IElevenLabsAgentService    elevenLabs)
+            IElevenLabsAgentService    elevenLabs,
+            ICallPreferenceRepository  callPreferenceRepository = null)
         {
+            _callPreferenceRepository = callPreferenceRepository;
             _configuration      = configuration;
             _plivoCX            = plivoCX;
             _callRepository     = callRepository;
@@ -81,6 +86,10 @@ namespace Risebird.Business.PlivoCX
         private string AgentProblem(PlivoCXAgent agent)
         {
             if (agent == null) return "The campaign's agent was not found.";
+            if (!InterviewerAvailabilityCalls.Enabled
+                && string.Equals(agent.Purpose, "availability", StringComparison.OrdinalIgnoreCase)
+                && string.Equals(agent.TargetType, "Interviewer", StringComparison.OrdinalIgnoreCase))
+                return InterviewerAvailabilityCalls.DisabledMessage;
             switch (PlivoCXCampaignProvider.Normalize(agent.Provider))
             {
                 case PlivoCXCampaignProvider.ElevenLabs:
@@ -266,6 +275,32 @@ namespace Risebird.Business.PlivoCX
             {
                 await _campaignRepository.SetCampaignCandidateStateAsync(cc.Id, PlivoCXCampaignCandidateState.Booked, "has-meeting", "Already scheduled", null);
                 return new PlivoCXDialResult { Error = "Already has a confirmed interview - marked Booked." };
+            }
+
+            // Pre-dial check, before the claim and the call log: an opted-out (or cold) contact is not a failed call.
+            // Marked Cold so the campaign stops picking it up, like an invalid number. Interviewer agents check the
+            // interviewer opt-out; candidate agents the candidate's cold / opt-out state in this skill channel.
+            // A failed check lets the call through, as before this check existed.
+            if (_callPreferenceRepository != null)
+            {
+                try
+                {
+                    bool interviewerTarget = string.Equals(agent.TargetType, "Interviewer", StringComparison.OrdinalIgnoreCase);
+                    CanCallResult canCall = null;
+                    if (interviewerTarget)
+                        canCall = await _callPreferenceRepository.CanCallContact("Interviewer", phone);
+                    else if (cc.IRFId.HasValue && cc.IRFId.Value > 0)
+                        canCall = await _callPreferenceRepository.CanCallContact("Candidate", phone, cc.IRFId.Value);
+                    if (canCall != null && !canCall.CanCall)
+                    {
+                        await _campaignRepository.SetCampaignCandidateStateAsync(cc.Id, PlivoCXCampaignCandidateState.Cold, "opted-out", null, null);
+                        return new PlivoCXDialResult { Error = "Not called: " + canCall.Reason };
+                    }
+                }
+                catch (Exception ex)
+                {
+                    await _logger.LogMessage(LogLevelInfo.Exception, ex);
+                }
             }
 
             // Call now, a per-row Call and the scheduler can reach the same candidate at once; only

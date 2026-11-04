@@ -889,6 +889,8 @@ namespace Risebird.Web.Controllers
                             ViewBag.IsAdvancedResumeScreening = false;
                             await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, advEx);
                         }
+                        // Grey WhatsApp icon for opted-out / at-limit candidates (C1).
+                        ViewBag.WhatsAppLimit = await Risebird.Web.Services.WhatsAppSendButtons.PrepareAsync(HttpContext.RequestServices, candidateList ?? new(), id, Risebird.Web.Services.WhatsAppSendButtons.ScheduleEvent);
                         return View(candidateList);
 
 
@@ -7693,9 +7695,11 @@ namespace Risebird.Web.Controllers
         }
         // WhatsApp unsubscribe button on candidate templates (C1, C2, C4, C5, C6). Opts the candidate out of
         // WhatsApp for this IRF only; emails and other roles are not affected.
+        // The tap itself unsubscribes (one step); src is the message it came from (WhatsAppOptOut.TemplateEvent).
+        // The candidate is also marked cold for this IRF (ColdCandidateInfos), without cancelling a booked interview.
         [AllowAnonymous]
         [HttpGet]
-        public async Task<IActionResult> Unsubscribe(string emailid, int irfid)
+        public async Task<IActionResult> Unsubscribe(string emailid, int irfid, string src = null)
         {
             ViewBag.Title = "WhatsApp unsubscribe";
             if (string.IsNullOrWhiteSpace(emailid) || irfid <= 0)
@@ -7703,11 +7707,49 @@ namespace Risebird.Web.Controllers
                 ViewBag.Message = "This unsubscribe link is incomplete. Please write to candidatesupport@risebird.io.";
                 return View("~/Views/Shared/WhatsAppUnsubscribed.cshtml");
             }
-            var saved = await _whatsappRepository.SaveOptOutAsync(WhatsAppHelper.AudienceCandidate, emailid, irfid, null, "UnsubscribeButton");
+            var email = emailid.Trim().Replace(" ", "+");
+            var saved = await _whatsappRepository.SaveOptOutAsync(WhatsAppHelper.AudienceCandidate, email, irfid, null, "UnsubscribeButton", src);
+            if (saved)
+                await _whatsappRepository.MarkCandidateColdAsync(email, irfid, "WhatsApp unsubscribe",
+                    "WhatsApp unsubscribe" + (string.IsNullOrWhiteSpace(src) ? "" : " · " + src.Trim()),
+                    "WhatsApp unsubscribe button" + (string.IsNullOrWhiteSpace(src) ? "" : " (" + src.Trim() + ")"));
             ViewBag.Message = saved
                 ? "You won't receive WhatsApp messages about this role. Emails are not affected."
                 : "We could not record your request. Please try again or write to candidatesupport@risebird.io.";
+            if (saved)
+            {
+                // Optional reason, posted back to UnsubscribeReason.
+                ViewBag.ReasonAction = Url.Action(nameof(UnsubscribeReason), "Candidate");
+                ViewBag.ReasonFields = new Dictionary<string, string> { ["emailid"] = email, ["irfid"] = irfid.ToString() };
+                ViewBag.Reasons = WhatsAppOptOutReasons.Candidate;
+            }
             return View("~/Views/Shared/WhatsAppUnsubscribed.cshtml");
+        }
+
+        /// <summary>The optional reason from the unsubscribe page, saved on the opt-out and on the cold mark.</summary>
+        [AllowAnonymous]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UnsubscribeReason(string emailid, int irfid, string reason, string otherReason)
+        {
+            ViewBag.Title = "WhatsApp unsubscribe";
+            var text = ReasonText(reason, otherReason, WhatsAppOptOutReasons.Candidate);
+            if (!string.IsNullOrWhiteSpace(emailid) && irfid > 0 && text != null
+                && await _whatsappRepository.SetOptOutReasonAsync(WhatsAppHelper.AudienceCandidate, emailid, irfid, text))
+            {
+                await _whatsappRepository.UpdateColdReasonAsync(emailid.Trim().Replace(" ", "+"), irfid, text);
+            }
+            ViewBag.Message = "Thank you. You won't receive WhatsApp messages about this role. Emails are not affected.";
+            return View("~/Views/Shared/WhatsAppUnsubscribed.cshtml");
+        }
+
+        /// <summary>One of the offered reasons, or the typed text for "Other"; null when nothing usable was sent.</summary>
+        public static string ReasonText(string reason, string otherReason, string[] allowed)
+        {
+            if (string.IsNullOrWhiteSpace(reason) || Array.IndexOf(allowed, reason) < 0) return null;
+            if (reason != "Other") return reason;
+            var other = otherReason?.Trim();
+            return string.IsNullOrEmpty(other) ? "Other" : "Other: " + (other.Length > 280 ? other.Substring(0, 280) : other);
         }
 
         public async Task<IActionResult> GetCandidateResumeSummary(int candidateId)

@@ -1,0 +1,154 @@
+@model Risebird.Entities.ViewModel.BulkSendModalVM
+@*
+    Shared bulk send modal (Not Scheduled, Reschedule, Not Confirmed). Date range (both required, from <= to),
+    skill channels (none = all), Email and / or WhatsApp (WhatsApp ticked by default, at least one required).
+    Posts startDate, endDate, rfids[], communicationMethods[] to Model.Endpoint; the endpoint answers
+    { success, message } and the page reloads on success. The endpoint refuses more than 200 recipients.
+*@
+@{
+    var id = Model.ModalId;
+}
+<div class="modal fade" id="@id" tabindex="-1" role="dialog" aria-labelledby="@(id)Label" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="filheader">
+                <div class="filavatar">
+                    <span class="fas fa-share"></span>
+                </div>
+                <h5 class="modal-title pull-left" id="@(id)Label">@Model.Title</h5>
+            </div>
+            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            <div class="modal-body">
+                <div class="loader text-center" style="display:none;">
+                    <img src="~/Newassets/img/lazyload.gif" />
+                </div>
+                <div class="bulk-send-form">
+                    <div class="row">
+                        <div class="col-md-6 col-sm-6 border-rv">
+                            <div class="form-group">
+                                <label class="control-label col-md-12 col-sm-12 desp-label" for="@(id)Start">@Model.DateLabel — from</label>
+                                <div class="col-md-12 col-sm-12">
+                                    <input id="@(id)Start" type="date" class="form-control">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-sm-6">
+                            <div class="form-group">
+                                <label class="control-label col-md-12 col-sm-12 desp-label" for="@(id)End">to</label>
+                                <div class="col-md-12 col-sm-12">
+                                    <input id="@(id)End" type="date" class="form-control">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-12 col-sm-12">
+                            <div class="form-group">
+                                <label class="control-label col-md-12 col-sm-12 desp-label" for="@(id)Channels">Skill Channel Id (none selected = all)</label>
+                                <div class="col-md-12 col-sm-12">
+                                    <select id="@(id)Channels" class="form-control multiselect" multiple="multiple" data-placeholder="All skill channels">
+                                        @foreach (var channel in Model.SkillChannelIds)
+                                        {
+                                            <option value="@channel">@channel</option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-12 col-sm-12">
+                            <div class="form-group">
+                                <span class="control-label col-md-12 col-sm-12 desp-label">Send by</span>
+                                <div class="col-md-12 col-sm-12">
+                                    <label class="form-check form-check-inline" style="margin-right:18px;">
+                                        <input type="checkbox" id="@(id)Email" value="email" /> Email
+                                    </label>
+                                    <label class="form-check form-check-inline">
+                                        <input type="checkbox" id="@(id)WhatsApp" value="whatsapp" checked /> WhatsApp
+                                    </label>
+                                    <div class="text-muted" style="font-size:12px;margin-top:4px;">WhatsApp skips candidates who unsubscribed from WhatsApp for the role or are at the limit of 3 for this stage. At most 200 recipients per send.</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-md-12 text-right">
+                            <button type="button" id="@(id)Send" class="mdc-button mdc-button--raised mdc-ripple-upgraded" style="background-color: #28a745;">
+                                <font style="font-size:12px;"> @Model.ButtonText</font>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+$(document).ready(function () {
+    var modal = $('#@id');
+    $('#@(id)Send').click(function () {
+        var startDate = $('#@(id)Start').val();
+        var endDate = $('#@(id)End').val();
+        var rfids = $('#@(id)Channels').val() || [];
+        var communicationMethods = [];
+        if ($('#@(id)Email').is(':checked')) communicationMethods.push('email');
+        if ($('#@(id)WhatsApp').is(':checked')) communicationMethods.push('whatsapp');
+
+        if (!startDate || !endDate) {
+            Swal.fire({ icon: 'error', title: 'Validation Error', text: 'Please select both dates.' });
+            return;
+        }
+        if (startDate > endDate) {
+            Swal.fire({ icon: 'error', title: 'Validation Error', text: 'The from date must be on or before the to date.' });
+            return;
+        }
+        if (communicationMethods.length === 0) {
+            Swal.fire({ icon: 'error', title: 'Validation Error', text: 'Tick Email, WhatsApp or both.' });
+            return;
+        }
+
+        Swal.fire({
+            title: '@Model.Title',
+            text: '@Model.ConfirmText',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#28a745',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, send'
+        }).then(function (result) {
+            if (result.dismiss === 'cancel' || result.isDismissed) return;
+            modal.find('.loader').show();
+            modal.find('.bulk-send-form').hide();
+            $.ajax({
+                url: '@Model.Endpoint',
+                type: 'POST',
+                traditional: true,
+                data: {
+                    startDate: startDate,
+                    endDate: endDate,
+                    rfids: rfids,
+                    communicationMethods: communicationMethods,
+                    __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').first().val()
+                },
+                success: function (response) {
+                    modal.find('.loader').hide();
+                    modal.find('.bulk-send-form').show();
+                    if (response && response.success) {
+                        Swal.fire({ icon: 'success', title: 'Sent', text: response.message }).then(function () {
+                            modal.modal('hide');
+                            location.reload();
+                        });
+                    } else {
+                        Swal.fire({ icon: 'error', title: 'Not sent', text: (response && response.message) || 'Nothing was sent.' });
+                    }
+                },
+                error: function () {
+                    modal.find('.loader').hide();
+                    modal.find('.bulk-send-form').show();
+                    Swal.fire({ icon: 'error', title: 'Error', text: 'An error occurred while sending.' });
+                }
+            });
+        });
+    });
+});
+</script>

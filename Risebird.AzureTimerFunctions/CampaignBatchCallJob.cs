@@ -29,6 +29,7 @@ namespace Risebird.AzureTimerFunctions
         private readonly IInterviewerEmailAvailabilityRepository _eaRepository;
         private readonly IPlivoCXService                         _plivoCXService;
         private readonly IApplicationErrorLogger                 _errorLogger;
+        private readonly ICallPreferenceRepository               _callPreferenceRepository;
         private readonly ILogger                                 _log;
 
         public CampaignBatchCallJob(
@@ -36,8 +37,10 @@ namespace Risebird.AzureTimerFunctions
             IConfiguration                          configuration,
             IInterviewerEmailAvailabilityRepository eaRepository,
             IPlivoCXService                         plivoCXService,
-            IApplicationErrorLogger                 errorLogger)
+            IApplicationErrorLogger                 errorLogger,
+            ICallPreferenceRepository               callPreferenceRepository)
         {
+            _callPreferenceRepository = callPreferenceRepository;
             _configuration = configuration;
             _eaRepository  = eaRepository;
             _plivoCXService = plivoCXService;
@@ -142,6 +145,15 @@ namespace Risebird.AzureTimerFunctions
 
                     if (phone.Length == 10 && !phone.StartsWith("+")) phone = "+91" + phone;
                     else if (phone.Length > 10 && !phone.StartsWith("+")) phone = "+" + phone;
+
+                    // Pre-dial check: never call an interviewer who opted out of calls.
+                    var canCall = await _callPreferenceRepository.CanCallContact("Interviewer", phone);
+                    if (!canCall.CanCall)
+                    {
+                        _log.LogInformation($"[CampaignBatchCall] Skipping interviewer #{interviewer.InterviewerProfileId}: {canCall.Reason}");
+                        skipped++;
+                        continue;
+                    }
 
                     // Defer record creation: the InterviewerEmailAvailability row is created
                     // by the hangup webhook only if the call confirms availability.

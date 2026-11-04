@@ -584,7 +584,10 @@ namespace Risebird.Web.Controllers
             var Weekend = from Weekend s in Enum.GetValues(typeof(Weekend))
                           select new { ID = (int)s, Name = s.GetDescription() };
             model.WeekEndList = new SelectList(Weekend, "ID", "Name");
+            // "Opted out of calls" is set only by a call opt-out (it also removes the interviewer from MAG); list it
+            // only when it is the current value, so saving the form keeps it and nobody picks it by hand.
             var AvailabilityStatus = from InterviewerAvailabilityStatus s in Enum.GetValues(typeof(InterviewerAvailabilityStatus))
+                                     where s != InterviewerAvailabilityStatus.Optedoutofcalls || model.Isavailable == (int)InterviewerAvailabilityStatus.Optedoutofcalls
                                      select new { ID = (int)s, Name = s.GetDescription() };
             model.AvailabilityStatus = new SelectList(AvailabilityStatus, "ID", "Name");
         }

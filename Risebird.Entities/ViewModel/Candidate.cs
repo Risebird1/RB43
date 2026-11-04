@@ -152,6 +152,9 @@ namespace Risebird.Entities.ViewModel
         public int MailCount { get; set; }
         public int CallsCount { get; set; }
         public int WhatsappCount { get; set; }
+        // WhatsApp send buttons: opted out of WhatsApp for this IRF, and schedule invites (C1) used of the 3-per-IRF limit.
+        public bool WhatsAppOptedOut { get; set; }
+        public int WhatsAppSendsUsed { get; set; }
         public bool IsResumeRedactAttempted { get; set; }
         public bool IsResumeRedactFailed { get; set; }
         public string CodedResumeLink { get; set; }

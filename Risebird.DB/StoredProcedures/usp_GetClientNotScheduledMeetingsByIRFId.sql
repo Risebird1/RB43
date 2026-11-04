@@ -34,7 +34,7 @@ begin
 	Select Cd.imid,Cd.candidateEmail,Cd.IRFId,Cd.candidateName,Cd.JDTiltle,Cd.MobileNumber,Cd.resumeLink,Cd.ClientHrContact,Max(dtCreatedOn) as dtCreatedOn from(Select IRF.id as imid,CTE.Emailid as candidateEmail,CTE.IRFId,candidateName,CTE.JDTiltle,CTE.MobileNumber,c.resumeLink,c.ClientHRAttemptContact as ClientHrContact,DateAdd(minute,330,cs.Date) as dtCreatedOn from CTE join IRF on CTE.IRFID=IRF.IRFId left join Userlist ul on ul.EmailId=CTE.Emailid left join CandidatesMaster cm on cm.UserId=ul.id         
 	left join Candidate c on c.IRFId=IRF.id and c.CandidateMasterId=cm.id        
 	left join CandidateStatus cs on cs.CandidateId=cm.id and cs.IRFId=c.IRFId and cs.Status=12        
-	Where cs.Date is not Null  and c.ClientHRAttemptContact = @emailId
+	Where cs.Date is not Null  and c.ClientHRAttemptContact = @emailId AND NOT EXISTS (select 1 from ColdCandidateInfos cci where cci.FKCandidateId=c.id and cci.IsColdCandidate=1)
 	group by IRF.id,CTE.Emailid,CTE.IRFId,candidateName,CTE.JDTiltle,CTE.MobileNumber,c.resumeLink,c.ClientHRAttemptContact,DateAdd(minute,330,cs.Date) having Count(*)=1) as Cd          
 	group by Cd.imid,Cd.candidateEmail,Cd.IRFId,Cd.candidateName,Cd.JDTiltle,Cd.MobileNumber,Cd.resumeLink,Cd.ClientHrContact
 	order by dtCreatedOn desc
@@ -48,7 +48,7 @@ begin
 	Select Cd.imid,Cd.candidateEmail,Cd.IRFId,Cd.candidateName,Cd.JDTiltle,Cd.MobileNumber,Cd.resumeLink,Cd.ClientHrContact,Max(dtCreatedOn) as dtCreatedOn from(Select IRF.id as imid,CTE.Emailid as candidateEmail,CTE.IRFId,candidateName,CTE.JDTiltle,CTE.MobileNumber,c.resumeLink,c.ClientHRAttemptContact as ClientHrContact,DateAdd(minute,330,cs.Date) as dtCreatedOn from CTE join IRF on CTE.IRFID=IRF.IRFId left join Userlist ul on ul.EmailId=CTE.Emailid left join CandidatesMaster cm on cm.UserId=ul.id         
 	left join Candidate c on c.IRFId=IRF.id and c.CandidateMasterId=cm.id        
 	left join CandidateStatus cs on cs.CandidateId=cm.id and cs.IRFId=c.IRFId and cs.Status=12        
-	Where cs.Date is not Null  
+	Where cs.Date is not Null AND NOT EXISTS (select 1 from ColdCandidateInfos cci where cci.FKCandidateId=c.id and cci.IsColdCandidate=1)  
 	group by IRF.id,CTE.Emailid,CTE.IRFId,candidateName,CTE.JDTiltle,CTE.MobileNumber,c.resumeLink,c.ClientHRAttemptContact,DateAdd(minute,330,cs.Date) having Count(*)=1) as Cd          
 	group by Cd.imid,Cd.candidateEmail,Cd.IRFId,Cd.candidateName,Cd.JDTiltle,Cd.MobileNumber,Cd.resumeLink,Cd.ClientHrContact
 	order by dtCreatedOn desc 

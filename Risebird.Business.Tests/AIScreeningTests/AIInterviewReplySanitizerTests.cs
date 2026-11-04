@@ -135,9 +135,28 @@ namespace Risebird.Business.Tests.AIScreeningTests
         }
 
         [Fact]
-        public void Json_with_non_string_values_is_not_unwrapped()
+        public void A_numbered_question_is_spoken_without_its_number_or_flags()
         {
-            const string reply = "{ \"timeout\": 30, \"note\": \"retry\" }";
+            // What the B2B inside sales prompt returned: shown and spoken raw because of the number.
+            const string reply =
+                "{\"question\":\"Sure. Tell me about a sales conversation where a prospect raised an objection and how you handled it.\"," +
+                "\"question_number\":2,\"is_follow_up\":false}";
+
+            Assert.Equal(
+                "Sure. Tell me about a sales conversation where a prospect raised an objection and how you handled it.",
+                AIInterviewReplySanitizer.StripOrFallback(reply, out _));
+        }
+
+        [Fact]
+        public void A_json_turn_with_nothing_to_speak_becomes_empty()
+        {
+            Assert.Equal("", AIInterviewReplySanitizer.StripOrFallback("{ \"skipped\": true }", out _));
+        }
+
+        [Fact]
+        public void Nested_json_is_not_unwrapped()
+        {
+            const string reply = "{ \"question\": { \"text\": \"Why?\" } }";
 
             Assert.Equal(reply, AIInterviewReplySanitizer.UnwrapSpokenJson(reply));
         }

@@ -593,6 +593,16 @@ namespace Risebird.Repository
             return rows.ToList();
         }
 
+        public async Task<List<PlivoCXCampaignIRFPickerRow>> GetRescheduleAsync(string email, DateTime startDate, DateTime endDate)
+        {
+            // Errors propagate so the picker shows "could not load" instead of an empty list.
+            using var conn = new SqlConnection(_connectionString);
+            var rows = await conn.QueryAsync<PlivoCXCampaignIRFPickerRow>(
+                "usp_GetPlivoCXCampaignReschedule", new { EmailId = email, Startdate = startDate, Enddate = endDate },
+                commandType: CommandType.StoredProcedure, commandTimeout: 120);
+            return rows.ToList();
+        }
+
         public async Task SetCallLogCampaignAsync(int callLogId, int campaignId)
         {
             try

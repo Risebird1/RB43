@@ -108,9 +108,15 @@
             candidateName = candidateName.replace(/</g, '&lt;').replace(/>/g, '&gt;');
             candidateEmail = candidateEmail.replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
+            // Opted out of WhatsApp for the role, or at the 3-per-IRF limit: shown, but cannot be ticked.
+            var blockedReason = candidate.WhatsAppOptedOut ? 'Unsubscribed from WhatsApp for this role'
+                : (candidate.WhatsAppLimit && candidate.WhatsAppSendsUsed >= candidate.WhatsAppLimit)
+                    ? 'WhatsApp limit reached (' + candidate.WhatsAppSendsUsed + '/' + candidate.WhatsAppLimit + ')' : '';
+            if (blockedReason) candidateEmail += ' <span style="color:#6b7280;font-size:11px;">· ' + blockedReason + '</span>';
+
             row.innerHTML =
                 '<td style="text-align: center;">' +
-                    '<input type="checkbox" class="candidate-checkbox" value="' + candidateEmail.replace(/"/g, '&quot;') + '" ' +
+                    '<input type="checkbox" class="candidate-checkbox" ' + (blockedReason ? 'disabled title="' + blockedReason + '" ' : '') + 'value="' + (candidate.EmailId || candidate.candidateEmail || '').replace(/"/g, '&quot;') + '" ' +
                     'data-irfid="' + irfId + '" ' +
                     'data-irfname="' + (irfName || '').replace(/"/g, '&quot;') + '" ' +
                     'data-enddate="' + endDateFormatted.replace(/"/g, '&quot;') + '" ' +
@@ -149,7 +155,7 @@
 
     function ToggleSelectAll() {
         var selectAll = document.getElementById('selectAllCandidates');
-        var checkboxes = document.querySelectorAll('.candidate-checkbox');
+        var checkboxes = document.querySelectorAll('.candidate-checkbox:not(:disabled)');
 
         checkboxes.forEach(function(checkbox) {
             checkbox.checked = selectAll.checked;
@@ -231,7 +237,7 @@
 
     // Update select all checkbox when individual checkboxes change
     $(document).on('change', '.candidate-checkbox', function() {
-        var totalCheckboxes = document.querySelectorAll('.candidate-checkbox').length;
+        var totalCheckboxes = document.querySelectorAll('.candidate-checkbox:not(:disabled)').length;
         var checkedCheckboxes = document.querySelectorAll('.candidate-checkbox:checked').length;
         document.getElementById('selectAllCandidates').checked = (totalCheckboxes === checkedCheckboxes);
     });

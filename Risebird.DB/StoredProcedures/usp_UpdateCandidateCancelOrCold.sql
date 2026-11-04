@@ -80,7 +80,7 @@ begin
 					
 					IF EXISTS(select 1 from ColdCandidateInfos where FKCandidateId=@FKCandidateId)
 					Begin
-						update ColdCandidateInfos set IsColdCandidate=1,ColdMarkedBY=@RequestedBy,ColdMarkedDate=@CurrentDate,ColdInfo='Drop By Client' where FKCandidateId=@FKCandidateId
+						update ColdCandidateInfos set IsColdCandidate=1,ColdMarkedBY=@RequestedBy,ColdMarkedDate=@CurrentDate,ColdInfo='Drop By Client',ColdSource=NULL,ColdReason=NULL where FKCandidateId=@FKCandidateId
 					End
 					Else
 					Begin

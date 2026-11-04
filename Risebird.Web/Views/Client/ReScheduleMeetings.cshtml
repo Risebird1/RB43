@@ -46,12 +46,20 @@
                         <a style="visibility:hidden" data-toggle="chardinjs" data-position="left"></a>
                         <h4 class="card-title"></h4>
                         <div class="mobile-view"> <h4 class="card-title">Reschedule Meetings</h4></div>
+                        @if (new[] { "Admin", "SupportAdmin", "SeniorHR", "HR" }.Contains(HttpContextAccessor.HttpContext.Session.GetString("profileName")?.Trim().Replace("\"", "")))
+                        {
+                            <a href="@Url.Action("Create", "WhatsAppCampaign", new { source = "Reschedule" })" class="btn btn-sm btn-outline-success" style="margin-top:6px;" title="Send the reschedule invite (C2) over WhatsApp to candidates on this list"><i class="fab fa-whatsapp"></i> WhatsApp campaign</a>
+                        }
                     </div>
                     <div class="pull-right client-ms">
                         <div style="float:left">
                             <div class="filter-note" style="text-align: right;"> Note: To visualize data older than 45 days, please apply filter</div>
                             <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded three " style="float: left;margin-right: 5px;" data-bs-toggle="modal" data-bs-target="#filterModal">
                                 <span class="mdc-button__label"><span class="fa fa-filter" data-toggle="tooltip" data-placement="top" title="Filter" data-original-title="Filter"><font style=" font-family: Roboto, sans-serif; font-size:12px;"> Filter</font></span></span>
+                                <div class="mdc-button__ripple"></div>
+                            </button>
+                            <button class="mdc-button mdc-button--outlined inline-demo-button mdc-ripple-upgraded three" style="float: left;margin-right: 5px;background-color: #28a745;color: white!important;" data-bs-toggle="modal" data-bs-target="#shareRescheduleModal">
+                                <span class="mdc-button__label"><span class="fas fa-share" title="Share Reschedule Invite"><font style="font-family: Roboto, sans-serif; font-size:12px;"> Share Invite</font></span></span>
                                 <div class="mdc-button__ripple"></div>
                             </button>
                             <span class="interview_2"> <i type="submit" class="far fa-file-excel excel-file card-title-space " data-toggle="tooltip" data-placement="bottom" title="Excel Export" data-original-title="Tooltip on bottom" onclick="location.href='@Url.Action("ReScheduleMeetingstoExcel", "Client")'"></i></span>
@@ -631,11 +639,21 @@
                                                                                     <a target="_blank" class="btn shadow btn-edit btn-xs sharp me-1 item4" href="@Url.Action("Edit", "Candidate", new { id = item.CandidateId, irfName = item.IRFId, irfId = item.imid })" title="Edit" style="top: 0px;left:0px;position: relative;cursor: pointer; width:22px!important;height:22px!important">
                                                                                         <span title="Edit"><i class="fa fa-edit" style="left:1px; top:-2px;font-size:12px; position: relative;"></i></span>
                                                                                     </a>
-                                                                                    <a target="_blank" class="btn shadow btn-invite btn-xs sharp me-1 item4" href="@Url.Action("SendInvite", "Candidate", new { IRFName = item.IRFId, irfId = item.imid, emailId = item.candidateEmail, endDate = DateTime.Now.AddDays(5), communicationMedium = (int)CommunicationMedium.Whatsapp, pageUrl="https://portal.risebird.io/Client/ReScheduleMeetings" })" title="Send Invite over Whatsapp" style="top: 0px;position: relative;cursor: pointer; width:23px!important;height:23px!important;background: #2c8d2cb8!important;">
-                                                                                        <span title="Send Invite Over Whatsapp">
-                                                                                            <img src="~/img/whatsapp.png" style="top:-3px;left:-3px;max-width:18px; position: relative;" />
+                                                                                    @{ var waLimit = (ViewBag.WhatsAppLimit as int?) ?? 3; var waTip = Risebird.Web.Services.WhatsAppSendButtons.Tooltip(item.WhatsAppOptedOut, item.WhatsAppSendsUsed, waLimit); }
+                                                                                    @if (Risebird.Web.Services.WhatsAppSendButtons.Disabled(item.WhatsAppOptedOut, item.WhatsAppSendsUsed, waLimit))
+                                                                                    {
+                                                                                        <span class="btn shadow btn-invite btn-xs sharp me-1 item4" aria-disabled="true" title="@waTip" style="top: 0px;position: relative;cursor: not-allowed; width:23px!important;height:23px!important;background: #9ca3af!important;opacity:.6;">
+                                                                                            <img src="~/img/whatsapp.png" alt="@waTip" style="top:-3px;left:-3px;max-width:18px; position: relative;filter:grayscale(1);" />
                                                                                         </span>
-                                                                                    </a>
+                                                                                    }
+                                                                                    else
+                                                                                    {
+                                                                                        <a target="_blank" class="btn shadow btn-invite btn-xs sharp me-1 item4" href="@Url.Action("SendInvite", "Candidate", new { IRFName = item.IRFId, irfId = item.imid, emailId = item.candidateEmail, endDate = DateTime.Now.AddDays(5), communicationMedium = (int)CommunicationMedium.Whatsapp, pageUrl="https://portal.risebird.io/Client/ReScheduleMeetings" })" title="Send Invite over Whatsapp · @waTip" style="top: 0px;position: relative;cursor: pointer; width:23px!important;height:23px!important;background: #2c8d2cb8!important;">
+                                                                                            <span title="Send Invite Over Whatsapp · @waTip">
+                                                                                                <img src="~/img/whatsapp.png" style="top:-3px;left:-3px;max-width:18px; position: relative;" />
+                                                                                            </span>
+                                                                                        </a>
+                                                                                    }
 
                                                                                     @if (item.MobileNumber != null && item.MobileNumber != string.Empty)
                                                                                     {
@@ -676,7 +694,7 @@
 <!-- end row -->
 @await Html.PartialAsync("~/Views/TwilioCalls/TwilioCallModalPartial.cshtml")
 @await Html.PartialAsync("~/Views/Candidate/AddCandidateStatusPartial.cshtml")
-<script src="~/js/markcoldcandidate.js?v=2024"></script>
+<script src="~/js/markcoldcandidate.js" asp-append-version="true"></script>
 <script src="~/autocallcandidate.js"></script>
 @*<div id="myCallModal" class="modal  modal-bg">
     <!-- Modal content -->
@@ -988,6 +1006,18 @@
 }
 <script src="~/js/filtervalidation.js?v=2024"></script>
 <loading></loading>
+
+@* Bulk send (C2 by email and / or WhatsApp) - shared modal, opened by the Share Invite button above. *@
+@await Html.PartialAsync("~/Views/Shared/_BulkSendModal.cshtml", new Risebird.Entities.ViewModel.BulkSendModalVM
+{
+    ModalId = "shareRescheduleModal",
+    Title = "Share Reschedule Invite",
+    DateLabel = "Meeting date",
+    ButtonText = "Share Invite",
+    ConfirmText = "Send the reschedule invite to every candidate matching these filters?",
+    Endpoint = Url.Action("ShareRescheduleBulkInvites", "Client"),
+    SkillChannelIds = Model.Select(x => x.IRFId).Where(x => !string.IsNullOrEmpty(x)).Distinct().ToList()
+})
 
 <style>
     .swal2-popup #swal2-content {

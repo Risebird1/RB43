@@ -24,6 +24,7 @@ select intp.*,intp.IsInterest as IsInterested, ul.FirstName, ul.LastName,ul.IsAc
 		WHEN intp.Isavailable =2 THEN 'Not Available'
 		WHEN intp.Isavailable =3 THEN 'Need Clarity'
 		WHEN intp.Isavailable =4 THEN 'Drop My Profile'
+		WHEN intp.Isavailable =5 THEN 'Opted out of calls'
 		ELSE 'no data'
 	END AS AvailabilityStatusValue
 FROM InterviewerProfile intp join UserList ul on ul.id = intp.UserId      

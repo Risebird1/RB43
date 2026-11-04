@@ -244,6 +244,10 @@ namespace Risebird.Business
                 {
                     interviewerProfile.AssessmentGroupDifference = string.Join(",", interviewerProfile.AssessmentGroupArray);
                 }
+                // Names come from EPFO / Naukri and are often a single word, so LastName (and
+                // sometimes FirstName) arrives null; .Replace on it threw and no profile was created.
+                interviewerProfile.FirstName = interviewerProfile.FirstName?.Trim() ?? string.Empty;
+                interviewerProfile.LastName = interviewerProfile.LastName?.Trim() ?? string.Empty;
                 UserDetails userDetails = new UserDetails
                 {
                     FirstName = interviewerProfile.FirstName.Replace(" ", ""),
@@ -260,6 +264,9 @@ namespace Risebird.Business
                     _applicationErrorLogger.LogMessage(LogLevelInfo.Error,
                         "Aborting AddInterviewerProfile: the Azure AD B2C account could not be created, so no interviewer profile was written.",
                         interviewerProfile.EmailId).GetAwaiter().GetResult();
+                    // Callers show this message; without it the operator only saw "Unknown reason".
+                    LastAddProfileException = new InvalidOperationException(
+                        $"The sign-in (Azure AD B2C) account could not be created for '{userDetails.EmailId}'. Check that the email is a single valid address.");
                     return false;
                 }
                 interviewerProfile.UserPassword = provisioning.Password;
@@ -267,7 +274,7 @@ namespace Risebird.Business
                 if (string.IsNullOrEmpty(interviewerProfile.NickName))
                 {
                     var lastnamelength = !string.IsNullOrEmpty(interviewerProfile.LastName) ? interviewerProfile.LastName.Length : 0;
-                    var NickName = (!string.IsNullOrEmpty(interviewerProfile.FirstName) ? interviewerProfile.FirstName.Substring(0, 2).Trim() : "Ri") + "" + (!string.IsNullOrEmpty(interviewerProfile.LastName) ? lastnamelength >= 2 ? interviewerProfile.LastName.Substring(0, 2).Trim().Replace(".", "") : interviewerProfile.LastName.Substring(0, 1).Trim().Replace(".", "") : "se") + "" + (!string.IsNullOrEmpty(interviewerProfile.MobileNumber) ? interviewerProfile.MobileNumber.Substring(6, 4) : "1145");
+                    var NickName = (interviewerProfile.FirstName.Length >= 2 ? interviewerProfile.FirstName.Substring(0, 2).Trim() : "Ri") + "" + (!string.IsNullOrEmpty(interviewerProfile.LastName) ? lastnamelength >= 2 ? interviewerProfile.LastName.Substring(0, 2).Trim().Replace(".", "") : interviewerProfile.LastName.Substring(0, 1).Trim().Replace(".", "") : "se") + "" + (!string.IsNullOrEmpty(interviewerProfile.MobileNumber) ? interviewerProfile.MobileNumber.Substring(6, 4) : "1145");
                     int i = 0;
                     while (i <= 4)
                     {
@@ -313,7 +320,9 @@ namespace Risebird.Business
                         {
                         try
                         {
-                            string yesButton = "https://portal.risebird.io/Interviewer/InterviewerAcknowledgementResponse?status=1&user=" + userId.ToString();
+                            // Encrypted user id: call consent is recorded only for an encrypted link, so it can't be forged for any id.
+                            string encUser = _encryptionHelper.EncryptInteger(userId).GetAwaiter().GetResult();
+                            string yesButton = "https://portal.risebird.io/Interviewer/InterviewerAcknowledgementResponse?status=1&callConsent=1&user=" + (string.IsNullOrEmpty(encUser) ? userId.ToString() : Uri.EscapeDataString(encUser));
                             string dropProfileButton = "";
                             
                             // Shoot acknowledgement email to the interviewer along with a custom button that, upon click, activates the Interviewer

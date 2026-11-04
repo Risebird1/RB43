@@ -39,6 +39,7 @@ namespace Risebird.Web.Controllers
         private readonly IPlivoCXService                         _plivoCXService;
         private readonly IPlivoCXCallRepository                  _cpRepo;
         private readonly IInterviewerListingSearchRepository     _interviewerListingSearchRepository;
+        private readonly ICallPreferenceRepository               _callPreferenceRepository;
 
         public InterviewerAvailabilityController(
             IInterviewerEmailAvailabilityRepository repository,
@@ -55,8 +56,10 @@ namespace Risebird.Web.Controllers
             IFileMimeTypeHelper                     fileMimeTypeHelper,
             IPlivoCXService                         plivoCXService,
             IPlivoCXCallRepository                  cpRepo,
-            IInterviewerListingSearchRepository     interviewerListingSearchRepository)
+            IInterviewerListingSearchRepository     interviewerListingSearchRepository,
+            ICallPreferenceRepository               callPreferenceRepository)
         {
+            _callPreferenceRepository = callPreferenceRepository;
             _repository             = repository;
             _logger                 = logger;
             _configuration          = configuration;
@@ -796,6 +799,9 @@ namespace Risebird.Web.Controllers
             if (HttpContext.Session.GetString("email") == null)
                 return Json(new { success = false, error = "Not signed in." });
 
+            if (!InterviewerAvailabilityCalls.Enabled)
+                return Json(new { success = false, error = InterviewerAvailabilityCalls.DisabledMessage });
+
             try
             {
                 var record = await _repository.GetEmailAvailabilityByIdAsync(id);
@@ -1334,6 +1340,9 @@ namespace Risebird.Web.Controllers
         {
             if (HttpContext.Session.GetString("email") == null)
                 return Json(new { success = false, error = "Not signed in." });
+
+            if (!InterviewerAvailabilityCalls.Enabled)
+                return Json(new { success = false, error = InterviewerAvailabilityCalls.DisabledMessage });
 
             try
             {
@@ -1951,6 +1960,10 @@ namespace Risebird.Web.Controllers
                     return;
                 }
 
+                // Said on a call: also a call opt-out, even if the interviewer is already inactive, so no dialler
+                // calls them again (status 5, out of every MAG, CallPreferences row).
+                await RecordCallOptOutOnUnsubscribeAsync(rec.UserId.Value, medium);
+
                 // Already inactive — don't repeat the work.
                 if (!rec.IsInterviewerActive)
                 {
@@ -1987,9 +2000,32 @@ namespace Risebird.Web.Controllers
                 if (contact == null || !contact.UserId.HasValue || contact.UserId.Value <= 0)
                     return; // already inactive/dropped, or not resolvable — nothing to deactivate
 
+                await RecordCallOptOutOnUnsubscribeAsync(contact.UserId.Value, medium);
+
                 var reason = $"Auto-inactivated: profile interviewer requested unsubscribe / drop profile via {medium}.";
                 await _interviewerService.InactivateInterviewer(
                     contact.UserId.Value, "System (Unsubscribe)", reason, false, "Unsubscribe");
+            }
+            catch (Exception ex)
+            {
+                await _logger.LogMessage(LogLevelInfo.Exception, ex);
+            }
+        }
+
+        // An "Unsubscribe" disposition on an availability voice call is a call opt-out (UCC): record it like the AI
+        // opt-out webhook does. Email replies only deactivate, as before. Never throws: deactivation still runs.
+        private async Task RecordCallOptOutOnUnsubscribeAsync(int userId, string medium)
+        {
+            if (!string.Equals(medium, "voice call", StringComparison.OrdinalIgnoreCase)) return;
+            try
+            {
+                await _callPreferenceRepository.RecordInterviewerCallOptOut(new Risebird.Entities.Data.RbAPIDataModels.InterviewerCallOptOutRequest
+                {
+                    UserId       = userId,
+                    Source       = "PlivoCX",
+                    OptOutSource = "AICall",
+                    Reason       = "Unsubscribe on availability call",
+                });
             }
             catch (Exception ex)
             {

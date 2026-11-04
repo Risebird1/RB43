@@ -123,7 +123,7 @@ join InterviewMeetings im on ccfr.InterviewId=im.id
  declare @BlackListCompanyCount int=(select COUNT(Id) from BlackListedCompany where IsBlackList=1)        
         
         
- declare @interviewerChurnCount int=(select COUNT(Id) from InterviewerProfile where Isavailable in (3,4))        
+ declare @interviewerChurnCount int=(select COUNT(Id) from InterviewerProfile where Isavailable in (3,4,5) or ChurnSource is not null)        
         
 declare @PaymentSlacomplianceCount int=(Select count(ps.id) From PaymentSLADetails ps left join InterviewMeetings im on ps.Interviewid=im.id left join IRF on IRF.IRFId=im.IRFId where ISNull(ps.IsApproved,0)=0)        
 declare @RedoRequestCount int=(Select COUNT(ri.id)   from RedoInterviews ri join InterviewMeetings im on ri.interviewid=im.id      
@@ -294,7 +294,7 @@ set @BlackListCompanyCount=(select COUNT(Id) from BlackListedCompany where IsBla
 set @PaymentSlacomplianceCount =(Select count(ps.id) From PaymentSLADetails ps left join InterviewMeetings im on ps.Interviewid=im.id left join IRF on IRF.IRFId=im.IRFId where ISNull(ps.IsApproved,0)=0)        
         
         
- set @interviewerChurnCount=(select COUNT(Id) from InterviewerProfile where Isavailable in (3,4))        
+ set @interviewerChurnCount=(select COUNT(Id) from InterviewerProfile where Isavailable in (3,4,5) or ChurnSource is not null)        
  set @RedoRequestCount=(Select COUNT(ri.id) from RedoInterviews ri join InterviewMeetings im on ri.interviewid=im.id join IRF on IRF.IRFId=im.iRFId where ISNULL(Approved,0)=0 and ISNULL(Rejected,0)=0 and Isnull(IRF.IsPaused,0)=0 and im.interviewDate>DateAdd(Day,-30,Getdate()))        
  set @HighRiskInterviewers =(Select Count(ip.Id) from InterviewerProfile ip join UserList ul on ul.id=ip.UserId join InterviewMeetings im on im.interviewer=ul.EmailId where interviewDate>@currentdate and ip.RedMarker>0)       
  set @InterviewerVideoKYC=(Select COUNT(ip.id) from InterviewerProfile ip join UserList ul on ul.id=ip.UserId where isnull(ip.IsVideoApproved,0)=0 and ul.IsActive=1 and ip.VideoLink is not null)       

@@ -352,6 +352,10 @@ namespace Risebird.Entities.ViewModel
         public string InterviewerWhatsappNumber { get; set; }
         public string InterviewerResume { get; set; }
         public int Isavailable { get; set; }
+        // Interviewer Churn Data: a WhatsApp unsubscribe (source, reason, when); availability is unchanged.
+        public string ChurnSource { get; set; }
+        public string ChurnReason { get; set; }
+        public DateTime? ChurnDate { get; set; }
         public DateTime? AvailabilityResponseDate { get; set; }
         public string candidateEmailId { get; set; }
         //public string EmploymentComment { get; set; }
@@ -366,9 +370,18 @@ namespace Risebird.Entities.ViewModel
         public int MailCount { get; set; }
         public int CallsCount { get; set; }
         public int WhatsappCount { get; set; }
+        // WhatsApp send buttons: opted out of WhatsApp for this IRF, and sends of this page's stage used (3-per-IRF limit).
+        public bool WhatsAppOptedOut { get; set; }
+        public int WhatsAppSendsUsed { get; set; }
         public bool IsColdCandidate { get; set; }
         public string ColdMarkedBY { get; set; }
         public DateTime? ColdMarkedDate { get; set; }
+        // ColdSource: AICall | HumanCall (call opt-out badge on the cold lists), a WhatsApp opt-out source, or NULL for a
+        // portal mark. ColdReason: the opt-out quote, popup reason or WhatsApp unsubscribe reason.
+        public string ColdSource { get; set; }
+        public string ColdReason { get; set; }
+        // Interviewer Churn: AICall | HumanCall when Isavailable = 5 (opted out of calls).
+        public string CallOptOutSource { get; set; }
         public int TotalCandidate { get; set; }
 
         public DateTime? RescheduleDate { get; set; }

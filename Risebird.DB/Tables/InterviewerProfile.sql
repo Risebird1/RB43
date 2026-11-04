@@ -570,3 +570,43 @@ BEGIN
     ALTER TABLE InterviewerProfile Add ReportPolicyAcknowledged bit null
 END
 GO
+
+-- WhatsApp unsubscribe -> Interviewer Churn Data (dashboard ribbon). Where it came from, e.g.
+-- "WhatsApp unsubscribe button (Interviewer Common Interview)" or "WhatsApp Stop reply", the reason the
+-- interviewer picked, and when. Availability (Isavailable) and the account are not changed. Cleared when an
+-- admin re-enables WhatsApp (/WhatsAppOptOut).
+IF COL_LENGTH('dbo.InterviewerProfile', 'ChurnSource') IS NULL
+    ALTER TABLE dbo.InterviewerProfile ADD ChurnSource varchar(150) NULL;
+GO
+IF COL_LENGTH('dbo.InterviewerProfile', 'ChurnReason') IS NULL
+    ALTER TABLE dbo.InterviewerProfile ADD ChurnReason nvarchar(300) NULL;
+GO
+IF COL_LENGTH('dbo.InterviewerProfile', 'ChurnDate') IS NULL
+    ALTER TABLE dbo.InterviewerProfile ADD ChurnDate datetime NULL;
+GO
+
+-- Call opt-out: CallConsent 1 = opted in (acknowledgement email "Yes"), 0 = opted out, NULL = unknown.
+-- Isavailable = 5 means "Opted out of calls" (InterviewerAvailabilityStatus.Optedoutofcalls). Other writers of
+-- Isavailable (availability emails, My Profile) can overwrite the 5, so calls are blocked on CallConsent = 0 too.
+-- CallOptOutSource = AICall | HumanCall: which channel the opt-out came from.
+IF NOT EXISTS(SELECT * FROM sys.columns WHERE Name = N'CallConsent' AND Object_ID = Object_ID(N'InterviewerProfile'))
+BEGIN
+    ALTER TABLE InterviewerProfile Add CallConsent bit null
+END
+
+IF NOT EXISTS(SELECT * FROM sys.columns WHERE Name = N'CallConsentOn' AND Object_ID = Object_ID(N'InterviewerProfile'))
+BEGIN
+    ALTER TABLE InterviewerProfile Add CallConsentOn datetime null
+END
+
+IF NOT EXISTS(SELECT * FROM sys.columns WHERE Name = N'CallOptOutSource' AND Object_ID = Object_ID(N'InterviewerProfile'))
+BEGIN
+    ALTER TABLE InterviewerProfile Add CallOptOutSource varchar(20) null
+END
+
+-- Isavailable before the call opt-out set it to 5, so "Calls -> Allowed" puts it back (3 Need clarity stays 3).
+IF NOT EXISTS(SELECT * FROM sys.columns WHERE Name = N'IsavailableBeforeOptOut' AND Object_ID = Object_ID(N'InterviewerProfile'))
+BEGIN
+    ALTER TABLE InterviewerProfile Add IsavailableBeforeOptOut int null
+END
+GO

@@ -188,6 +188,7 @@ namespace Risebird.Business.Interface
         Task<List<UnassignedInterviewVM>> FetchAllUnassignedInterviewes();
         bool UpdateCancelInterviewDetails(int meetingid);
         Task<List<UnassignedInterviewVM>> FetchCandidateMeetingsForReminder();
+        Task<BulkSendResult> SendCandidateConfirmationReminders(List<int> meetingIds, bool sendEmail, bool sendWhatsApp, string sentBy);
         Task<string> UpdateCandidateMeetingsStatus(int meetingid, int status, string uniqueid, int Irfid, int candidateId, bool response, string cancellationreason);
         Task<List<CustomerDetailsVM>> FetchCustomerDetails();
         Task<List<RBInterviewerPayoutDetails>> FNAllGeneratedPayoutDetails(DateTime st, DateTime se);

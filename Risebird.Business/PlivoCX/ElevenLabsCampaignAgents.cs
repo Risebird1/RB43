@@ -37,6 +37,30 @@ namespace Risebird.Business.PlivoCX
             "when the person is not the candidate, or once the candidate declines. Do not wait for them to hang up " +
             "and do not keep talking after goodbye. If you reach voicemail, end the call without leaving a message.";
 
+        // Call opt-out (UCC): the candidate asks not to be called again about this role. Reported as `unsubscribe`
+        // and applied by PlivoCXCallOutcomeProcessor: cold in this skill channel only, no further calls for it.
+        private const string OptOut =
+            "\n\n# Opt-out handling\n" +
+            "If the candidate says anything like \"don't call me again\", \"not interested\", \"remove my number\", \"stop calling\", " +
+            "\"unsubscribe\" or \"I'm not looking for a job\":\n" +
+            "1. Do not try to persuade them or continue.\n" +
+            "2. Say: \"Understood. We won't call you again about this role. Sorry for the trouble.\"\n" +
+            "3. End the call.\n" +
+            "If they only say \"call me later\", \"not now\" or \"I'm in a meeting\", that is NOT an opt-out.";
+
+        private static readonly ElevenLabsDataCollectionItem Unsubscribe = new ElevenLabsDataCollectionItem
+        {
+            Type = "boolean",
+            Description = "true only if the candidate asked not to be called again about this role, said they are not interested, " +
+                          "or asked to remove their number. false for \"call me later\", \"not now\", busy, wrong person, or anything unclear."
+        };
+
+        private static readonly ElevenLabsDataCollectionItem OptOutReason = new ElevenLabsDataCollectionItem
+        {
+            Type = "string",
+            Description = "If unsubscribe is true: a short quote of what the candidate said. Otherwise empty."
+        };
+
         private static readonly ElevenLabsDataCollectionItem Disposition = new ElevenLabsDataCollectionItem
         {
             Type = "string",
@@ -73,7 +97,9 @@ namespace Risebird.Business.PlivoCX
                 Description = "true only if the candidate explicitly said yes when the agent read back the interview day and time; false otherwise."
             },
             ["candidate_disposition"] = Disposition,
-            ["confirmed_candidate_name"] = ConfirmedName
+            ["confirmed_candidate_name"] = ConfirmedName,
+            ["unsubscribe"] = Unsubscribe,
+            ["opt_out_reason"] = OptOutReason
         };
 
         public static IReadOnlyList<ElevenLabsCampaignAgentDefinition> Definitions { get; } = new List<ElevenLabsCampaignAgentDefinition>
@@ -113,7 +139,7 @@ namespace Risebird.Business.PlivoCX
 "- Unsure about the job: \"You applied for this position and the company is moving quickly. Would you like to secure a slot?\"\n" +
 "- Not interested or asked not to be called: thank them and end the call.\n" +
 "- Never confirm a slot without the candidate's explicit yes.\n" +
-"- Keep every reply to one or two short sentences." + Ending
+"- Keep every reply to one or two short sentences." + OptOut + Ending
             },
             new ElevenLabsCampaignAgentDefinition
             {
@@ -152,7 +178,7 @@ namespace Risebird.Business.PlivoCX
 "- Questions about salary, role or process: \"That's all in your email. Shall we find a new time?\"\n" +
 "- Not interested or asked not to be called: thank them and end the call.\n" +
 "- Never confirm a slot without the candidate's explicit yes.\n" +
-"- Keep every reply to one or two short sentences." + Ending
+"- Keep every reply to one or two short sentences." + OptOut + Ending
             },
             new ElevenLabsCampaignAgentDefinition
             {
@@ -178,7 +204,9 @@ namespace Risebird.Business.PlivoCX
                                       "uninterested - no longer wants the interview or asked not to be called. " +
                                       "cant_say - cannot make it at that time, wants another time, wrong person, unclear, or the call dropped. Lowercase, no quotes, never empty."
                     },
-                    ["confirmed_candidate_name"] = ConfirmedName
+                    ["confirmed_candidate_name"] = ConfirmedName,
+                    ["unsubscribe"] = Unsubscribe,
+                    ["opt_out_reason"] = OptOutReason
                 },
                 Prompt =
 "# Role\n" +
@@ -203,7 +231,7 @@ namespace Risebird.Business.PlivoCX
 "- Never tell the candidate the interview is cancelled.\n" +
 "- Questions about salary, role or process: \"The team will share details over email.\" then ask the attendance question again (this counts toward the limit of two).\n" +
 "- No joining link: \"Please check your inbox and spam folder for the Risebird email.\" then continue.\n" +
-"- Keep every reply to one short sentence." + Ending
+"- Keep every reply to one short sentence." + OptOut + Ending
             }
         };
 

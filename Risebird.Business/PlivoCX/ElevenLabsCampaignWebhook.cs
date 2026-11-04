@@ -38,7 +38,8 @@ namespace Risebird.Business.PlivoCX
                 CandidateName  = DynamicVariable(data, "candidate_name"),
                 PhoneNumber    = DynamicVariable(data, "phone_number"),
                 JobTitle       = DynamicVariable(data, "job_title"),
-                ClientName     = DynamicVariable(data, "client_name")
+                ClientName     = DynamicVariable(data, "client_name"),
+                Provider       = "ElevenLabs"
             };
 
             if (type == "call_initiation_failure")
@@ -79,6 +80,8 @@ namespace Risebird.Business.PlivoCX
             payload.CandidateConfirmed     = Collected(data, "candidate_confirmed");
             payload.CandidateDisposition   = Collected(data, "candidate_disposition");
             payload.ConfirmedCandidateName = Collected(data, "confirmed_candidate_name");
+            payload.Unsubscribe            = Collected(data, "unsubscribe");
+            payload.OptOutReason           = Collected(data, "opt_out_reason");
             return payload;
         }
 

@@ -108,6 +108,15 @@ BEGIN
           AND  c.Phone IS NOT NULL
           AND  c.Phone <> ''
           AND  (c.Status IS NULL OR c.Status <> 9)
+          -- Not cold in ColdCandidateInfos either (manual cold mark or call opt-out), same as the reschedule
+          -- eligibility. Otherwise a cold candidate stays first in the ORDER BY, the job's pre-dial check skips it,
+          -- and it takes a batch slot on every run.
+          AND  NOT EXISTS (
+                   SELECT 1
+                   FROM   ColdCandidateInfos cci
+                   WHERE  cci.FKCandidateId = c.id
+                     AND  ISNULL(cci.IsColdCandidate, 0) = 1
+               )
           AND  (c.PlivoCXDisposition IS NULL OR c.PlivoCXDisposition <> 'uninterested')
           AND  ISNULL(irf.IsDeleted, 0) = 0
           AND  ISNULL(irf.IsPaused, 0) = 0

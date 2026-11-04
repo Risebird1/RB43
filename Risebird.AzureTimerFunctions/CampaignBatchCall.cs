@@ -54,6 +54,13 @@ namespace Risebird.AzureTimerFunctions
         public async Task<HttpResponseData> Run(
             [HttpTrigger(AuthorizationLevel.Function, "post", Route = null)] HttpRequestData req)
         {
+            if (!InterviewerAvailabilityCalls.Enabled)
+            {
+                _log.LogInformation("[CampaignBatchCall] Availability calls to interviewers are disabled. Skipping.");
+                return await JsonResponse(req, HttpStatusCode.OK,
+                    new { success = false, started = false, message = InterviewerAvailabilityCalls.DisabledMessage });
+            }
+
             CampaignBatchCallRequestDTO dto = null;
             try
             {
@@ -209,11 +216,13 @@ namespace Risebird.AzureTimerFunctions
             IInterviewerEmailAvailabilityRepository repo = null;
             IPlivoCXService plivoCXService = null;
             IApplicationErrorLogger errorLogger = null;
+            ICallPreferenceRepository callPreferenceRepository = null;
 
             try
             {
                 scope = _scopeFactory.CreateScope();
                 repo = scope.ServiceProvider.GetRequiredService<IInterviewerEmailAvailabilityRepository>();
+                callPreferenceRepository = scope.ServiceProvider.GetRequiredService<ICallPreferenceRepository>();
                 plivoCXService = scope.ServiceProvider.GetRequiredService<IPlivoCXService>();
                 errorLogger = scope.ServiceProvider.GetRequiredService<IApplicationErrorLogger>();
             }
@@ -256,35 +265,47 @@ namespace Risebird.AzureTimerFunctions
                             if (phone.Length == 10 && !phone.StartsWith("+")) phone = "+91" + phone;
                             else if (phone.Length > 10 && !phone.StartsWith("+")) phone = "+" + phone;
 
-                            var triggerRequest = new PlivoCXAvailabilityTriggerRequest
+                            // Pre-dial check: never call an interviewer who opted out of calls.
+                            var canCall = await callPreferenceRepository.CanCallContact("Interviewer", phone);
+                            if (!canCall.CanCall)
                             {
-                                CallerId         = callerId,
-                                PhoneNumber      = phone,
-                                InterviewerName  = interviewer.InterviewerName ?? "there",
-                                InterviewerEmail = interviewer.SenderEmail,
-                                MagName          = magName,
-                                LogId            = AvailabilityCallToken.Build(interviewer.InterviewerProfileId, magName, source),
-                                TodayDate        = DateTime.Now.ToString("dddd, dd MMMM yyyy")
-                            };
-
-                            var response = await plivoCXService.TriggerAvailabilityCallAsync(triggerRequest);
-
-                            if (!string.IsNullOrEmpty(response?.Error))
-                            {
-                                failed++;
-                                outcome = "Failed";
-                                error = response.Error;
-                                log.LogWarning("[CampaignBatchCall][BG] Attempt #{LogId} — Plivo returned error for interviewer #{ProfileId} ({Name}, {Phone}): {Error}",
-                                    batchCallLogId, interviewer.InterviewerProfileId, interviewer.InterviewerName, phone, error);
+                                skipped++;
+                                error = canCall.Reason;
+                                log.LogInformation("[CampaignBatchCall][BG] Attempt #{LogId} — skipping interviewer #{ProfileId} ({Name}): {Reason}",
+                                    batchCallLogId, interviewer.InterviewerProfileId, interviewer.InterviewerName, error);
                             }
                             else
                             {
-                                succeeded++;
-                                outcome = "Succeeded";
-                                conversationId = response?.ConversationId;
-                            }
+                                var triggerRequest = new PlivoCXAvailabilityTriggerRequest
+                                {
+                                    CallerId         = callerId,
+                                    PhoneNumber      = phone,
+                                    InterviewerName  = interviewer.InterviewerName ?? "there",
+                                    InterviewerEmail = interviewer.SenderEmail,
+                                    MagName          = magName,
+                                    LogId            = AvailabilityCallToken.Build(interviewer.InterviewerProfileId, magName, source),
+                                    TodayDate        = DateTime.Now.ToString("dddd, dd MMMM yyyy")
+                                };
 
-                            await Task.Delay(InterCallDelayMs);
+                                var response = await plivoCXService.TriggerAvailabilityCallAsync(triggerRequest);
+
+                                if (!string.IsNullOrEmpty(response?.Error))
+                                {
+                                    failed++;
+                                    outcome = "Failed";
+                                    error = response.Error;
+                                    log.LogWarning("[CampaignBatchCall][BG] Attempt #{LogId} — Plivo returned error for interviewer #{ProfileId} ({Name}, {Phone}): {Error}",
+                                        batchCallLogId, interviewer.InterviewerProfileId, interviewer.InterviewerName, phone, error);
+                                }
+                                else
+                                {
+                                    succeeded++;
+                                    outcome = "Succeeded";
+                                    conversationId = response?.ConversationId;
+                                }
+
+                                await Task.Delay(InterCallDelayMs);
+                            }
                         }
                     }
                     catch (Exception exCall)

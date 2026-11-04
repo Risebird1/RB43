@@ -10,6 +10,7 @@ using Risebird.Business.Interface;
 using Risebird.CommonHelper;
 using Risebird.CommonHelper.Interface;
 using Risebird.Entities.Data;
+using Risebird.Entities.Data.RbAPIDataModels;
 using Risebird.Entities.Enum;
 using Risebird.Entities.ViewModel;
 using Risebird.Repository.Interface;
@@ -60,6 +61,7 @@ namespace Risebird.Web.Controllers
         private readonly IPdfReaderHelper _pdfReaderHelper;
         private readonly ICashfreePayoutService _cashfreePayoutService;
         private readonly INaukriOnboardingRepository _naukriOnboardingRepository;
+        private readonly ICallPreferenceRepository _callPreferenceRepository;
 
         private readonly IHttpClientFactory _httpClientFactory;
 
@@ -73,9 +75,11 @@ namespace Risebird.Web.Controllers
         IAffIndaResumeParserHelper affIndaResumeParserHelper, IEncryptionHelper encryptionHelper,
         IAssistantServiceHelper assistantServiceHelper, IPdfReaderHelper pdfReaderHelper,
         ICashfreePayoutService cashfreePayoutService,
-        INaukriOnboardingRepository naukriOnboardingRepository, IHttpClientFactory httpClientFactory)
+        INaukriOnboardingRepository naukriOnboardingRepository, IHttpClientFactory httpClientFactory,
+        ICallPreferenceRepository callPreferenceRepository)
 
         {
+            _callPreferenceRepository = callPreferenceRepository;
             _httpClientFactory = httpClientFactory;
             _interviewerService = interviewerService;
             _clientService = clientService;
@@ -1108,7 +1112,10 @@ namespace Risebird.Web.Controllers
             var OutSideIndiaPrice = from OutSideIndiaPrice s in Enum.GetValues(typeof(OutSideIndiaPrice))
                                     select new { ID = (int)s, Name = s.GetDescription() };
             model.OutsideIndiaServiceRateList = new SelectList(OutSideIndiaPrice, "ID", "Name");
+            // "Opted out of calls" is set only by a call opt-out (it also removes the interviewer from MAG); list it
+            // only when it is the current value, so saving the form keeps it and nobody picks it by hand.
             var AvailabilityStatus = from InterviewerAvailabilityStatus s in Enum.GetValues(typeof(InterviewerAvailabilityStatus))
+                                     where s != InterviewerAvailabilityStatus.Optedoutofcalls || model.Isavailable == (int)InterviewerAvailabilityStatus.Optedoutofcalls
                                      select new { ID = (int)s, Name = s.GetDescription() };
             model.AvailabilityStatus = new SelectList(AvailabilityStatus, "ID", "Name");
             model.SkillChannelList = new SelectList(await _interviewerService.GetApplicableSkillChannelsForInterviewerPostAdding(model.UserId), "id", "IRFId");
@@ -4641,6 +4648,48 @@ namespace Risebird.Web.Controllers
                 string.IsNullOrWhiteSpace(modifiedBy) ? null : modifiedBy);
             return Json("success");
         }
+
+        /// <summary>
+        /// Flag panel "Calls" column. Opted out = a Risebird caller heard "don't call me" on a human call: same as an AI
+        /// opt-out (status 5, Interviewer Churn, out of every MAG), marked HumanCall. Allowed = undo: back in MAG,
+        /// call consent reset to unknown.
+        /// </summary>
+        private static readonly HashSet<string> CallPreferenceRoles = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+        {
+            "Admin", "HR", "SeniorHR", "SupportAdmin", "InterviewerManagement", "SeniorInterviewerManagement"
+        };
+
+        [HttpPost]
+        public async Task<JsonResult> InterviewerCallPreferenceUpdate(int userId, bool optedOut, string reason = null)
+        {
+            var performedBy = HttpContext.Session.GetString("email")?.Trim()?.Replace("\"", "");
+            var profileName = HttpContext.Session.GetString("profileName")?.Trim()?.Replace("\"", "");
+            // Opting an interviewer out removes them from every MAG: Risebird staff roles only.
+            if (string.IsNullOrWhiteSpace(performedBy) || userId <= 0 || !CallPreferenceRoles.Contains(profileName ?? ""))
+                return Json(new { success = false, message = "Not allowed." });
+            try
+            {
+                if (optedOut)
+                {
+                    var result = await _callPreferenceRepository.RecordInterviewerCallOptOut(new InterviewerCallOptOutRequest
+                    {
+                        UserId = userId,
+                        Source = "Portal",
+                        OptOutSource = "HumanCall",
+                        Reason = string.IsNullOrWhiteSpace(reason) ? "Opted out on call (flag panel)" : reason.Trim(),
+                        CreatedBy = performedBy,
+                    });
+                    return Json(new { success = result.OptedOut > 0 });
+                }
+                var undone = await _callPreferenceRepository.UndoInterviewerCallOptOut(userId, performedBy);
+                return Json(new { success = undone });
+            }
+            catch (Exception ex)
+            {
+                await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, ex);
+                return Json(new { success = false, message = "Could not update call preference." });
+            }
+        }
         [Authorize]
         [HttpGet]
         public async Task<IActionResult> InterviewerStatsAndRatings(int? irfId = null, string irfName = null)
@@ -5064,6 +5113,8 @@ namespace Risebird.Web.Controllers
         public async Task<JsonResult> SendOpenURLNotification(int? irfId = null)
         {
             var _AllInterviewerInterview = await _interviewerService.FetchAllInterviewerallUpcomingInterview("Verified", irfId);
+            // Reported back to the button: WhatsApp skips opted-out interviewers (and those with no number).
+            int emailed = 0, whatsAppSent = 0, optedOut = 0, noNumber = 0;
             foreach (var item in _AllInterviewerInterview)
             {
                 if (!string.IsNullOrEmpty(item.EmailId))
@@ -5092,6 +5143,7 @@ namespace Risebird.Web.Controllers
                             Subject = "New interviews have come up! Please assign."
                         };
                         var emailsend1 = await _notificationHelper.SendInterviewerCommonInterviewNotification(_mail1, sendreporturl, item.Total, item.uniqueid, irfId);
+                        emailed++;
                         //What's App Message Send
                         WhatsAppVM _whatsAppVM = new WhatsAppVM();
                         _whatsAppVM.Emailid = item.EmailId;
@@ -5099,7 +5151,10 @@ namespace Risebird.Web.Controllers
                         _whatsAppVM.buttonlink = !string.IsNullOrEmpty(sendreporturl) ? sendreporturl.Replace("https://portal.risebird.io/", "") : "";
                         _whatsAppVM.Event = "Interviewer Common Interview";
                         _whatsAppVM.irfId = irfId.HasValue ? irfId.Value : 0;
-                        await _whatsAppHelper.WhatsAppSendInterviewerCommonInterviewDetails(_whatsAppVM);
+                        var whatsAppResult = await _whatsAppHelper.WhatsAppSendInterviewerCommonInterviewDetails(_whatsAppVM);
+                        if (whatsAppResult == WhatsAppHelper.SentMessage) whatsAppSent++;
+                        else if (whatsAppResult == WhatsAppHelper.SkippedOptedOut) optedOut++;
+                        else if (whatsAppResult == WhatsAppHelper.SkippedNoNumber) noNumber++;
                     }
                     catch (Exception ex)
                     {
@@ -5107,7 +5162,8 @@ namespace Risebird.Web.Controllers
                     }
                 }
             }
-            return Json("Success");
+            // Callers check the "Success" prefix and show the rest.
+            return Json("Success: emailed " + emailed + " · WhatsApp sent " + whatsAppSent + " · skipped " + optedOut + " opted out" + (noNumber > 0 ? " · " + noNumber + " no number" : ""));
         }
         #endregion
         #region Interviewer Video Confirmation
@@ -5209,7 +5265,7 @@ namespace Risebird.Web.Controllers
         // so nobody can unsubscribe someone else. Stops all interviewer WhatsApp messages; emails are not affected.
         [AllowAnonymous]
         [HttpGet]
-        public async Task<IActionResult> Unsubscribe(string id, [FromServices] IWhatsappRepository whatsappRepository)
+        public async Task<IActionResult> Unsubscribe(string id, [FromServices] IWhatsappRepository whatsappRepository, string src = null)
         {
             ViewBag.Title = "WhatsApp unsubscribe";
             var email = string.IsNullOrWhiteSpace(id) ? null : await whatsappRepository.FetchEmailByUniqueIdAsync(id);
@@ -5218,19 +5274,51 @@ namespace Risebird.Web.Controllers
                 ViewBag.Message = "This unsubscribe link is not valid. Please write to support@risebird.io.";
                 return View("~/Views/Shared/WhatsAppUnsubscribed.cshtml");
             }
-            var saved = await whatsappRepository.SaveOptOutAsync(WhatsAppHelper.AudienceInterviewer, email, null, null, "UnsubscribeButton");
+            // src: the message the button was in (WhatsAppOptOut.TemplateEvent).
+            var saved = await whatsappRepository.SaveOptOutAsync(WhatsAppHelper.AudienceInterviewer, email, null, null, "UnsubscribeButton", src);
+            // Also listed in Interviewer Churn Data with the source; availability and the account are unchanged.
+            if (saved)
+                await whatsappRepository.MarkInterviewerChurnAsync(email,
+                    "WhatsApp unsubscribe button" + (string.IsNullOrWhiteSpace(src) ? "" : " (" + src.Trim() + ")"));
             ViewBag.Message = saved
                 ? "You won't receive WhatsApp messages from Risebird. Emails are not affected."
                 : "We could not record your request. Please try again or write to support@risebird.io.";
+            if (saved)
+            {
+                ViewBag.ReasonAction = Url.Action(nameof(UnsubscribeReason), "Interviewer");
+                ViewBag.ReasonFields = new Dictionary<string, string> { ["id"] = id };
+                ViewBag.Reasons = WhatsAppOptOutReasons.Interviewer;
+            }
+            return View("~/Views/Shared/WhatsAppUnsubscribed.cshtml");
+        }
+
+        /// <summary>The optional reason from the interviewer unsubscribe page.</summary>
+        [AllowAnonymous]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UnsubscribeReason(string id, string reason, string otherReason, [FromServices] IWhatsappRepository whatsappRepository)
+        {
+            ViewBag.Title = "WhatsApp unsubscribe";
+            var email = string.IsNullOrWhiteSpace(id) ? null : await whatsappRepository.FetchEmailByUniqueIdAsync(id);
+            var text = CandidateController.ReasonText(reason, otherReason, WhatsAppOptOutReasons.Interviewer);
+            if (!string.IsNullOrEmpty(email) && text != null
+                && await whatsappRepository.SetOptOutReasonAsync(WhatsAppHelper.AudienceInterviewer, email, null, text))
+                await whatsappRepository.SetInterviewerChurnReasonAsync(email, text);
+            ViewBag.Message = "Thank you. You won't receive WhatsApp messages from Risebird. Emails are not affected.";
             return View("~/Views/Shared/WhatsAppUnsubscribed.cshtml");
         }
 
         [Authorize]
         [HttpGet]
-        public async Task<IActionResult> MyQuality([FromServices] IInterviewerMyQualityService myQualityService)
+        public async Task<IActionResult> MyQuality([FromServices] IInterviewerMyQualityService myQualityService,
+            [FromServices] Risebird.Web.Services.IRisebirdSessionBootstrapService sessionBootstrap)
         {
             try
             {
+                // Opened from the WhatsApp QC message (I8) on a phone or a new tab: the login cookie is valid but the
+                // portal session may be empty. Rebuild it instead of signing the interviewer out; a signed-out user
+                // never gets here - [Authorize] sends them to login and back to this page.
+                await sessionBootstrap.EnsureSessionAsync(HttpContext);
                 var (email, profile) = MyQualitySession();
                 if (email == null || profile == null)
                     return RedirectToAction("SignOut", "Session");
@@ -5526,16 +5614,22 @@ namespace Risebird.Web.Controllers
         // GET below only renders a harmless confirmation page; the real state change happens on the POST,
         // which automated scanners do not issue.
         [HttpGet]
-        public IActionResult InterviewerAcknowledgementResponse(int status, string user)
+        public IActionResult InterviewerAcknowledgementResponse(int status, string user, int? callConsent = null)
         {
             if ((status != 1 && status != 4) || string.IsNullOrWhiteSpace(user))
                 return Content("Invalid request.", "text/html");
 
             bool isAccept = status == 1;
+            // Call opt-in (UCC consent proof): the "Yes" link carries callConsent=1, and the page states what
+            // confirming agrees to. Old links without it still activate but record no consent.
+            bool withCallConsent = isAccept && callConsent == 1;
             string heading     = isAccept ? "Confirm your onboarding" : "Confirm dropping your profile";
             string body        = isAccept
                 ? "Please confirm that you want to accept and activate your interviewer profile with Risebird."
                 : "Please confirm that you do not wish to proceed and want to drop your profile.";
+            if (withCallConsent)
+                body += " By confirming, you also agree to receive calls from Risebird about interviews. You can ask us to stop at any time.";
+            string consentField = withCallConsent ? "<input type='hidden' name='callConsent' value='1' />" : "";
             string buttonLabel = isAccept ? "Yes, activate my profile" : "Yes, drop my profile";
             string buttonColor = isAccept ? "#2e7d32" : "#c62828";
             string actionUrl   = Url.Action("InterviewerAcknowledgementResponse", "Interviewer");
@@ -5551,6 +5645,7 @@ namespace Risebird.Web.Controllers
                 <form method='post' action='{actionUrl}'>
                     <input type='hidden' name='status' value='{status}' />
                     <input type='hidden' name='user' value='{System.Net.WebUtility.HtmlEncode(user)}' />
+                    {consentField}
                     <button type='submit'>{buttonLabel}</button>
                 </form></div></body></html>";
             return Content(html, "text/html");
@@ -5559,7 +5654,7 @@ namespace Risebird.Web.Controllers
         [HttpPost]
         [ActionName("InterviewerAcknowledgementResponse")]
         [IgnoreAntiforgeryToken]
-        public async Task<JsonResult> InterviewerAcknowledgementResponseConfirm(int status, string user)//, int irf
+        public async Task<JsonResult> InterviewerAcknowledgementResponseConfirm(int status, string user, int? callConsent = null)//, int irf
         {
             //check link expiry befire hitting db
 
@@ -5579,9 +5674,17 @@ namespace Risebird.Web.Controllers
                 }
                 else
                 {
-                    string decodedEncryptedId = System.Net.WebUtility.UrlDecode(user);
-                    userId = await _encryptionHelper.DecryptInteger(decodedEncryptedId);
+                    // The form posts the id already decoded; decoding again turns a base64 '+' into a space, so try
+                    // the value as posted first and fall back to the old double-decoded form.
+                    userId = await _encryptionHelper.DecryptInteger(user);
+                    if (!userId.HasValue || userId.Value <= 0)
+                    {
+                        string decodedEncryptedId = System.Net.WebUtility.UrlDecode(user);
+                        userId = await _encryptionHelper.DecryptInteger(decodedEncryptedId);
+                    }
                 }
+                // Call consent counts only from an encrypted link: a plain id could be posted for anyone.
+                bool consentFromEncryptedLink = !success;
 
                 //var userId = await _encryptionHelper.DecryptData(user);
 
@@ -5597,6 +5700,20 @@ namespace Risebird.Web.Controllers
                     bool activateChannels = !prospectId.HasValue;
 
                     var result = await _interviewerService.UpdateInterviewerActiveStatus(status, userId.Value, activateChannels);//, irf
+
+                    // Call opt-in: record consent (IP + user agent as UCC proof) and reverse a previous call opt-out.
+                    // A failure here never blocks the activation.
+                    if (result != null && status == 1 && callConsent == 1 && consentFromEncryptedLink)
+                    {
+                        try
+                        {
+                            // The connection's address (App Service puts the client IP there), not X-Forwarded-For,
+                            // which the client can set.
+                            var ipAddress = HttpContext.Connection.RemoteIpAddress?.ToString();
+                            await _callPreferenceRepository.RecordInterviewerCallConsent(userId.Value, ipAddress, Request.Headers["User-Agent"].ToString());
+                        }
+                        catch (Exception cex) { await _applicationErrorLogger.LogMessage(LogLevelInfo.Exception, cex); }
+                    }
 
                     if (result != null)
                     {

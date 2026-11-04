@@ -76,7 +76,8 @@ namespace Risebird.MicroService
                             _whatsAppVM.Event = "Interviewer Feedback Remainder";
                             _whatsAppVM.MessageValue = item.CandidateName;
                             _whatsAppVM.CandidateName = item.CandidateName;
-                            _whatsAppVM.ReportLink = "Interview/InterviewDetails?id=" + item.IRFId + "&interviewId=" + item.id;
+                            // "Edit Report" opens the report form itself, as the interviewer's My Interview page does.
+                            _whatsAppVM.ReportLink = "Interview/AddReport?interviewId=" + item.id + "&irfId=" + item.IRFId;
                             _whatsAppVM.InterviewId = item.id;
                             _whatsAppVM.irfId = item.IRFId;
                             await _whatsAppHelper.WhatsAppSendInterviewerFeedbackRemainder(_whatsAppVM);
