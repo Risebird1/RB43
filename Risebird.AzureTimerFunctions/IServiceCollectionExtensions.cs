@@ -70,6 +70,8 @@ namespace Risebird.AzureFunctions
             services.AddScoped<IPlivoCXService, PlivoCXService>();
             services.AddScoped<IPlivoCXCallRepository, PlivoCXCallRepository>();
             services.AddScoped<IPlivoCXCampaignRepository, PlivoCXCampaignRepository>();
+            // Call opt-out: pre-dial check (usp_CanCallContact) before every automated call.
+            services.AddScoped<ICallPreferenceRepository, CallPreferenceRepository>();
             services.AddScoped<IPlivoCXCampaignService, Risebird.Business.PlivoCX.PlivoCXCampaignService>();
             services.AddScoped<IWhatsAppCampaignRepository, WhatsAppCampaignRepository>();
             services.AddScoped<IWhatsAppCampaignService, Risebird.Business.WhatsAppCampaigns.WhatsAppCampaignService>();

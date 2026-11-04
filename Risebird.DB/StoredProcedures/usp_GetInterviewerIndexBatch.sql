@@ -59,6 +59,7 @@ BEGIN
             WHEN intp.Isavailable = 2 THEN 'Not Available'
             WHEN intp.Isavailable = 3 THEN 'Need Clarity'
             WHEN intp.Isavailable = 4 THEN 'Drop My Profile'
+            WHEN intp.Isavailable = 5 THEN 'Opted out of calls'
             ELSE 'no data'
         END,
         ISNULL(intp.VideoConfirmation, 0)                    AS VideoConfirmation,

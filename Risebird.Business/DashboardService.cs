@@ -1227,11 +1227,11 @@ namespace Risebird.Business
             return null;
         }
 
-        public async Task<List<InterviewUsersDetails>> MarkedColdCandidate(int CandidateId, string Email, int InterviewId, int type)
+        public async Task<List<InterviewUsersDetails>> MarkedColdCandidate(int CandidateId, string Email, int InterviewId, int type, string coldSource = null, string coldReason = null, bool logCallOptOut = false)
         {
             try
             {
-                return await _dashboardRespository.MarkedColdCandidate(CandidateId, Email, InterviewId, type);
+                return await _dashboardRespository.MarkedColdCandidate(CandidateId, Email, InterviewId, type, coldSource, coldReason, logCallOptOut);
 
             }
             catch (Exception e)

@@ -46,6 +46,7 @@ namespace Risebird.AzureTimerFunctions
         private readonly IAssistantServiceHelper      _assistantServiceHelper;
         private readonly IInterviewerService          _interviewerService;
         private readonly IHttpRequestHelper           _httpRequestHelper;
+        private readonly ICallPreferenceRepository    _callPreferenceRepository;
         private readonly IWhatsAppHelper              _whatsAppHelper;
         private readonly string                       _evApiKey;
         private readonly string                       _evEndpoint;
@@ -68,8 +69,10 @@ namespace Risebird.AzureTimerFunctions
             IAssistantServiceHelper     assistantServiceHelper,
             IInterviewerService         interviewerService,
             IHttpRequestHelper          httpRequestHelper,
-            IWhatsAppHelper             whatsAppHelper)
+            IWhatsAppHelper             whatsAppHelper,
+            ICallPreferenceRepository   callPreferenceRepository)
         {
+            _callPreferenceRepository = callPreferenceRepository;
             _configuration     = configuration;
             _repository        = repository;
             _pdfReaderHelper   = pdfReaderHelper;
@@ -437,6 +440,18 @@ namespace Risebird.AzureTimerFunctions
             if (!IsWithinCallWindow())
             {
                 _log.LogInformation($"[OnboardAuto] #{p.Id} — outside 9 AM–9 PM IST. Deferring call.");
+                return;
+            }
+
+            // Pre-dial check: the number belongs to an interviewer who opted out of calls. Not a failed call, so no
+            // attempt is used up; hand it to an operator instead of retrying every run.
+            var canCall = await _callPreferenceRepository.CanCallContact("Interviewer", p.ParsedPhone);
+            if (!canCall.CanCall)
+            {
+                _log.LogInformation($"[OnboardAuto] #{p.Id} — not called: {canCall.Reason}");
+                await _repository.UpdateAutomationStatusAsync(p.Id, "ManualRequired");
+                await _repository.InsertHistoryAsync(p.Id, "AutomationNote", "—",
+                    $"Automation: not called — {canCall.Reason} ({p.ParsedPhone}). Operator review required.", "AutomationJob");
                 return;
             }
 
@@ -813,7 +828,9 @@ namespace Risebird.AzureTimerFunctions
             bool ackSent = false;
             try
             {
-                string yesButton  = $"{portalBase}/Interviewer/InterviewerAcknowledgementResponse?status=1&user={userId}";
+                // Encrypted user id: call consent is recorded only for an encrypted link, so it can't be forged for any id.
+                string encUser = await _encryptionHelper.EncryptInteger(userId);
+                string yesButton  = $"{portalBase}/Interviewer/InterviewerAcknowledgementResponse?status=1&callConsent=1&user={(string.IsNullOrEmpty(encUser) ? userId.ToString() : Uri.EscapeDataString(encUser))}";
                 string dropButton = $"{portalBase}/Interviewer/InterviewerAcknowledgementResponse?status=4&user={userId}";
                 string agNames    = rec.AssessmentGroupName ?? rec.MagName ?? "";
 

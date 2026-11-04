@@ -12,7 +12,9 @@ Create Procedure usp_FetchInterviewersFlags
 @Emailid varchar(150)
 As
 BEGIN
-Select ul.Emailid,ip.isApproved,ul.Isactive,ul.IsInterviewerAccess,ip.IsInterest as IsInterested,ul.LastLogin,ip.IsLeadInterviewer,ip.CreatedBy,ip.id,ip.IsDeleted from 
+Select ul.Emailid,ip.isApproved,ul.Isactive,ul.IsInterviewerAccess,ip.IsInterest as IsInterested,ul.LastLogin,ip.IsLeadInterviewer,ip.CreatedBy,ip.id,ip.IsDeleted,
+-- Call opt-out: flag panel "Calls" column (Opted out when Isavailable = 5 or CallConsent = 0) and its marker (AICall | HumanCall).
+CAST(CASE WHEN ip.Isavailable = 5 OR ip.CallConsent = 0 THEN 1 ELSE 0 END AS bit) as IsCallOptedOut,ip.CallOptOutSource,ip.CallConsent,ul.id as UserId from 
 InterviewerProfile ip join Userlist ul on ul.id=ip.Userid 
 where ul.Emailid=@Emailid
 END

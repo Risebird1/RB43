@@ -348,7 +348,13 @@
                                                             @if (ViewBag.ColdCandidateValue == 1)
                                                             {
                                                                 <td>Yes</td>
-                                                                <td>@item.ColdMarkedBY</td>
+                                                                <td>
+                                                                    @item.ColdMarkedBY
+                                                                    @if (item.ColdSource == "AICall" || item.ColdSource == "HumanCall")
+                                                                    {
+                                                                        <br /><span class="label label-danger" title="@item.ColdReason">Opted out: @(item.ColdSource == "AICall" ? "AI call" : "Human call")</span>
+                                                                    }
+                                                                </td>
                                                                 <td>@item.ColdMarkedDate</td>
                                                             }
 

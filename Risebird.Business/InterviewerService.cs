@@ -313,7 +313,9 @@ namespace Risebird.Business
                         {
                         try
                         {
-                            string yesButton = "https://portal.risebird.io/Interviewer/InterviewerAcknowledgementResponse?status=1&user=" + userId.ToString();
+                            // Encrypted user id: call consent is recorded only for an encrypted link, so it can't be forged for any id.
+                            string encUser = _encryptionHelper.EncryptInteger(userId).GetAwaiter().GetResult();
+                            string yesButton = "https://portal.risebird.io/Interviewer/InterviewerAcknowledgementResponse?status=1&callConsent=1&user=" + (string.IsNullOrEmpty(encUser) ? userId.ToString() : Uri.EscapeDataString(encUser));
                             string dropProfileButton = "";
                             
                             // Shoot acknowledgement email to the interviewer along with a custom button that, upon click, activates the Interviewer

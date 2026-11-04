@@ -2294,6 +2294,10 @@
                                                             {
                                                                 <td>Drop my profile</td>
                                                             }
+                                                            else if (item.Isavailable == 5)
+                                                            {
+                                                                <td>Opted out of calls@(item.CallOptOutSource == "HumanCall" ? " (human call)" : "")</td>
+                                                            }
                                                             else
                                                             {
                                                                 @* Listed only for a WhatsApp unsubscribe; their availability was not changed. *@

@@ -154,6 +154,18 @@ Begin
     --[OutsideIndiaProductRate] = @OutsideIndiaProductRate    
   where userId = @UserId
 
+  -- Call opt-out / MAG: an admin switching the interviewer off here (Active or Interviewer access) removes them
+  -- from every MAG, like the dashboard and flags panel; switching them back on restores the groups removed by a
+  -- manual inactivation (merged with any picked in this form). A call opt-out exclusion is left alone.
+  Declare @MagWasOn bit = CASE WHEN ISNULL(@OldIsActive, 0) = 1 AND ISNULL(@OldIsInterviewerAccess, 1) = 1 THEN 1 ELSE 0 END;
+  Declare @MagIsOn bit = CASE WHEN ISNULL(@IsActive, 0) = 1 AND ISNULL(ISNULL(@IsInterviewerAccess, @OldIsInterviewerAccess), 1) = 1 THEN 1 ELSE 0 END;
+  Declare @MagNow datetime = DATEADD(MINUTE, 330, GETUTCDATE());
+  Declare @MagBy varchar(200) = ISNULL(NULLIF(LTRIM(RTRIM(@loggedInUser)), ''), 'Admin');
+  IF @MagWasOn = 1 AND @MagIsOn = 0
+      EXEC usp_ExcludeInterviewerFromMAG @UserId, 'ManualInactive', @MagBy, @MagNow
+  IF @MagWasOn = 0 AND @MagIsOn = 1
+      EXEC usp_RestoreInterviewerToMAG @UserId, 'ManualInactive', @MagBy, @MagNow
+
   -- QC Activity: one InterviewerActionLog row per status that actually changed in this edit
   -- (Active, Interviewer access, Hold payment). Skipped while the log table is missing.
   IF OBJECT_ID(N'dbo.InterviewerActionLog', N'U') IS NOT NULL
